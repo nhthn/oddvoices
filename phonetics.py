@@ -159,18 +159,23 @@ def parse_words(file):
         word, __, pronunciation = line.partition("=")
         word = word.strip()
         pronunciation = pronunciation.strip()
-        tokens = []
+        phonemes = []
         while len(pronunciation) != 0:
             for phoneme in sorted(ALL_PHONEMES, key=lambda x: len(x), reverse=True):
                 if pronunciation.startswith(phoneme):
-                    tokens.append(phoneme)
+                    phonemes.append(phoneme)
                     pronunciation = pronunciation[len(phoneme):]
                     break
             else:
                 raise RuntimeError(f"Unrecognized phoneme: {pronunciation}")
+        vowel_count = 0
+        for phoneme in phonemes:
+            if phoneme in VOWELS:
+                vowel_count += 1
         words.append({
             "word": word,
-            "pronunciation": tokens
+            "pronunciation": phonemes,
+            "vowel_count": vowel_count,
         })
     return words
 
@@ -189,6 +194,7 @@ def check_words(words):
     if missing != 0:
         raise RuntimeError(f"{missing} out of {len(IMPORTANT_DIPHONES)} diphones missing")
 
-with open("words2.txt") as f:
-    words = parse_words(f)
-    check_words(words)
+if __name__ == "__main__":
+    with open("words2.txt") as f:
+        words = parse_words(f)
+        check_words(words)

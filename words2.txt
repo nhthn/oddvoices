@@ -48,7 +48,6 @@ choose = tSuz
 joke = dZoUk
 rather = r{}D@r
 past = p{}st
-measure = mEZ@r
 
 Sally = s{}li
 laugh = l{}f
