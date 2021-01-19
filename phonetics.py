@@ -51,7 +51,7 @@ VOWELS = [
     "aU",
 ]
 
-ALL_PHONEMES = CONSONANTS + APPROXIMANTS + VOWELS
+ALL_PHONEMES = CONSONANTS + APPROXIMANTS + VOWELS + [" "]
 
 IMPORTANT_DIPHONES = []
 for vowel in VOWELS:
@@ -150,6 +150,20 @@ UNIMPORTANT_DIPHONES = [
 for diphone in UNIMPORTANT_DIPHONES:
     IMPORTANT_DIPHONES.remove(diphone)
 
+
+def parse_pronunciation(pronunciation):
+    pronunciation = pronunciation.strip()
+    phonemes = []
+    while len(pronunciation) != 0:
+        for phoneme in sorted(ALL_PHONEMES, key=lambda x: len(x), reverse=True):
+            if pronunciation.startswith(phoneme):
+                phonemes.append(phoneme)
+                pronunciation = pronunciation[len(phoneme):]
+                break
+        else:
+            raise RuntimeError(f"Unrecognized phoneme: {pronunciation}")
+    return phonemes
+
 def parse_words(file):
     words = []
     for line in file:
@@ -158,17 +172,8 @@ def parse_words(file):
             continue
         word, __, pronunciation = line.partition("=")
         word = word.strip()
-        pronunciation = pronunciation.strip()
-        phonemes = []
-        while len(pronunciation) != 0:
-            for phoneme in sorted(ALL_PHONEMES, key=lambda x: len(x), reverse=True):
-                if pronunciation.startswith(phoneme):
-                    phonemes.append(phoneme)
-                    pronunciation = pronunciation[len(phoneme):]
-                    break
-            else:
-                raise RuntimeError(f"Unrecognized phoneme: {pronunciation}")
         vowel_count = 0
+        phonemes = parse_pronunciation(pronunciation)
         for phoneme in phonemes:
             if phoneme in VOWELS:
                 vowel_count += 1

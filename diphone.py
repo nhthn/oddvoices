@@ -37,7 +37,21 @@ class DiphoneDatabase:
     def beat_to_frame(self, beat):
         return int(self.beat * self.rate * beat)
 
-    def do_psola(self, segment, out_f0=100.0):
+    def get_instantaneous_f0(self, signal, offset, window_size=2048):
+        unwindowed_frame: np.array = signal[offset:offset + window_size]
+        frame: np.array = unwindowed_frame * scipy.signal.get_window("hann", window_size)
+
+        autocorrelation: np.array = scipy.signal.correlate(frame, frame)
+        autocorrelation = autocorrelation[window_size:]
+        ascending_bins = np.where(np.diff(autocorrelation) >= 0)
+        if len(ascending_bins[0]) == 0:
+            return -1
+        first_ascending_bin = np.min(ascending_bins)
+        measured_period: int = np.argmax(autocorrelation[first_ascending_bin:]) + first_ascending_bin
+        measured_f0 = self.rate / measured_period
+        return measured_f0
+
+    def do_psola(self, segment, out_f0=200.0):
         expected_f0: float = 440 * 2 ** ((52 - 69) / 12)
         period: float = self.rate / expected_f0
 
@@ -46,32 +60,26 @@ class DiphoneDatabase:
         current_measured_period = period
         offset = 0
         while True:
-            window_size: int = int(current_measured_period * 3)
-            if offset + window_size >= len(segment):
+            autocorrelation_window_size: int = 2048
+            if offset + autocorrelation_window_size >= len(segment):
                 break
+
+            f0 = self.get_instantaneous_f0(
+                segment, offset, window_size=autocorrelation_window_size
+            )
+
+            voiced = expected_f0 / 1.5 <= f0 <= expected_f0 * 1.5
+            measured_period = self.rate / f0 if voiced else period
+            window_size = int(measured_period * 2)
+
             unwindowed_frame: np.array = segment[offset:offset + window_size]
             frame: np.array = unwindowed_frame * scipy.signal.get_window("hann", window_size)
-
-            autocorrelation: np.array = scipy.signal.correlate(frame, frame)
-            autocorrelation = autocorrelation[window_size:]
-            ascending_bins = np.where(np.diff(autocorrelation) >= 0)
-            if len(ascending_bins[0]) == 0:
-                continue
-            first_ascending_bin = np.min(ascending_bins)
-            measured_period: int = np.argmax(autocorrelation[first_ascending_bin:]) + first_ascending_bin
-            f0 = self.rate / measured_period
-            if expected_f0 / 1.5 <= f0 <= expected_f0 * 1.5:
-                period_scale_factor = period / measured_period
-                current_measured_period = measured_period
-            else:
-                period_scale_factor = 1
-                current_measured_period = period
-            corrected_frame: np.array = scipy.signal.resample(frame, int(window_size * period_scale_factor))
+            corrected_frame: np.array = scipy.signal.resample(frame, int(period * 2))
             frames.append(corrected_frame)
-            input_hop = int(period * period_scale_factor)
-            offset += input_hop
 
-        n_randomized_phases = 50
+            offset += int(measured_period)
+
+        n_randomized_phases = 100
         phases = np.exp(np.random.random((n_randomized_phases,)) * 2 * np.pi * 1j)
 
         output_hop = period * (expected_f0 / out_f0)
@@ -90,19 +98,34 @@ class DiphoneDatabase:
 
         return result
 
-    def write_sample(self, pronunciation, out_file):
-        for word in self.words:
-            if word["pronunciation"] == pronunciation:
-                start = self.beat_to_frame(word["start_beat"])
-                end = self.beat_to_frame(word["end_beat"])
-                audio = self.audio[start:end]
-                audio = self.do_psola(audio)
-                soundfile.write(out_file, audio, samplerate=self.rate)
-                return
-        else:
-            raise RuntimeError(f"Pronunciation not found: {pronunciation}")
+    def say_word(self, word):
+        start = self.beat_to_frame(word["start_beat"])
+        end = self.beat_to_frame(word["end_beat"])
+        audio = self.audio[start:end]
+        audio = self.do_psola(audio)
+        return audio
+
+    def write_sample(self, pronunciation_string, out_file):
+        pronunciation = phonetics.parse_pronunciation(pronunciation_string)
+        pronunciations = [[]]
+        for phoneme in pronunciation:
+            if phoneme == " ":
+                pronunciations.append([])
+            else:
+                pronunciations[-1].append(phoneme)
+
+        result = []
+        for pronunciation in pronunciations:
+            for word in self.words:
+                if word["pronunciation"] == pronunciation:
+                    result.append(self.say_word(word))
+                    break
+            else:
+                raise RuntimeError(f"Pronunciation not found: {pronunciation}")
+        audio = np.concatenate(result)
+        soundfile.write(out_file, audio, samplerate=self.rate)
 
 if __name__ == "__main__":
 
     database = DiphoneDatabase("STE-048.wav", "words.txt")
-    database.write_sample(["h", "i", "r"], "out.wav")
+    database.write_sample("maI laIf Iz raIt j{}", "out.wav")
