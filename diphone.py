@@ -13,12 +13,16 @@ def get_sublist_index(list_1, list_2):
 class DiphoneDatabase:
 
     def __init__(self, sound_file, words_file):
+        self.expected_f0: float = 440 * 2 ** ((52 - 69) / 12)
         self.bpm: float = 60.0
         self.beat: float = 60 / self.bpm
         self.audio: np.array
         self.rate: int
         self.audio, self.rate = soundfile.read(sound_file)
         self.audio = np.sum(self.audio, axis=1)
+
+        self.n_randomized_phases = 30
+        self.randomized_phases = np.exp(np.random.random((self.n_randomized_phases,)) * 2 * np.pi * 1j)
 
         with open(words_file) as f:
             self.words = phonetics.parse_words(f)
@@ -33,6 +37,8 @@ class DiphoneDatabase:
             word["start_beat"] = beat
             word["end_beat"] = beat + duration
             beat += quarter_notes
+
+        self.build_diphone_index()
 
     def beat_to_frame(self, beat):
         return int(self.beat * self.rate * beat)
@@ -51,58 +57,90 @@ class DiphoneDatabase:
         measured_f0 = self.rate / measured_period
         return measured_f0
 
-    def do_psola(self, segment, out_f0=200.0):
-        expected_f0: float = 440 * 2 ** ((52 - 69) / 12)
-        period: float = self.rate / expected_f0
+    def build_diphone_index(self):
+        self.diphones = {}
+        for word in self.words:
+            pronunciation = word["pronunciation"]
+            start_beat = word["start_beat"]
+            for i in range(len(pronunciation) - 1):
+                phoneme_1 = pronunciation[i]
+                phoneme_2 = pronunciation[i + 1]
+                if phoneme_1 in phonetics.VOWELS or phoneme_2 in phonetics.VOWELS:
+                    diphone = (phoneme_1, phoneme_2)
+                    spec = {
+                        "start_beat": start_beat,
+                        "end_beat": start_beat + 1,
+                    }
+                    self.diphones[diphone] = spec
+                    start_beat += 1
 
+    def analyze_psola(self, segment):
+        autocorrelation_window_size: int = 2048
+        period: float = self.rate / self.expected_f0
         frames = []
-
-        current_measured_period = period
         offset = 0
-        while True:
-            autocorrelation_window_size: int = 2048
-            if offset + autocorrelation_window_size >= len(segment):
-                break
+
+        while offset + autocorrelation_window_size < len(segment):
 
             f0 = self.get_instantaneous_f0(
                 segment, offset, window_size=autocorrelation_window_size
             )
 
-            voiced = expected_f0 / 1.5 <= f0 <= expected_f0 * 1.5
+            voiced = self.expected_f0 / 1.5 <= f0 <= self.expected_f0 * 1.5
             measured_period = self.rate / f0 if voiced else period
             window_size = int(measured_period * 2)
 
-            unwindowed_frame: np.array = segment[offset:offset + window_size]
-            frame: np.array = unwindowed_frame * scipy.signal.get_window("hann", window_size)
-            corrected_frame: np.array = scipy.signal.resample(frame, int(period * 2))
-            frames.append(corrected_frame)
+            frame: np.array = segment[offset:offset + window_size]
+            frame = frame * scipy.signal.get_window("hann", len(frame))
+            frame = scipy.signal.resample(frame, int(period * 2))
+
+            if voiced:
+                frame = np.fft.rfft(frame)
+                frame[:self.n_randomized_phases] = (
+                    np.abs(frame[:self.n_randomized_phases]) * self.randomized_phases
+                )
+                frame = np.fft.irfft(frame)
+                frame = frame * scipy.signal.get_window("hann", len(frame))
+
+            if len(frame) < int(period * 2):
+                frame = np.concatenate([frame, np.zeros(int(period * 2) - len(frame))])
+
+            frames.append(frame)
 
             offset += int(measured_period)
 
-        n_randomized_phases = 100
-        phases = np.exp(np.random.random((n_randomized_phases,)) * 2 * np.pi * 1j)
+        return frames
 
-        output_hop = period * (expected_f0 / out_f0)
+    def crossfade_psola(self, frames_1, frames_2, crossfade_length):
+        result = []
+        for frame in frames_1[:-crossfade_length]:
+            result.append(frame)
+        for i in range(crossfade_length):
+            t = i / crossfade_length
+            frame_1 = frames_1[-crossfade_length + i]
+            frame_2 = frames_2[i]
+            result.append(frame_1 * (1 - t) + frame_2 * t)
+        for frame in frames_2[crossfade_length:]:
+            result.append(frame)
+        return result
 
+
+    def synthesize_psola(self, frames, out_f0=200.0, formant_shift=1.0):
+        output_hop = self.rate / out_f0
         result_length = int(len(frames) * output_hop) + len(frames[-1])
         result = np.zeros(result_length)
         for i, frame in enumerate(frames):
-            frame = np.fft.rfft(frame)
-            frame[:n_randomized_phases] = np.abs(frame[:n_randomized_phases]) * phases
-            frame = np.fft.irfft(frame)
-            frame = frame * scipy.signal.get_window("hann", len(frame))
-
+            frame = scipy.signal.resample(frame, int(len(frame) / formant_shift))
             start = int(i * output_hop)
             end = int(i * output_hop) + len(frame)
             result[start:end] += frame
-
         return result
 
     def say_word(self, word):
         start = self.beat_to_frame(word["start_beat"])
         end = self.beat_to_frame(word["end_beat"])
         audio = self.audio[start:end]
-        audio = self.do_psola(audio)
+        audio = self.analyze_psola(audio)
         return audio
 
     def write_sample(self, pronunciation_string, out_file):
@@ -114,18 +152,23 @@ class DiphoneDatabase:
             else:
                 pronunciations[-1].append(phoneme)
 
-        result = []
+        psola_segments = []
         for pronunciation in pronunciations:
-            for word in self.words:
-                if word["pronunciation"] == pronunciation:
-                    result.append(self.say_word(word))
-                    break
-            else:
-                raise RuntimeError(f"Pronunciation not found: {pronunciation}")
-        audio = np.concatenate(result)
+            for i in range(len(pronunciation) - 1):
+                diphone = (pronunciation[i], pronunciation[i + 1])
+                if diphone in self.diphones:
+                    psola_segments.append(self.say_word(self.diphones[diphone]))
+
+        merged_psola_segments = psola_segments[0]
+        for psola_segment in psola_segments[1:]:
+            merged_psola_segments = self.crossfade_psola(
+                merged_psola_segments, psola_segment, 10
+            )
+        audio = self.synthesize_psola(merged_psola_segments)
+
         soundfile.write(out_file, audio, samplerate=self.rate)
 
 if __name__ == "__main__":
 
     database = DiphoneDatabase("STE-048.wav", "words.txt")
-    database.write_sample("maI laIf Iz raIt j{}", "out.wav")
+    database.write_sample("tunaIt", "out.wav")
