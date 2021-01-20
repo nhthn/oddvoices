@@ -2,7 +2,7 @@ import soundfile
 import scipy.signal
 import numpy as np
 
-import phonetics
+import phonology
 
 def get_sublist_index(list_1, list_2):
     for i in range(len(list_2) - len(list_1) + 1):
@@ -25,7 +25,7 @@ class DiphoneDatabase:
         self.randomized_phases = np.exp(np.random.random((self.n_randomized_phases,)) * 2 * np.pi * 1j)
 
         with open(words_file) as f:
-            self.words = phonetics.parse_words(f)
+            self.words = phonology.parse_words(f)
 
         beat = 0
         for word in self.words:
@@ -65,7 +65,7 @@ class DiphoneDatabase:
             for i in range(len(pronunciation) - 1):
                 phoneme_1 = pronunciation[i]
                 phoneme_2 = pronunciation[i + 1]
-                if phoneme_1 in phonetics.VOWELS or phoneme_2 in phonetics.VOWELS:
+                if phoneme_1 in phonology.VOWELS or phoneme_2 in phonology.VOWELS:
                     diphone = (phoneme_1, phoneme_2)
                     spec = {
                         "start_beat": start_beat,
@@ -144,7 +144,7 @@ class DiphoneDatabase:
         return audio
 
     def write_sample(self, pronunciation_string, out_file):
-        pronunciation = phonetics.parse_pronunciation(pronunciation_string)
+        pronunciation = phonology.parse_pronunciation(pronunciation_string)
         pronunciations = [[]]
         for phoneme in pronunciation:
             if phoneme == " ":
