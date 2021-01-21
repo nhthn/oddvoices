@@ -15,6 +15,7 @@ APPROXIMANTS = [
 ]
 
 CONSONANTS = APPROXIMANTS + [
+    "?",
     "m",
     "n",
     "N",
@@ -54,7 +55,7 @@ VOWELS = [
     "aU",
 ]
 
-ALL_PHONEMES = CONSONANTS + APPROXIMANTS + VOWELS + [" "]
+ALL_PHONEMES = CONSONANTS + APPROXIMANTS + VOWELS
 
 IMPORTANT_DIPHONES = []
 for vowel in VOWELS:
@@ -106,6 +107,7 @@ UNIMPORTANT_DIPHONES = [
 
     # Rare
     ("u", "dZ"),  # nothing rhymes with "splooge"
+    ("g", "OI"),  # goy, goiter
 
     # U + approximant usually becomes u or @
     ("U", "l"),
@@ -189,6 +191,12 @@ UNIMPORTANT_DIPHONES = [
 for diphone in UNIMPORTANT_DIPHONES:
     IMPORTANT_DIPHONES.remove(diphone)
 
+def normalize_pronunciation(pronunciation):
+    if pronunciation[0] in VOWELS:
+        pronunciation = ["?"] + pronunciation
+    if pronunciation[-1] in VOWELS:
+        pronunciation = pronunciation + ["?"]
+    return pronunciation
 
 def parse_pronunciation(pronunciation):
     pronunciation = pronunciation.strip()
@@ -209,16 +217,17 @@ def parse_words(file):
         line = line.strip()
         if line == "":
             continue
-        word, __, pronunciation = line.partition("=")
+        word, __, pronunciation_string = line.partition("=")
         word = word.strip()
         vowel_count = 0
-        phonemes = parse_pronunciation(pronunciation)
-        for phoneme in phonemes:
+        pronunciation = parse_pronunciation(pronunciation_string)
+        for phoneme in pronunciation:
             if phoneme in VOWELS:
                 vowel_count += 1
+        pronunciation = normalize_pronunciation(pronunciation)
         words.append({
             "word": word,
-            "pronunciation": phonemes,
+            "pronunciation": pronunciation,
             "vowel_count": vowel_count,
         })
     return words

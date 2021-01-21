@@ -152,6 +152,11 @@ class DiphoneDatabase:
             else:
                 pronunciations[-1].append(phoneme)
 
+        pronunciations = [
+            phonology.normalize_pronunciation(pronunciation)
+            for pronunciation in pronunciations
+        ]
+
         psola_segments = []
         for pronunciation in pronunciations:
             for i in range(len(pronunciation) - 1):
