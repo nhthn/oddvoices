@@ -87,6 +87,7 @@ UNIMPORTANT_DIPHONES = [
     ("I", "w"),
     ("E", "j"),
     ("E", "w"),
+    ("A", "w"),  # aU
 
     # Probably don't exist in English
     ("@", "j"),  # usually becomes aI
@@ -97,6 +98,7 @@ UNIMPORTANT_DIPHONES = [
     ("oU", "N"),
     ("eI", "N"),
     ("aI", "N"),
+    ("aU", "N"),
 
     # Rare
     ("u", "dZ"),  # nothing rhymes with "splooge"
@@ -146,6 +148,39 @@ UNIMPORTANT_DIPHONES = [
     ("aI", "T"),
     ("z", "aI"), # Zybourne Clock?
     ("aI", "S"),
+    ("j", "OI"),
+    ("OI", "r"),
+    ("OI", "w"),
+    ("w", "OI"),
+    ("OI", "m"),
+    ("OI", "k"),
+    ("OI", "g"),
+    ("OI", "p"),
+    ("OI", "b"),
+    ("OI", "tS"),
+    ("OI", "dZ"),
+    ("OI", "f"),
+    ("OI", "v"),
+    ("OI", "T"),
+    ("T", "OI"),
+    ("OI", "D"),
+    ("D", "OI"),
+    ("z", "OI"),
+    ("OI", "S"),
+    ("S", "OI"),
+    ("aU", "j"),
+    ("aU", "m"),
+    ("aU", "k"),
+    ("aU", "g"),  # cowgirl
+    ("aU", "p"),  # cowper
+    ("aU", "b"),
+    ("aU", "dZ"),
+    ("aU", "f"),
+    ("aU", "v"),
+    ("aU", "T"),
+    ("T", "aU"),
+    ("aU", "D"),
+    ("aU", "S"),
 ]
 for diphone in UNIMPORTANT_DIPHONES:
     IMPORTANT_DIPHONES.remove(diphone)
