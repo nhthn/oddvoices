@@ -1,3 +1,6 @@
+import random
+
+
 def is_sublist(list_1, list_2):
     for i in range(len(list_2) - len(list_1) + 1):
         if list(list_1) == list_2[i : i + len(list_1)]:
@@ -80,6 +83,7 @@ UNIMPORTANT_DIPHONES = [
 
     ("{}", "j"),
     ("{}", "r"),
+    ("{}", "w"),
     ("D", "A"),
     ("A", "j"),
     ("I", "r"),
@@ -235,6 +239,19 @@ def check_words(words):
         raise RuntimeError(f"{missing} out of {len(IMPORTANT_DIPHONES)} diphones missing")
 
 if __name__ == "__main__":
-    with open("words2.txt") as f:
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("infile")
+    parser.add_argument("--scramble", type=str)
+    args = parser.parse_args()
+
+    with open(args.infile) as f:
         words = parse_words(f)
         check_words(words)
+
+    if args.scramble is not None:
+        random.shuffle(words)
+        with open(args.scramble, "w") as f:
+            for word in words:
+                f.write(f"{word['word']} = {''.join(word['pronunciation'])}\n")
