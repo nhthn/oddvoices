@@ -187,6 +187,7 @@ UNIMPORTANT_DIPHONES = [
     ("T", "aU"),
     ("aU", "D"),
     ("aU", "S"),
+    ("{}", "g"),  # usually becomes Eg
 ]
 for diphone in UNIMPORTANT_DIPHONES:
     IMPORTANT_DIPHONES.remove(diphone)
