@@ -1,2 +1,11 @@
 __pycache__
 out.wav
+*~
+
+*.tex
+*.pdf
+*.log
+*.aux
+
+*.aup
+*_data

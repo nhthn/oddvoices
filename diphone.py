@@ -10,38 +10,52 @@ def get_sublist_index(list_1, list_2):
             return i
     raise IndexError("Sublist not found")
 
+
+def midi_note_to_hertz(midi_note):
+    return 440 * 2 ** ((midi_note - 69) / 12)
+
+
+def seconds_to_timestamp(seconds):
+    minutes = int(seconds / 60)
+    remaining_seconds = seconds - minutes * 60
+    return str(minutes) + ":" + str(remaining_seconds)
+
+
 class DiphoneDatabase:
 
-    def __init__(self, sound_file, words_file):
-        self.expected_f0: float = 440 * 2 ** ((52 - 69) / 12)
+    def __init__(self, sound_file, label_file, expected_f0):
+        self.expected_f0: float = expected_f0
         self.bpm: float = 60.0
         self.beat: float = 60 / self.bpm
         self.audio: np.array
         self.rate: int
         self.audio, self.rate = soundfile.read(sound_file)
-        self.audio = np.sum(self.audio, axis=1)
 
         self.n_randomized_phases = 30
         self.randomized_phases = np.exp(np.random.random((self.n_randomized_phases,)) * 2 * np.pi * 1j)
 
-        with open(words_file) as f:
-            self.words = phonology.parse_words(f)
+        self.parse_label_file(label_file)
 
-        beat = 0
-        for word in self.words:
-            half_notes = word["vowel_count"] + 1
-            if half_notes % 2 == 1:
-                half_notes += 1
-            quarter_notes = half_notes * 2
-            duration = word["vowel_count"] * 2.1
-            word["start_beat"] = beat
-            word["end_beat"] = beat + duration
-            beat += quarter_notes
+    def parse_label_file(self, label_file):
+        self.segments = {}
+        with open(label_file) as label_file:
+            for line in label_file:
+                entries = line.strip().split(maxsplit=2)
+                if len(entries) == 3:
+                    start, end, text = entries
+                    start = float(start)
+                    end = float(end)
+                    text = text.split()
+                    try:
+                        text = tuple(phonology.parse_pronunciation(text[0]) + text[1:])
+                    except RuntimeError as e:
+                        print(seconds_to_timestamp(start))
+                        raise e from None
 
-        self.build_diphone_index()
-
-    def beat_to_frame(self, beat):
-        return int(self.beat * self.rate * beat)
+                    self.segments[text] = {
+                        "start_frame": int(float(start) * self.rate),
+                        "end_frame": int(float(end) * self.rate),
+                    }
 
     def get_instantaneous_f0(self, signal, offset, window_size=2048):
         unwindowed_frame: np.array = signal[offset:offset + window_size]
@@ -56,23 +70,6 @@ class DiphoneDatabase:
         measured_period: int = np.argmax(autocorrelation[first_ascending_bin:]) + first_ascending_bin
         measured_f0 = self.rate / measured_period
         return measured_f0
-
-    def build_diphone_index(self):
-        self.diphones = {}
-        for word in self.words:
-            pronunciation = word["pronunciation"]
-            start_beat = word["start_beat"]
-            for i in range(len(pronunciation) - 1):
-                phoneme_1 = pronunciation[i]
-                phoneme_2 = pronunciation[i + 1]
-                if phoneme_1 in phonology.VOWELS or phoneme_2 in phonology.VOWELS:
-                    diphone = (phoneme_1, phoneme_2)
-                    spec = {
-                        "start_beat": start_beat,
-                        "end_beat": start_beat + 1,
-                    }
-                    self.diphones[diphone] = spec
-                    start_beat += 1
 
     def analyze_psola(self, segment):
         autocorrelation_window_size: int = 2048
@@ -111,7 +108,8 @@ class DiphoneDatabase:
 
         return frames
 
-    def crossfade_psola(self, frames_1, frames_2, crossfade_length):
+    def crossfade_psola(self, frames_1, frames_2, nominal_crossfade_length):
+        crossfade_length = min([len(frames_1), len(frames_2), nominal_crossfade_length])
         result = []
         for frame in frames_1[:-crossfade_length]:
             result.append(frame)
@@ -126,6 +124,8 @@ class DiphoneDatabase:
 
 
     def synthesize_psola(self, frames, out_f0=200.0, formant_shift=1.0):
+        if len(frames) == 0:
+            raise RuntimeError("Empty PSOLA")
         output_hop = self.rate / out_f0
         result_length = int(len(frames) * output_hop) + len(frames[-1])
         result = np.zeros(result_length)
@@ -136,12 +136,17 @@ class DiphoneDatabase:
             result[start:end] += frame
         return result
 
-    def say_word(self, word):
-        start = self.beat_to_frame(word["start_beat"])
-        end = self.beat_to_frame(word["end_beat"])
-        audio = self.audio[start:end]
-        audio = self.analyze_psola(audio)
-        return audio
+    def say_segment(self, segment_name):
+        if len(segment_name) == 1 and segment_name[0] in phonology.DIPHTHONGS:
+            return (
+                self.say_segment((segment_name[0], "stable"))
+                + self.say_segment((segment_name[0], "transition"))
+            )
+        info = self.segments[segment_name]
+        start_frame = info["start_frame"]
+        end_frame = info["end_frame"]
+        segment = self.audio[start_frame:end_frame]
+        return self.analyze_psola(segment)
 
     def write_sample(self, pronunciation_string, out_file):
         pronunciation = phonology.parse_pronunciation(pronunciation_string)
@@ -161,13 +166,17 @@ class DiphoneDatabase:
         for pronunciation in pronunciations:
             for i in range(len(pronunciation) - 1):
                 diphone = (pronunciation[i], pronunciation[i + 1])
-                if diphone in self.diphones:
-                    psola_segments.append(self.say_word(self.diphones[diphone]))
+                if pronunciation[i] in phonology.VOWELS:
+                    psola_segments.append(self.say_segment((pronunciation[i],)))
+                if diphone in self.segments:
+                    psola_segments.append(self.say_segment(diphone))
+            if pronunciation[-1] in phonology.VOWELS:
+                psola_segments.append(self.say_segment((pronunciation[-1],)))
 
         merged_psola_segments = psola_segments[0]
         for psola_segment in psola_segments[1:]:
             merged_psola_segments = self.crossfade_psola(
-                merged_psola_segments, psola_segment, 10
+                merged_psola_segments, psola_segment, 20
             )
         audio = self.synthesize_psola(merged_psola_segments)
 
@@ -175,5 +184,9 @@ class DiphoneDatabase:
 
 if __name__ == "__main__":
 
-    database = DiphoneDatabase("STE-048.wav", "words.txt")
-    database.write_sample("tunaIt", "out.wav")
+    database = DiphoneDatabase(
+        "STE-049.wav",
+        "STE-049-labels.txt",
+        expected_f0=midi_note_to_hertz(53),
+    )
+    database.write_sample("hEloU", "out.wav")

@@ -1,4 +1,5 @@
 import random
+import subprocess
 
 
 def is_sublist(list_1, list_2):
@@ -38,6 +39,14 @@ CONSONANTS = APPROXIMANTS + [
     "Z",
 ]
 
+DIPHTHONGS = [
+    "oU",
+    "eI",
+    "aI",
+    "OI",
+    "aU",
+]
+
 VOWELS = [
     "{}",
     "A",
@@ -48,12 +57,7 @@ VOWELS = [
     "U",
     "@r",
     "i",
-    "oU",
-    "eI",
-    "aI",
-    "OI",
-    "aU",
-]
+] + DIPHTHONGS
 
 ALL_PHONEMES = CONSONANTS + APPROXIMANTS + VOWELS
 
@@ -81,6 +85,8 @@ UNIMPORTANT_DIPHONES = [
     ("aI", "j"),
     ("OI", "j"),
     ("aU", "w"),
+
+    ("E", "r"),  # should be eIr or @r
 
     ("{}", "j"),
     ("{}", "r"),
@@ -248,17 +254,65 @@ def check_words(words):
     if missing != 0:
         raise RuntimeError(f"{missing} out of {len(IMPORTANT_DIPHONES)} diphones missing")
 
+def escape_latex(string):
+    escaped_string = string
+    escaped_string = escaped_string.replace("{", r"\{")
+    escaped_string = escaped_string.replace("}", r"\}")
+    return escaped_string
+
+def generate_latex(words):
+    result = []
+    result.append(r"\documentclass{article}")
+    result.append(r"\usepackage{setspace}")
+    result.append(r"\usepackage{multicol}")
+    result.append(r"\setlength{\columnsep}{1cm}")
+    result.append(r"""
+    \usepackage[
+      margin=1.5cm,
+      includefoot,
+      footskip=30pt,
+    ]{geometry}
+    \usepackage{layout}
+    """)
+
+    result.append(r"\begin{document}")
+    result.append(r"\singlespacing")
+    result.append(r"\begin{multicols}{3}")
+    result.append(r"""
+        \setlength{\itemsep}{0pt}
+        \setlength{\parskip}{0pt}
+        \setlength{\parsep}{0pt}
+    """)
+    result.append(r"\begin{enumerate}")
+
+    for word in words:
+        result.append(r"\item " + word["word"] + " = " + escape_latex("".join(word["pronunciation"])))
+        result.append("")
+
+    result.append(r"\end{enumerate}")
+    result.append(r"\end{multicols}")
+    result.append(r"\end{document}")
+    return result
+
+
 if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser()
     parser.add_argument("infile")
     parser.add_argument("--scramble", type=str)
+    parser.add_argument("--latex", type=str)
     args = parser.parse_args()
 
     with open(args.infile) as f:
         words = parse_words(f)
         check_words(words)
+
+    if args.latex is not None:
+        with open(args.latex, "w") as f:
+            for line in generate_latex(words):
+                f.write(line + "\n")
+        subprocess.run(["pdflatex", args.latex], check=True)
 
     if args.scramble is not None:
         random.shuffle(words)
