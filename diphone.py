@@ -185,18 +185,18 @@ if __name__ == "__main__":
         expected_f0=midi_note_to_hertz(53),
     )
     music = [
-        {"midi_note": 57, "phonemes": "meI"},
+        {"midi_note": 57, "phonemes": "meIr"},
         {"midi_note": 55, "phonemes": "ri"},
         {"midi_note": 53, "phonemes": "h{}d"},
         {"midi_note": 55, "phonemes": "@"},
         {"midi_note": 57, "phonemes": "lId"},
-        {"midi_note": 57, "phonemes": "d@l"},
+        {"midi_note": 57, "phonemes": "@l"},
         {"midi_note": 57, "phonemes": "l{}m"},
         {"midi_note": 55, "phonemes": "lId"},
-        {"midi_note": 55, "phonemes": "d@l"},
+        {"midi_note": 55, "phonemes": "@l"},
         {"midi_note": 55, "phonemes": "l{}m"},
         {"midi_note": 57, "phonemes": "lId"},
-        {"midi_note": 60, "phonemes": "d@l"},
+        {"midi_note": 60, "phonemes": "@l"},
         {"midi_note": 60, "phonemes": "l{}m"},
     ]
     database.sing(music, "out.wav")
