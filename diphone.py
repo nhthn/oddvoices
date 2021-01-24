@@ -148,37 +148,32 @@ class DiphoneDatabase:
         segment = self.audio[start_frame:end_frame]
         return self.analyze_psola(segment)
 
-    def write_sample(self, pronunciation_string, out_file):
-        pronunciation = phonology.parse_pronunciation(pronunciation_string)
-        pronunciations = [[]]
-        for phoneme in pronunciation:
-            if phoneme == " ":
-                pronunciations.append([])
-            else:
-                pronunciations[-1].append(phoneme)
+    def sing(self, music, out_file):
+        out_segments = []
+        for note in music:
+            f0 = midi_note_to_hertz(note["midi_note"])
 
-        pronunciations = [
-            phonology.normalize_pronunciation(pronunciation)
-            for pronunciation in pronunciations
-        ]
+            phonemes = phonology.parse_pronunciation(note["phonemes"])
+            phonemes = phonology.normalize_pronunciation(phonemes)
 
-        psola_segments = []
-        for pronunciation in pronunciations:
-            for i in range(len(pronunciation) - 1):
-                diphone = (pronunciation[i], pronunciation[i + 1])
-                if pronunciation[i] in phonology.VOWELS:
-                    psola_segments.append(self.say_segment((pronunciation[i],)))
+            psola_segments = []
+            for i in range(len(phonemes) - 1):
+                diphone = (phonemes[i], phonemes[i + 1])
+                if phonemes[i] in phonology.VOWELS:
+                    psola_segments.append(self.say_segment((phonemes[i],)))
                 if diphone in self.segments:
                     psola_segments.append(self.say_segment(diphone))
-            if pronunciation[-1] in phonology.VOWELS:
-                psola_segments.append(self.say_segment((pronunciation[-1],)))
 
-        merged_psola_segments = psola_segments[0]
-        for psola_segment in psola_segments[1:]:
-            merged_psola_segments = self.crossfade_psola(
-                merged_psola_segments, psola_segment, 20
+            merged_psola_segments = psola_segments[0]
+            for psola_segment in psola_segments[1:]:
+                merged_psola_segments = self.crossfade_psola(
+                    merged_psola_segments, psola_segment, 20
+                )
+            out_segments.append(
+                self.synthesize_psola(merged_psola_segments, out_f0=f0)
             )
-        audio = self.synthesize_psola(merged_psola_segments)
+
+        audio = np.concatenate(out_segments)
 
         soundfile.write(out_file, audio, samplerate=self.rate)
 
@@ -189,4 +184,19 @@ if __name__ == "__main__":
         "STE-049-labels.txt",
         expected_f0=midi_note_to_hertz(53),
     )
-    database.write_sample("hEloU", "out.wav")
+    music = [
+        {"midi_note": 57, "phonemes": "meI"},
+        {"midi_note": 55, "phonemes": "ri"},
+        {"midi_note": 53, "phonemes": "h{}d"},
+        {"midi_note": 55, "phonemes": "@"},
+        {"midi_note": 57, "phonemes": "lId"},
+        {"midi_note": 57, "phonemes": "d@l"},
+        {"midi_note": 57, "phonemes": "l{}m"},
+        {"midi_note": 55, "phonemes": "lId"},
+        {"midi_note": 55, "phonemes": "d@l"},
+        {"midi_note": 55, "phonemes": "l{}m"},
+        {"midi_note": 57, "phonemes": "lId"},
+        {"midi_note": 60, "phonemes": "d@l"},
+        {"midi_note": 60, "phonemes": "l{}m"},
+    ]
+    database.sing(music, "out.wav")
