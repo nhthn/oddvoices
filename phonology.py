@@ -15,8 +15,7 @@ APPROXIMANTS = [
     "w",
 ]
 
-CONSONANTS = APPROXIMANTS + [
-    "?",
+NON_APPROXIMANT_CONSONANTS = [
     "m",
     "n",
     "N",
@@ -39,6 +38,8 @@ CONSONANTS = APPROXIMANTS + [
     "Z",
 ]
 
+CONSONANTS = APPROXIMANTS + NON_APPROXIMANT_CONSONANTS
+
 DIPHTHONGS = [
     "oU",
     "eI",
@@ -59,151 +60,10 @@ VOWELS = [
     "i",
 ] + DIPHTHONGS
 
-ALL_PHONEMES = CONSONANTS + APPROXIMANTS + VOWELS
+SPECIAL = ["_"]
 
-IMPORTANT_DIPHONES = []
-for vowel in VOWELS:
-    for consonant in CONSONANTS:
-        if consonant == "Z":
-            continue
-        if consonant != "h":
-            IMPORTANT_DIPHONES.append((vowel, consonant))
-        if consonant != "N":
-            IMPORTANT_DIPHONES.append((consonant, vowel))
+ALL_PHONEMES = CONSONANTS + VOWELS + SPECIAL
 
-UNIMPORTANT_DIPHONES = [
-    # nonsensical
-    ("@", "r"),
-    ("@r", "r"),
-    ("r", "@r"),
-    ("@r", "j"),
-    ("j", "@r"),
-    ("@r", "w"),
-    ("oU", "w"),
-    ("i", "j"),
-    ("eI", "j"),
-    ("aI", "j"),
-    ("OI", "j"),
-    ("aU", "w"),
-
-    ("E", "r"),  # should be eIr or @r
-
-    ("{}", "j"),
-    ("{}", "r"),
-    ("{}", "w"),
-    ("D", "A"),
-    ("A", "j"),
-    ("I", "r"),
-    ("I", "j"),
-    ("I", "w"),
-    ("E", "j"),
-    ("E", "w"),
-    ("A", "w"),  # aU
-
-    # Probably don't exist in English
-    ("@", "j"),  # usually becomes aI
-    ("u", "N"),
-    ("U", "N"),
-    ("@r", "N"),
-    ("i", "N"),
-    ("oU", "N"),
-    ("eI", "N"),
-    ("aI", "N"),
-    ("aU", "N"),
-
-    # Rare
-    ("u", "dZ"),  # nothing rhymes with "splooge"
-    ("g", "OI"),  # goy, goiter
-
-    # U + approximant usually becomes u or @
-    ("U", "l"),
-    ("U", "r"),
-    ("U", "w"),
-    ("U", "j"),
-
-    # Can't think of any:
-    ("T", "E"),
-    ("E", "N"),
-    ("T", "u"),
-    ("D", "u"),
-    ("j", "U"),
-    ("U", "m"),
-    ("U", "n"),
-    ("U", "p"),
-    ("U", "b"),
-    ("tS", "U"),
-    ("U", "dZ"),
-    ("dZ", "U"),
-    ("f", "U"),
-    ("U", "f"),
-    ("v", "U"),
-    ("U", "T"),
-    ("T", "U"),
-    ("U", "D"),
-    ("D", "U"),
-    ("U", "s"),
-    ("s", "U"),
-    ("U", "z"),
-    ("z", "U"),
-    ("U", "v"),
-    ("i", "b"),
-    ("i", "dZ"),
-    ("oU", "dZ"),
-    ("oU", "j"),
-    ("eI", "S"),
-    ("j", "aI"),
-    ("aI", "w"),
-    ("aI", "g"),
-    ("aI", "tS"),
-    ("@r", "D"),  # very rare except "merther"
-    ("aI", "dZ"),
-    ("aI", "T"),
-    ("z", "aI"), # Zybourne Clock?
-    ("aI", "S"),
-    ("j", "OI"),
-    ("OI", "r"),
-    ("OI", "w"),
-    ("w", "OI"),
-    ("OI", "m"),
-    ("OI", "k"),
-    ("OI", "g"),
-    ("OI", "p"),
-    ("OI", "b"),
-    ("OI", "tS"),
-    ("OI", "dZ"),
-    ("OI", "f"),
-    ("OI", "v"),
-    ("OI", "T"),
-    ("T", "OI"),
-    ("OI", "D"),
-    ("D", "OI"),
-    ("z", "OI"),
-    ("OI", "S"),
-    ("S", "OI"),
-    ("aU", "j"),
-    ("aU", "m"),
-    ("aU", "k"),
-    ("aU", "g"),  # cowgirl
-    ("aU", "p"),  # cowper
-    ("aU", "b"),
-    ("aU", "dZ"),
-    ("aU", "f"),
-    ("aU", "v"),
-    ("aU", "T"),
-    ("T", "aU"),
-    ("aU", "D"),
-    ("aU", "S"),
-    ("{}", "g"),  # usually becomes Eg
-]
-for diphone in UNIMPORTANT_DIPHONES:
-    IMPORTANT_DIPHONES.remove(diphone)
-
-def normalize_pronunciation(pronunciation):
-    if pronunciation[0] in VOWELS:
-        pronunciation = ["?"] + pronunciation
-    if pronunciation[-1] in VOWELS:
-        pronunciation = pronunciation + ["?"]
-    return pronunciation
 
 def parse_pronunciation(pronunciation):
     pronunciation = pronunciation.strip()
@@ -218,104 +78,50 @@ def parse_pronunciation(pronunciation):
             raise RuntimeError(f"Unrecognized phoneme: {pronunciation}")
     return phonemes
 
-def parse_words(file):
-    words = []
-    for line in file:
-        line = line.strip()
-        if line == "":
-            continue
-        word, __, pronunciation_string = line.partition("=")
-        word = word.strip()
-        vowel_count = 0
-        pronunciation = parse_pronunciation(pronunciation_string)
-        for phoneme in pronunciation:
-            if phoneme in VOWELS:
-                vowel_count += 1
-        pronunciation = normalize_pronunciation(pronunciation)
-        words.append({
-            "word": word,
-            "pronunciation": pronunciation,
-            "vowel_count": vowel_count,
-        })
-    return words
+def generate_word_list():
+    word_list = []
+    for i, phoneme_1 in enumerate(ALL_PHONEMES):
+        for phoneme_2 in ALL_PHONEMES[i + 1:]:
+            type_: str
+            pair: tuple(str, str)
+            if phoneme_1 in CONSONANTS and phoneme_2 in VOWELS:
+                type_ = "cv"
+                pair = phoneme_1, phoneme_2
+            elif phoneme_2 in CONSONANTS and phoneme_1 in VOWELS:
+                type_ = "cv"
+                pair = phoneme_2, phoneme_1
+            elif phoneme_1 in CONSONANTS and phoneme_2 in CONSONANTS:
+                type_ = "cc"
+                pair = phoneme_1, phoneme_2
+            elif phoneme_1 in VOWELS and phoneme_2 in VOWELS:
+                type_ = "vv"
+                pair = phoneme_1, phoneme_2
+            elif "_" in (phoneme_1, phoneme_2):
+                if phoneme_1 == "_":
+                    pair = phoneme_2, phoneme_1
+                else:
+                    pair = phoneme_1, phoneme_2
+                if phoneme_1 in VOWELS:
+                    type_ = "_v"
+                elif phoneme_1 in CONSONANTS:
+                    type_ = "_c"
 
-def check_words(words):
-    missing = 0
-    found = 0
-    for diphone in IMPORTANT_DIPHONES:
-        for word in words:
-            if is_sublist(diphone, word["pronunciation"]):
-                found += 1
-                break
-        else:
-            missing += 1
-            if missing <= 10:
-                print(diphone)
-    if missing != 0:
-        raise RuntimeError(f"{missing} out of {len(IMPORTANT_DIPHONES)} diphones missing")
+            if type_ == "cv":
+                word_list.append(["t", "A", pair[0], pair[1], pair[0], "A"])
+            elif type_ == "cc":
+                word_list.append(["t", "A", pair[0], pair[1], "A"])
+            elif type_ == "vv":
+                word_list.append(["t", pair[0], pair[1]])
+            elif type_ == "_v":
+                word_list.append([pair[0], "t", "A", "t", pair[0]])
+            elif type_ == "_c":
+                word_list.append([pair[0], "A", pair[0]])
 
-def escape_latex(string):
-    escaped_string = string
-    escaped_string = escaped_string.replace("{", r"\{")
-    escaped_string = escaped_string.replace("}", r"\}")
-    return escaped_string
-
-def generate_latex(words):
-    result = []
-    result.append(r"\documentclass{article}")
-    result.append(r"\usepackage{setspace}")
-    result.append(r"\usepackage{multicol}")
-    result.append(r"\setlength{\columnsep}{1cm}")
-    result.append(r"""
-    \usepackage[
-      margin=1.5cm,
-      includefoot,
-      footskip=30pt,
-    ]{geometry}
-    \usepackage{layout}
-    """)
-
-    result.append(r"\begin{document}")
-    result.append(r"\singlespacing")
-    result.append(r"\begin{multicols}{3}")
-    result.append(r"""
-        \setlength{\itemsep}{0pt}
-        \setlength{\parskip}{0pt}
-        \setlength{\parsep}{0pt}
-    """)
-    result.append(r"\begin{enumerate}")
-
-    for word in words:
-        result.append(r"\item " + word["word"] + " = " + escape_latex("".join(word["pronunciation"])))
-        result.append("")
-
-    result.append(r"\end{enumerate}")
-    result.append(r"\end{multicols}")
-    result.append(r"\end{document}")
-    return result
-
+    return word_list
 
 if __name__ == "__main__":
-    import argparse
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("infile")
-    parser.add_argument("--scramble", type=str)
-    parser.add_argument("--latex", type=str)
-    args = parser.parse_args()
-
-    with open(args.infile) as f:
-        words = parse_words(f)
-        check_words(words)
-
-    if args.latex is not None:
-        with open(args.latex, "w") as f:
-            for line in generate_latex(words):
-                f.write(line + "\n")
-        subprocess.run(["pdflatex", args.latex], check=True)
-
-    if args.scramble is not None:
-        random.shuffle(words)
-        with open(args.scramble, "w") as f:
-            for word in words:
-                f.write(f"{word['word']} = {''.join(word['pronunciation'])}\n")
+    word_list = generate_word_list()
+    random.shuffle(word_list)
+    for word in word_list:
+        print("".join(word))
+    print(len(word_list), "words")
