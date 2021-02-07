@@ -56,6 +56,7 @@ VOWELS = [
     "@",
     "u",
     "U",
+    # "@`",
     "@r",
     "i",
 ] + DIPHTHONGS
@@ -64,6 +65,39 @@ SPECIAL = ["_"]
 
 ALL_PHONEMES = CONSONANTS + VOWELS + SPECIAL
 
+XSAMPA_TO_IPA = {
+    "{}": "æ",
+    "A": "ɑ",
+    "I": "ɪ",
+    "E": "ɛ",
+    "@": "ə",
+    "u": "u",
+    "U": "ʊ",
+    "@r": "ɚ",
+    # "@`": "ɚ",
+    "i": "i",
+    "N": "ŋ",
+    "tS": "tʃ",
+    "dZ": "dʒ",
+    "T": "θ",
+    "D": "ð",
+    "S": "ʃ",
+    "Z": "ʒ",
+    "oU": "oʊ",
+    "eI": "eɪ",
+    "aI": "aɪ",
+    "OI": "ɔɪ",
+    "aU": "aʊ",
+}
+
+def as_ipa_string(tokens):
+    result = []
+    for phoneme in tokens:
+        if phoneme in XSAMPA_TO_IPA:
+            result.append(XSAMPA_TO_IPA[phoneme])
+        else:
+            result.append(phoneme)
+    return "/" + "".join(result) + "/"
 
 def parse_pronunciation(pronunciation):
     pronunciation = pronunciation.strip()
@@ -75,8 +109,19 @@ def parse_pronunciation(pronunciation):
                 pronunciation = pronunciation[len(phoneme):]
                 break
         else:
-            raise RuntimeError(f"Unrecognized phoneme: {pronunciation}")
+            if pronunciation[0] == "?":
+                phonemes.append("_")
+                pronunciation = pronunciation[1:]
+            else:
+                raise RuntimeError(f"Unrecognized phoneme: {pronunciation}")
     return phonemes
+
+def normalize_pronunciation(pronunciation):
+    if pronunciation[0] != "_":
+        pronunciation = ["_"] + pronunciation
+    if pronunciation[-1] != "_":
+        pronunciation = pronunciation + ["_"]
+    return pronunciation
 
 def generate_word_list():
     word_list = []
@@ -108,12 +153,13 @@ def generate_word_list():
 
             if type_ == "cv":
                 word_list.append(["t", "A", pair[0], pair[1], pair[0], "A"])
-            elif type_ == "cc":
+            elif type_ == "cc" and pair[0] != "h":
                 word_list.append(["t", "A", pair[0], pair[1], "A"])
             elif type_ == "vv":
                 word_list.append(["t", pair[0], pair[1]])
             elif type_ == "_v":
                 word_list.append([pair[0], "t", "A", "t", pair[0]])
+                word_list.append([pair[0]])
             elif type_ == "_c":
                 word_list.append([pair[0], "A", pair[0]])
 
@@ -123,5 +169,5 @@ if __name__ == "__main__":
     word_list = generate_word_list()
     random.shuffle(word_list)
     for word in word_list:
-        print("".join(word))
+        print(as_ipa_string(word))
     print(len(word_list), "words")
