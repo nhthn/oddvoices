@@ -1,6 +1,23 @@
+## Using the synthesizer
+
+Install [Git LFS](https://git-lfs.github.com/) and make sure you are up to date:
+
+    git lfs init
+    git lfs pull
+
+Install Python dependencies:
+
+    pip install soundfile numpy scipy
+
+Run:
+
+    python diphone.py music.json
+
+Audio output is at `out.wav`.
+
 ## Database
 
-`words2_shuffled.txt` is a list of around 350 English words (and a few non-words) that, when sung, produce a corpus of most of the common vowel-consonant and consonant-vowel diphones in General American English (GA). They are provided in random order to keep singers from getting too bored.
+`python phonology.py` yields a list of around 700 nonsense words that, when sung, produce a corpus of all possible diphones in General American English (GA). They are provided in random order to keep singers from getting too bored.
 
 All pronunciations are provided using X-SAMPA notation. X-SAMPA is similar to IPA, but uses ASCII characters. One minor change is that /æ/ is represented with `{}` to prevent bracket matching issues in text editors. (The closing curly bracket represents /ʉ/, which is not found in GA.)
 
@@ -8,7 +25,9 @@ The word database was created manually. Many diphones are omitted because they a
 
 ## Recording a corpus
 
-In a quiet recording environment, record singing all words in order. I recommend using a pop filter if possible to prevent overly loud plosives. With 350 words and a few seconds each, you'll need to set aside 20-30 minutes total. To minimize fatigue, take breaks and record in multiple sessions.
+**Note: these instructions are incomplete/incorrect, do not attempt yet.**
+
+In a quiet recording environment, record singing all words in order. I recommend using a pop filter if possible to prevent overly loud plosives. With 750 words and a few seconds each, you'll need to set aside about an hour total. To minimize fatigue, take breaks and record in multiple sessions.
 
 All words should be sung in monotone. Pick a note in a comfortable register where you can safely avoid cracks, vocal fries, and other artifacts, and (importantly) keep that note fixed through the entire corpus. Minor pitch deviations within 50 cents or so are not likely to be a problem. It is fine to do multiple takes for a word.
 
@@ -24,12 +43,3 @@ If there are multiple audio files, concatenate them together into one big audio 
 
 Open up the audio file in Audacity. (On Linux, be sure to use JACK and not ALSA or PulseAudio. Audacity lies about the endpoints during audio playback!)
 
-The first three steps involve tagging individual phonemes. The stable regions of vowels and diphthongs are used for held notes when singing. The final step is the most laborious, involving tagging hundreds of diphones.
-
-Step 1. For each of the nine vowels, locate a stable region and tag it.
-
-Step 2. For each of the five diphthongs, tag its stable region as (e.g.) `eI stable` and its transition region as `eI transition`.
-
-Step 3. For each of the 20 consonants, find a segment and tag it.
-
-Step 4. Tag all CV and VC diphones. Remember that the glottal stop `?` counts as a consonant!

@@ -1,0 +1,20 @@
+{
+    "time_scale": 0.3,
+    "formant_shift": 1.1,
+    "transpose": 5,
+    "notes": [
+        {"midi_note": 57, "phonemes": "meIr"},
+        {"midi_note": 55, "phonemes": "ri"},
+        {"midi_note": 53, "phonemes": "h{}d"},
+        {"midi_note": 55, "phonemes": "@"},
+        {"midi_note": 57, "phonemes": "lId"},
+        {"midi_note": 57, "phonemes": "@l"},
+        {"midi_note": 57, "phonemes": "l{}m", "duration": 2},
+        {"midi_note": 55, "phonemes": "lId"},
+        {"midi_note": 55, "phonemes": "@l"},
+        {"midi_note": 55, "phonemes": "l{}m", "duration": 2},
+        {"midi_note": 57, "phonemes": "lId"},
+        {"midi_note": 60, "phonemes": "@l"},
+        {"midi_note": 60, "phonemes": "l{}m", "duration": 2}
+    ]
+}

@@ -239,7 +239,7 @@ class DiphoneDatabase:
 
         psola_segments = []
         for note in music["notes"]:
-            f0 = midi_note_to_hertz(note["midi_note"])
+            f0 = midi_note_to_hertz(note["midi_note"] + music["transpose"])
 
             phonemes = phonology.parse_pronunciation(note["phonemes"])
             phonemes = phonology.normalize_pronunciation(phonemes)
@@ -277,31 +277,13 @@ class DiphoneDatabase:
         soundfile.write(out_file, audio, samplerate=self.rate)
 
 if __name__ == "__main__":
+    import sys
+    import json
 
     database = DiphoneDatabase(
         "STE-049.wav",
         "STE-049-labels.txt",
         expected_f0=midi_note_to_hertz(53),
     )
-    music = {
-        "time_scale": 0.3,
-        "formant_shift": 1.1,
-        "notes": [
-            {"midi_note": 57, "phonemes": "meIr"},
-            {"midi_note": 55, "phonemes": "ri"},
-            {"midi_note": 53, "phonemes": "h{}d"},
-            {"midi_note": 55, "phonemes": "@"},
-            {"midi_note": 57, "phonemes": "lId"},
-            {"midi_note": 57, "phonemes": "@l"},
-            {"midi_note": 57, "phonemes": "l{}m", "duration": 2},
-            {"midi_note": 55, "phonemes": "lId"},
-            {"midi_note": 55, "phonemes": "@l"},
-            {"midi_note": 55, "phonemes": "l{}m", "duration": 2},
-            {"midi_note": 57, "phonemes": "lId"},
-            {"midi_note": 60, "phonemes": "@l"},
-            {"midi_note": 60, "phonemes": "l{}m", "duration": 2},
-        ]
-    }
-    for note in music["notes"]:
-        note["midi_note"] += 5
-    database.sing(music, "out.wav")
+    with open(sys.argv[1]) as f:
+        database.sing(json.load(f), "out.wav")
