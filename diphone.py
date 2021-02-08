@@ -21,6 +21,65 @@ def seconds_to_timestamp(seconds):
     return str(minutes) + ":" + str(remaining_seconds)
 
 
+class Frame:
+
+    def __init__(self, rate, wavetable, f0):
+        self.rate = rate
+        self.wavetable = wavetable
+        self.f0 = f0
+
+    @property
+    def hop_size(self):
+        return self.rate / self.f0
+
+    def __len__(self):
+        return len(self.wavetable)
+
+
+class Segment:
+
+    def __init__(
+        self,
+        rate: float,
+        in_f0: float,
+        frames,
+        out_f0: float,
+        duration=None
+    ):
+        self.rate: float = rate
+        self.in_f0: float = in_f0
+        self.out_f0: float = out_f0
+        self.frames = []
+        for wavetable in frames:
+            frame = Frame(self.rate, wavetable, self.out_f0)
+            self.frames.append(frame)
+        if len(frames) == 0:
+            raise RuntimeError("Empty segment")
+        if duration is None:
+            self.duration = duration
+        else:
+            self.duration = self.original_duration
+
+    @property
+    def original_duration(self):
+        return len(self.frames) * self.rate / self.in_f0
+
+def synthesize_psola(frames):
+    result_length = sum([frame.hop_size for frame in frames])
+    result_length += len(frames[0]) // 2
+    result_length += len(frames[-1]) // 2
+    result_length = int(result_length)
+    result = np.zeros(result_length)
+    position = 0
+    for i, frame in enumerate(frames):
+        hop = frame.hop_size
+        start = int(position)
+        end = start + len(frame)
+        result[start:end] += frame.wavetable
+        position += hop
+    return result
+
+
 class DiphoneDatabase:
 
     def __init__(self, sound_file, label_file, expected_f0):
@@ -123,57 +182,64 @@ class DiphoneDatabase:
         return result
 
 
-    def synthesize_psola(self, frames, out_f0=200.0, formant_shift=1.0):
-        if len(frames) == 0:
-            raise RuntimeError("Empty PSOLA")
-        output_hop = self.rate / out_f0
-        result_length = int(len(frames) * output_hop) + len(frames[-1])
-        result = np.zeros(result_length)
-        for i, frame in enumerate(frames):
-            frame = scipy.signal.resample(frame, int(len(frame) / formant_shift))
-            start = int(i * output_hop)
-            end = int(i * output_hop) + len(frame)
-            result[start:end] += frame
-        return result
-
-    def say_segment(self, segment_name):
+    def say_segment(self, segment_name, f0=200.0, duration=None):
         if len(segment_name) == 1 and segment_name[0] in phonology.DIPHTHONGS:
             return (
-                self.say_segment((segment_name[0], "stable"))
-                + self.say_segment((segment_name[0], "transition"))
+                self.say_segment(
+                    (segment_name[0], "stable"),
+                    duration=duration,
+                    f0=f0,
+                )
+                + self.say_segment(
+                    (segment_name[0], "transition"),
+                    f0=f0,
+                )
             )
         info = self.segments[segment_name]
         start_frame = info["start_frame"]
         end_frame = info["end_frame"]
         segment = self.audio[start_frame:end_frame]
-        return self.analyze_psola(segment)
+
+        frames = self.analyze_psola(segment)
+
+        return [Segment(
+            rate=self.rate,
+            in_f0=self.expected_f0,
+            frames=frames,
+            out_f0=f0,
+            duration=duration,
+        )]
 
     def sing(self, music, out_file):
         out_segments = []
+
+        psola_segments = []
         for note in music:
             f0 = midi_note_to_hertz(note["midi_note"])
 
             phonemes = phonology.parse_pronunciation(note["phonemes"])
             phonemes = phonology.normalize_pronunciation(phonemes)
 
-            psola_segments = []
             for i in range(len(phonemes) - 1):
                 diphone = (phonemes[i], phonemes[i + 1])
                 if phonemes[i] in phonology.VOWELS:
-                    psola_segments.append(self.say_segment((phonemes[i],)))
+                    segment = self.say_segment(
+                        (phonemes[i],),
+                        f0=f0,
+                        duration=1.0,
+                    )
+                    psola_segments.extend(segment)
                 if diphone in self.segments:
-                    psola_segments.append(self.say_segment(diphone))
+                    segment = self.say_segment(
+                        diphone,
+                        f0=f0,
+                    )
+                    psola_segments.extend(segment)
 
-            merged_psola_segments = psola_segments[0]
-            for psola_segment in psola_segments[1:]:
-                merged_psola_segments = self.crossfade_psola(
-                    merged_psola_segments, psola_segment, 20
-                )
-            out_segments.append(
-                self.synthesize_psola(merged_psola_segments, out_f0=f0)
-            )
-
-        audio = np.concatenate(out_segments)
+        frames = []
+        for segment in psola_segments:
+            frames.extend(segment.frames)
+        audio = synthesize_psola(frames)
 
         soundfile.write(out_file, audio, samplerate=self.rate)
 
