@@ -23,10 +23,11 @@ def seconds_to_timestamp(seconds):
 
 class Frame:
 
-    def __init__(self, rate, wavetable, f0):
+    def __init__(self, rate, wavetable, f0, formant_shift=1.0):
         self.rate = rate
         self.wavetable = wavetable
         self.f0 = f0
+        self.formant_shift = formant_shift
 
     @property
     def hop_size(self):
@@ -34,6 +35,14 @@ class Frame:
 
     def __len__(self):
         return len(self.wavetable)
+
+    @property
+    def formant_shifted_wavetable_length(self):
+        return int(len(self.wavetable) / self.formant_shift)
+
+    @property
+    def formant_shifted_wavetable(self):
+        return scipy.signal.resample(self.wavetable, self.formant_shifted_wavetable_length)
 
 
 class Segment:
@@ -44,25 +53,36 @@ class Segment:
         in_f0: float,
         frames,
         out_f0: float,
+        formant_shift: float = 1.0,
         duration=None
     ):
         self.rate: float = rate
         self.in_f0: float = in_f0
         self.out_f0: float = out_f0
-        self.frames = []
+        self.formant_shift: float = formant_shift
+        self.original_frames = []
         for wavetable in frames:
-            frame = Frame(self.rate, wavetable, self.out_f0)
-            self.frames.append(frame)
-        if len(frames) == 0:
+            frame = Frame(self.rate, wavetable, self.out_f0, formant_shift=formant_shift)
+            self.original_frames.append(frame)
+        if len(self.original_frames) == 0:
             raise RuntimeError("Empty segment")
+
+        self.duration: float
         if duration is None:
-            self.duration = duration
-        else:
             self.duration = self.original_duration
+        else:
+            self.duration = duration
+
+        period_count: int = int(self.duration * self.out_f0)
+        self.frames = []
+        for i in range(period_count):
+            t = i / period_count
+            frame = self.original_frames[int(t * len(self.original_frames))]
+            self.frames.append(frame)
 
     @property
     def original_duration(self):
-        return len(self.frames) * self.rate / self.in_f0
+        return len(self.original_frames) / self.in_f0
 
 def synthesize_psola(frames):
     result_length = sum([frame.hop_size for frame in frames])
@@ -73,9 +93,10 @@ def synthesize_psola(frames):
     position = 0
     for i, frame in enumerate(frames):
         hop = frame.hop_size
+        wavetable = frame.formant_shifted_wavetable
         start = int(position)
-        end = start + len(frame)
-        result[start:end] += frame.wavetable
+        end = start + len(wavetable)
+        result[start:end] += wavetable
         position += hop
     return result
 
@@ -182,17 +203,19 @@ class DiphoneDatabase:
         return result
 
 
-    def say_segment(self, segment_name, f0=200.0, duration=None):
+    def say_segment(self, segment_name, f0=200.0, duration=None, formant_shift=1.0):
         if len(segment_name) == 1 and segment_name[0] in phonology.DIPHTHONGS:
             return (
                 self.say_segment(
                     (segment_name[0], "stable"),
                     duration=duration,
                     f0=f0,
+                    formant_shift=formant_shift,
                 )
                 + self.say_segment(
                     (segment_name[0], "transition"),
                     f0=f0,
+                    formant_shift=formant_shift,
                 )
             )
         info = self.segments[segment_name]
@@ -208,17 +231,25 @@ class DiphoneDatabase:
             frames=frames,
             out_f0=f0,
             duration=duration,
+            formant_shift=formant_shift,
         )]
 
     def sing(self, music, out_file):
         out_segments = []
 
         psola_segments = []
-        for note in music:
+        for note in music["notes"]:
             f0 = midi_note_to_hertz(note["midi_note"])
 
             phonemes = phonology.parse_pronunciation(note["phonemes"])
             phonemes = phonology.normalize_pronunciation(phonemes)
+
+            vowel_count = sum([
+                1 if phoneme in phonology.VOWELS else 0
+                for phoneme in phonemes
+            ])
+            vowel_duration = note.get("duration", 1) / vowel_count
+            vowel_duration *= music["time_scale"]
 
             for i in range(len(phonemes) - 1):
                 diphone = (phonemes[i], phonemes[i + 1])
@@ -226,13 +257,15 @@ class DiphoneDatabase:
                     segment = self.say_segment(
                         (phonemes[i],),
                         f0=f0,
-                        duration=1.0,
+                        duration=vowel_duration,
+                        formant_shift=music["formant_shift"],
                     )
                     psola_segments.extend(segment)
                 if diphone in self.segments:
                     segment = self.say_segment(
                         diphone,
                         f0=f0,
+                        formant_shift=music["formant_shift"],
                     )
                     psola_segments.extend(segment)
 
@@ -250,19 +283,25 @@ if __name__ == "__main__":
         "STE-049-labels.txt",
         expected_f0=midi_note_to_hertz(53),
     )
-    music = [
-        {"midi_note": 57, "phonemes": "meIr"},
-        {"midi_note": 55, "phonemes": "ri"},
-        {"midi_note": 53, "phonemes": "h{}d"},
-        {"midi_note": 55, "phonemes": "@"},
-        {"midi_note": 57, "phonemes": "lId"},
-        {"midi_note": 57, "phonemes": "@l"},
-        {"midi_note": 57, "phonemes": "l{}m"},
-        {"midi_note": 55, "phonemes": "lId"},
-        {"midi_note": 55, "phonemes": "@l"},
-        {"midi_note": 55, "phonemes": "l{}m"},
-        {"midi_note": 57, "phonemes": "lId"},
-        {"midi_note": 60, "phonemes": "@l"},
-        {"midi_note": 60, "phonemes": "l{}m"},
-    ]
+    music = {
+        "time_scale": 0.3,
+        "formant_shift": 1.1,
+        "notes": [
+            {"midi_note": 57, "phonemes": "meIr"},
+            {"midi_note": 55, "phonemes": "ri"},
+            {"midi_note": 53, "phonemes": "h{}d"},
+            {"midi_note": 55, "phonemes": "@"},
+            {"midi_note": 57, "phonemes": "lId"},
+            {"midi_note": 57, "phonemes": "@l"},
+            {"midi_note": 57, "phonemes": "l{}m", "duration": 2},
+            {"midi_note": 55, "phonemes": "lId"},
+            {"midi_note": 55, "phonemes": "@l"},
+            {"midi_note": 55, "phonemes": "l{}m", "duration": 2},
+            {"midi_note": 57, "phonemes": "lId"},
+            {"midi_note": 60, "phonemes": "@l"},
+            {"midi_note": 60, "phonemes": "l{}m", "duration": 2},
+        ]
+    }
+    for note in music["notes"]:
+        note["midi_note"] += 5
     database.sing(music, "out.wav")
