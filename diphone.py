@@ -11,6 +11,10 @@ def get_sublist_index(list_1, list_2):
     raise IndexError("Sublist not found")
 
 
+def hertz_to_midi_note(hertz):
+    return np.log2(hertz / 440) * 12 + 69
+
+
 def midi_note_to_hertz(midi_note):
     return 440 * 2 ** ((midi_note - 69) / 12)
 
@@ -43,6 +47,14 @@ class Frame:
     @property
     def formant_shifted_wavetable(self):
         return scipy.signal.resample(self.wavetable, self.formant_shifted_wavetable_length)
+
+    def crossfade(self, other, t):
+        return Frame(
+            rate=self.rate,
+            wavetable=self.wavetable * (1 - t) + other.wavetable * t,
+            f0=self.f0,
+            formant_shift=self.formant_shift,
+        )
 
 
 class Segment:
@@ -84,6 +96,28 @@ class Segment:
     def original_duration(self):
         return len(self.original_frames) / self.in_f0
 
+    def crossfade(self, other, duration=0.05):
+        average_f0 = np.sqrt(self.out_f0 * other.out_f0)
+        nominal_crossfade_length = int(duration * average_f0)
+        crossfade_length = min([len(self.frames), len(other.frames), nominal_crossfade_length])
+        crossfade_frames = []
+        for i in range(crossfade_length):
+            t = i / crossfade_length
+            frame_1 = self.frames[-crossfade_length + i]
+            frame_2 = other.frames[i]
+            crossfade_frames.append(frame_1.crossfade(frame_2, t))
+        crossfade_1 = crossfade_frames[:crossfade_length // 2]
+        crossfade_2 = crossfade_frames[crossfade_length // 2:]
+        for frame in crossfade_1:
+            frame.f0 = self.out_f0
+            frame.formant_shfit = self.formant_shift
+        for frame in crossfade_2:
+            frame.f0 = other.out_f0
+            frame.formant_shfit = other.formant_shift
+        self.frames = self.frames[:-crossfade_length] + crossfade_1
+        other.frames = crossfade_2 + other.frames[crossfade_length:]
+
+
 def synthesize_psola(frames):
     result_length = sum([frame.hop_size for frame in frames])
     result_length += len(frames[0]) // 2
@@ -99,6 +133,15 @@ def synthesize_psola(frames):
         result[start:end] += wavetable
         position += hop
     return result
+
+
+def smooth_f0(frames):
+    f0_midi_note = hertz_to_midi_note(frames[0].f0)
+    for frame in frames:
+        hop_in_seconds = frame.hop_size / frame.rate
+        k = 1 - (hop_in_seconds * 40)
+        f0_midi_note = hertz_to_midi_note(frame.f0) * (1 - k) + f0_midi_note * k
+        frame.f0 = midi_note_to_hertz(f0_midi_note)
 
 
 class DiphoneDatabase:
@@ -188,20 +231,6 @@ class DiphoneDatabase:
 
         return frames
 
-    def crossfade_psola(self, frames_1, frames_2, nominal_crossfade_length):
-        crossfade_length = min([len(frames_1), len(frames_2), nominal_crossfade_length])
-        result = []
-        for frame in frames_1[:-crossfade_length]:
-            result.append(frame)
-        for i in range(crossfade_length):
-            t = i / crossfade_length
-            frame_1 = frames_1[-crossfade_length + i]
-            frame_2 = frames_2[i]
-            result.append(frame_1 * (1 - t) + frame_2 * t)
-        for frame in frames_2[crossfade_length:]:
-            result.append(frame)
-        return result
-
 
     def say_segment(self, segment_name, f0=200.0, duration=None, formant_shift=1.0):
         if len(segment_name) == 1 and segment_name[0] in phonology.DIPHTHONGS:
@@ -269,9 +298,13 @@ class DiphoneDatabase:
                     )
                     psola_segments.extend(segment)
 
+        for i in range(len(psola_segments) - 1):
+            psola_segments[i].crossfade(psola_segments[i + 1])
+
         frames = []
         for segment in psola_segments:
             frames.extend(segment.frames)
+        smooth_f0(frames)
         audio = synthesize_psola(frames)
 
         soundfile.write(out_file, audio, samplerate=self.rate)
