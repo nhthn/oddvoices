@@ -152,16 +152,51 @@ def generate_word_list():
                     type_ = "_c"
 
             if type_ == "cv":
-                word_list.append(["t", "A", pair[0], pair[1], pair[0], "A"])
+                word_list.append({
+                    "word": ["t", "A", pair[0], pair[1], pair[0], "A"],
+                    "segments": [
+                        [pair[0], pair[1]],
+                        [pair[1], pair[0]],
+                    ]
+                })
             elif type_ == "cc" and pair[0] != "h":
-                word_list.append(["t", "A", pair[0], pair[1], "A"])
+                word_list.append({
+                    "word": ["t", "A", pair[0], pair[1], "A"],
+                    "segments": [[pair[0], pair[1]]],
+                })
+                word_list.append({
+                    "word": ["t", "A", pair[1], pair[0], "A"],
+                    "segments": [[pair[1], pair[0]]],
+                })
             elif type_ == "vv":
-                word_list.append(["t", pair[0], pair[1]])
+                word_list.append({
+                    "word": ["t", pair[0], pair[1]],
+                    "segments": [[pair[0], pair[1]]],
+                })
+                word_list.append({
+                    "word": ["t", pair[1], pair[0]],
+                    "segments": [[pair[1], pair[0]]],
+                })
             elif type_ == "_v":
-                word_list.append([pair[0], "t", "A", "t", pair[0]])
-                word_list.append([pair[0]])
+                word_list.append({
+                    "word": [pair[0], "t", "A", "t", pair[0]],
+                    "segments": [
+                        ["_", pair[0]],
+                        [pair[0], "_"],
+                    ],
+                })
+                word_list.append({
+                    "word": [pair[0]],
+                    "segments": [[pair[0]]],
+                })
             elif type_ == "_c":
-                word_list.append([pair[0], "A", pair[0]])
+                word_list.append({
+                    "word": [pair[0], "A", pair[0]],
+                    "segments": [
+                        ["_", pair[0]],
+                        [pair[0], "_"],
+                    ],
+                })
 
     return word_list
 
@@ -169,5 +204,5 @@ if __name__ == "__main__":
     word_list = generate_word_list()
     random.shuffle(word_list)
     for word in word_list:
-        print(as_ipa_string(word))
+        print(as_ipa_string(word["word"]))
     print(len(word_list), "words")
