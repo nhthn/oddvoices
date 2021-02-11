@@ -1,0 +1,1314 @@
+_@,@_ /@/ uh (long)
+_@`,@`_ /@`/ er (long)
+_A,A_ /A/ ah (long)
+_E,E_ /E/ E (long)
+_I,I_ /I/ I (long)
+_OI,OI_ /OI/ oy (long "o," short "y")
+
+@D /@D@`/ other
+@N /m@N/ mung
+@S /l@S/ lush
+@T
+@b /k@b/ cub
+@d /m@d/ mud
+@dZ /f@dZ/ fudge
+@f /in@f/ enough
+@g /l@g/ lug
+@j /k{}b@jEroU/ caballero
+@k /m@k/ muck
+@l /m@l/ mull
+@m /r@m/ rum
+@n /r@n/ run
+@p /@ph@ld/ uphold
+@r /k@rin/ careen
+@s /k@s/ cuss
+@t /k@t/ cut
+@tS /kl@tS/ clutch
+@v /l@v/ love
+@w /@weI/ away
+@z /bik@z/ because
+@`S /h@`S/ Hearsch
+@`T /@`T/ earth
+@`b /k@`b/ curb
+@`d /k@`d/ curd
+@`dZ /@`dZ/ urge
+@`f /k@`fju/ curfew
+@`g /b@`g@`/ burger
+@`k /m@`k/ murk
+@`l /k@`l/ curl
+@`m /t@`m/ term
+@`n /b@`n/ burn
+@`p /b@`p/ burp
+@`s /k@`s/ curse
+@`t /h@`t/ hurt
+@`tS /l@`tS/ lurch
+@`v /k@`v/ curve
+@`z /b@`z/ burs
+AD /bAD@`/ bother
+AN /lAN/ long
+AS /gAS/ gosh
+AT /gAT/ goth
+Ab /lAb/ lob
+Ad /gAd/ god
+AdZ /lAdZ/ lodge
+Af /kAf/ cough
+Ag /kAg/ cog
+Ak /lAk/ lock
+Al /bAl/ ball
+Am /mAm/ mom
+An /dAn/ Don
+Ap /hAp/ hop
+Ar /kAr/ car
+As /mAs/ moss
+At /kAt/ caught
+AtS /nAtS/ notch
+Av /mAv/ mauve
+Az /Az/ Oz
+D@ /D@/ the (pr. "thuh")
+D@`,@D /m@D@`/ mother
+DE /DEn/ then
+DI /DIs/ this
+D_ /loUD/ loathe
+DaU /DaU/ thou
+Di /Di/ thee
+DoU /DoU/ though
+D{} /D{}t/ that
+ES /mES/ mesh
+ET /bET/ Beth
+Eb /Eb/ ebb
+Ed /bEd/ bed
+EdZ /EdZ/ edge
+Ef /dZEf/ Jeff
+Eg /Eg/ egg
+Ek /tSEk/ check
+El /bEl/ bell
+Em /dZEm/ gem
+En /bEn/ Ben
+Ep /stEp/ step
+Er /Er@r/ error
+Es /lEs/ less
+Et /lEt/ let
+EtS /EtS/ etch
+Ev /dEv/ dev
+Ez /fEz/ fez
+ID /hID@`/ hither
+IN,N_ /sIN/ sing
+IS /dIS/ dish
+IT /pITi/ pithy
+Ib /nIb/ nib
+Id /bId/ bid
+IdZ /rIdZ/ ridge
+If /If/ if
+Ig /bIg/ big
+Ik /lIk/ lick
+Il /pIl/ pill
+Im /dZIm/ Jim
+In /bIn/ bin
+Ip /lIp/ lip
+Is /kIs/ kiss
+It /lIt/ lit
+ItS /stItS/ stitch
+Iv /gIv/ give
+Iz /lIz/ Liz
+NI /sININ/ singing
+Nd /pINd/ pinged
+Nz /sINz/ sings
+Ng /j@Ng@`/ younger
+OIN /bOIN/ boing
+OIb /fOIb@l/ foible
+OId /drOId/ droid
+OIl /OIl/ oil
+OIn /lOIn/ loin
+OIs /rOIs/ Royce
+OIt /@drOIt/ adroit
+OIz /bOIz/ boys
+S@ /S@nt/ shunt
+S@` /S@`/ sure
+SA /SAk/ shock
+SE /SEp@`d/ shepherd
+SI /SIp/ ship
+SU /SUk/ shook
+S_ /liS/ leash
+SaI /SaI/ shy
+SaU /SaUw@`/ shower
+SeI /SeI/ Shay
+Si /Sin/ sheen
+SoU /SoU/ show
+Sr /SraIn/ shrine
+Su /Su/ shoe
+S{} /S{}k/ shack
+T@ /T@nd@`/ thunder
+T@` /T@`d/ third
+TA /TA/ thaw
+TE /EpITEt/ epithet
+TI /TIn/ thin
+T_ /wIT/ with
+TaI /TaI/ thigh
+Ti /Tij@d@`/ theater
+UD
+UE
+UI
+UN
+UOI
+US
+UT
+UZ
+U_
+UaI
+UaU
+Ub
+Ud
+UdZ
+UeI
+Uf
+Ug
+Uh
+Ui
+Uj
+Uk
+Ul
+Um
+Un
+Uo
+UoU
+Up
+Ur
+Us
+Ut
+UtS
+Uu
+Uv
+Uw
+Uz
+U{}
+Z@
+Z@`
+ZA
+ZD
+ZE
+ZI
+ZN
+ZOI
+ZS
+ZT
+ZU
+Z_
+ZaI
+ZaU
+Zb
+Zd
+ZdZ
+ZeI
+Zf
+Zg
+Zh
+Zi
+Zj
+Zk
+Zl
+Zm
+Zn
+Zo
+ZoU
+Zp
+Zr
+Zs
+Zt
+ZtS
+Zu
+Zv
+Zw
+Zz
+Z{}
+_@
+_@`
+_A
+_D
+_E
+_I
+_N
+_OI
+_S
+_T
+_U
+_Z
+_aI
+_aU
+_b
+_d
+_dZ
+_eI
+_f
+_g
+_h
+_i
+_j
+_k
+_l
+_m
+_n
+_o
+_oU
+_p
+_r
+_s
+_t
+_tS
+_u
+_v
+_w
+_z
+_{}
+aI@
+aI@`
+aIA
+aID
+aIE
+aII
+aIN
+aIOI
+aIS
+aIT
+aIU
+aIZ
+aI_
+aIaU
+aIb
+aId
+aIdZ
+aIeI
+aIf
+aIg
+aIh
+aIi
+aIj
+aIk
+aIl
+aIm
+aIn
+aIo
+aIoU
+aIp
+aIr
+aIs
+aIt
+aItS
+aIu
+aIv
+aIw
+aIz
+aI{}
+aU@
+aU@`
+aUA
+aUD
+aUE
+aUI
+aUN
+aUOI
+aUS
+aUT
+aUU
+aUZ
+aU_
+aUaI
+aUb
+aUd
+aUdZ
+aUeI
+aUf
+aUg
+aUh
+aUi
+aUj
+aUk
+aUl
+aUm
+aUn
+aUo
+aUoU
+aUp
+aUr
+aUs
+aUt
+aUtS
+aUu
+aUv
+aUw
+aUz
+aU{}
+b@
+b@`
+bA
+bD
+bE
+bI
+bN
+bOI
+bS
+bT
+bU
+bZ
+b_
+baI
+baU
+bd
+bdZ
+beI
+bf
+bg
+bh
+bi
+bj
+bk
+bl
+bm
+bn
+bo
+boU
+bp
+br
+bs
+bt
+btS
+bu
+bv
+bw
+bz
+b{}
+d@
+d@`
+dA
+dD
+dE
+dI
+dN
+dOI
+dS
+dT
+dU
+dZ
+d_
+daI
+daU
+db
+ddZ
+deI
+df
+dg
+dh
+di
+dj
+dk
+dl
+dm
+dn
+do
+doU
+dp
+dr
+ds
+dt
+dtS
+du
+dv
+dw
+dz
+d{}
+dZ@
+dZ@`
+dZA
+dZD
+dZE
+dZI
+dZN
+dZOI
+dZS
+dZT
+dZU
+dZZ
+dZ_
+dZaI
+dZaU
+dZb
+dZd
+dZeI
+dZf
+dZg
+dZh
+dZi
+dZj
+dZk
+dZl
+dZm
+dZn
+dZo
+dZoU
+dZp
+dZr
+dZs
+dZt
+dZtS
+dZu
+dZv
+dZw
+dZz
+dZ{}
+eI@
+eI@`
+eIA
+eID
+eIE
+eII
+eIN
+eIOI
+eIS
+eIT
+eIU
+eIZ
+eI_
+eIaI
+eIaU
+eIb
+eId
+eIdZ
+eIf
+eIg
+eIh
+eIi
+eIj
+eIk
+eIl
+eIm
+eIn
+eIo
+eIoU
+eIp
+eIr
+eIs
+eIt
+eItS
+eIu
+eIv
+eIw
+eIz
+eI{}
+f@
+f@`
+fA
+fD
+fE
+fI
+fN
+fOI
+fS
+fT
+fU
+fZ
+f_
+faI
+faU
+fb
+fd
+fdZ
+feI
+fg
+fh
+fi
+fj
+fk
+fl
+fm
+fn
+fo
+foU
+fp
+fr
+fs
+ft
+ftS
+fu
+fv
+fw
+fz
+f{}
+g@
+g@`
+gA
+gD
+gE
+gI
+gN
+gOI
+gS
+gT
+gU
+gZ
+g_
+gaI
+gaU
+gb
+gd
+gdZ
+geI
+gf
+gh
+gi
+gj
+gk
+gl
+gm
+gn
+go
+goU
+gp
+gr
+gs
+gt
+gtS
+gu
+gv
+gw
+gz
+g{}
+h@
+h@`
+hA
+hD
+hE
+hI
+hN
+hOI
+hS
+hT
+hU
+hZ
+h_
+haI
+haU
+hb
+hd
+hdZ
+heI
+hf
+hg
+hi
+hj
+hk
+hl
+hm
+hn
+ho
+hoU
+hp
+hr
+hs
+ht
+htS
+hu
+hv
+hw
+hz
+h{}
+i@
+i@`
+iA
+iD
+iE
+iI
+iN
+iOI
+iS
+iT
+iU
+iZ
+i_
+iaI
+iaU
+ib
+id
+idZ
+ieI
+if
+ig
+ih
+ij
+ik
+il
+im
+in
+io
+ioU
+ip
+ir
+is
+it
+itS
+iu
+iv
+iw
+iz
+i{}
+j@
+j@`
+jA
+jD
+jE
+jI
+jN
+jOI
+jS
+jT
+jU
+jZ
+j_
+jaI
+jaU
+jb
+jd
+jdZ
+jeI
+jf
+jg
+jh
+ji
+jk
+jl
+jm
+jn
+jo
+joU
+jp
+jr
+js
+jt
+jtS
+ju
+jv
+jw
+jz
+j{}
+k@
+k@`
+kA
+kD
+kE
+kI
+kN
+kOI
+kS
+kT
+kU
+kZ
+k_
+kaI
+kaU
+kb
+kd
+kdZ
+keI
+kf
+kg
+kh
+ki
+kj
+kl
+km
+kn
+ko
+koU
+kp
+kr
+ks
+kt
+ktS
+ku
+kv
+kw
+kz
+k{}
+l@
+l@`
+lA
+lD
+lE
+lI
+lN
+lOI
+lS
+lT
+lU
+lZ
+l_
+laI
+laU
+lb
+ld
+ldZ
+leI
+lf
+lg
+lh
+li
+lj
+lk
+lm
+ln
+lo
+loU
+lp
+lr
+ls
+lt
+ltS
+lu
+lv
+lw
+lz
+l{}
+m@
+m@`
+mA
+mD
+mE
+mI
+mN
+mOI
+mS
+mT
+mU
+mZ
+m_
+maI
+maU
+mb
+md
+mdZ
+meI
+mf
+mg
+mh
+mi
+mj
+mk
+ml
+mn
+mo
+moU
+mp
+mr
+ms
+mt
+mtS
+mu
+mv
+mw
+mz
+m{}
+n@
+n@`
+nA
+nD
+nE
+nI
+nN
+nOI
+nS
+nT
+nU
+nZ
+n_
+naI
+naU
+nb
+nd
+ndZ
+neI
+nf
+ng
+nh
+ni
+nj
+nk
+nl
+nm
+no
+noU
+np
+nr
+ns
+nt
+ntS
+nu
+nv
+nw
+nz
+n{}
+o@
+o@`
+oA
+oD
+oE
+oI
+oN
+oOI
+oS
+oT
+oU
+oZ
+o_
+oaI
+oaU
+ob
+od
+odZ
+oeI
+of
+og
+oh
+oi
+oj
+ok
+ol
+om
+on
+ooU
+op
+or
+os
+ot
+otS
+ou
+ov
+ow
+oz
+o{}
+oU@
+oU@`
+oUA
+oUD
+oUE
+oUI
+oUN
+oUOI
+oUS
+oUT
+oUU
+oUZ
+oU_
+oUaI
+oUaU
+oUb
+oUd
+oUdZ
+oUeI
+oUf
+oUg
+oUh
+oUi
+oUj
+oUk
+oUl
+oUm
+oUn
+oUo
+oUp
+oUr
+oUs
+oUt
+oUtS
+oUu
+oUv
+oUw
+oUz
+oU{}
+p@
+p@`
+pA
+pD
+pE
+pI
+pN
+pOI
+pS
+pT
+pU
+pZ
+p_
+paI
+paU
+pb
+pd
+pdZ
+peI
+pf
+pg
+ph
+pi
+pj
+pk
+pl
+pm
+pn
+po
+poU
+pr
+ps
+pt
+ptS
+pu
+pv
+pw
+pz
+p{}
+r@
+r@`
+rA
+rD
+rE
+rI
+rN
+rOI
+rS
+rT
+rU
+rZ
+r_
+raI
+raU
+rb
+rd
+rdZ
+reI
+rf
+rg
+rh
+ri
+rj
+rk
+rl
+rm
+rn
+ro
+roU
+rp
+rs
+rt
+rtS
+ru
+rv
+rw
+rz
+r{}
+s@
+s@`
+sA
+sD
+sE
+sI
+sN
+sOI
+sS
+sT
+sU
+sZ
+s_
+saI
+saU
+sb
+sd
+sdZ
+seI
+sf
+sg
+sh
+si
+sj
+sk
+sl
+sm
+sn
+so
+soU
+sp
+sr
+st
+stS
+su
+sv
+sw
+sz
+s{}
+t@
+t@`
+tA
+tD
+tE
+tI
+tN
+tOI
+tS
+tT
+tU
+tZ
+t_
+taI
+taU
+tb
+td
+tdZ
+teI
+tf
+tg
+th
+ti
+tj
+tk
+tl
+tm
+tn
+to
+toU
+tp
+tr
+ts
+ttS
+tu
+tv
+tw
+tz
+t{}
+tS@
+tS@`
+tSA
+tSD
+tSE
+tSI
+tSN
+tSOI
+tSS
+tST
+tSU
+tSZ
+tS_
+tSaI
+tSaU
+tSb
+tSd
+tSdZ
+tSeI
+tSf
+tSg
+tSh
+tSi
+tSj
+tSk
+tSl
+tSm
+tSn
+tSo
+tSoU
+tSp
+tSr
+tSs
+tSt
+tSu
+tSv
+tSw
+tSz
+tS{}
+u@
+u@`
+uA
+uD
+uE
+uI
+uN
+uOI
+uS
+uT
+uU
+uZ
+u_
+uaI
+uaU
+ub
+ud
+udZ
+ueI
+uf
+ug
+uh
+ui
+uj
+uk
+ul
+um
+un
+uo
+uoU
+up
+ur
+us
+ut
+utS
+uv
+uw
+uz
+u{}
+v@
+v@`
+vA
+vD
+vE
+vI
+vN
+vOI
+vS
+vT
+vU
+vZ
+v_
+vaI
+vaU
+vb
+vd
+vdZ
+veI
+vf
+vg
+vh
+vi
+vj
+vk
+vl
+vm
+vn
+vo
+voU
+vp
+vr
+vs
+vt
+vtS
+vu
+vw
+vz
+v{}
+w@
+w@`
+wA
+wD
+wE
+wI
+wN
+wOI
+wS
+wT
+wU
+wZ
+w_
+waI
+waU
+wb
+wd
+wdZ
+weI
+wf
+wg
+wh
+wi
+wj
+wk
+wl
+wm
+wn
+wo
+woU
+wp
+wr
+ws
+wt
+wtS
+wu
+wv
+wz
+w{}
+z@
+z@`
+zA
+zD
+zE
+zI
+zN
+zOI
+zS
+zT
+zU
+zZ
+z_
+zaI
+zaU
+zb
+zd
+zdZ
+zeI
+zf
+zg
+zh
+zi
+zj
+zk
+zl
+zm
+zn
+zo
+zoU
+zp
+zr
+zs
+zt
+ztS
+zu
+zv
+zw
+z{}
+{}@
+{}@`
+{}A
+{}D
+{}E
+{}I
+{}N
+{}OI
+{}S
+{}T
+{}U
+{}Z
+{}_
+{}aI
+{}aU
+{}b
+{}d
+{}dZ
+{}eI
+{}f
+{}g
+{}h
+{}i
+{}j
+{}k
+{}l
+{}m
+{}n
+{}o
+{}oU
+{}p
+{}r
+{}s
+{}t
+{}tS
+{}u
+{}v
+{}w
+{}z

@@ -56,8 +56,7 @@ VOWELS = [
     "@",
     "u",
     "U",
-    # "@`",
-    "@r",
+    "@`",
     "i",
     "o",
 ] + DIPHTHONGS
@@ -73,8 +72,7 @@ XSAMPA_TO_IPA = {
     "E": "ɛ",
     "@": "ə",
     "U": "ʊ",
-    "@r": "ɚ",
-    # "@`": "ɚ",
+    "@`": "ɚ",
     "i": "i",
     "N": "ŋ",
     "tS": "tʃ",
@@ -123,7 +121,7 @@ def normalize_pronunciation(pronunciation):
         pronunciation = pronunciation + ["_"]
     return pronunciation
 
-def generate_word_list():
+def generate_nonsense_word_list():
     word_list = []
     for i, phoneme_1 in enumerate(ALL_PHONEMES):
         for phoneme_2 in ALL_PHONEMES[i + 1:]:
@@ -200,9 +198,37 @@ def generate_word_list():
 
     return word_list
 
+
+def generate_base():
+    for phoneme_1 in sorted(ALL_PHONEMES):
+        for phoneme_2 in sorted(ALL_PHONEMES):
+            if phoneme_1 != phoneme_2:
+                print(phoneme_1 + phoneme_2)
+
+def parse_wordlist(f):
+    orphaned_diphones = []
+    for line in f:
+        line, __, __ = line.partition("#")
+        line = line.strip()
+        if line == "":
+            continue
+        parts = line.strip().split(maxsplit=2)
+        diphones = [parse_pronunciation(part) for part in parts[0].split(",")]
+        if len(parts) == 1:
+            orphaned_diphones.extend(diphones)
+        elif len(parts) == 3:
+            pronunciation = line[1]
+            text = line[2]
+        else:
+            raise RuntimeError(f"Parse error: {line}")
+
 if __name__ == "__main__":
-    word_list = generate_word_list()
-    random.shuffle(word_list)
-    for word in word_list:
-        print(as_ipa_string(word["word"]))
-    print(len(word_list), "words")
+
+    with open("words.txt") as f:
+        parse_wordlist(f)
+
+    #word_list = generate_nonsense_word_list()
+    #random.shuffle(word_list)
+    #for word in word_list:
+    #    print(as_ipa_string(word["word"]))
+    #print(len(word_list), "words")
