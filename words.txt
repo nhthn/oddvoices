@@ -137,7 +137,7 @@ SI /SIp/ ship
 SU /SUk/ shook
 S_ /liS/ leash
 SaI /SaI/ shy
-SaU,_S /SaUw@`/ shower
+SaU,_S,aUw /SaUw@`/ shower
 SeI /SeI/ Shay
 Si /Sin/ sheen
 SoU /SoU/ show
@@ -184,7 +184,7 @@ aId /gaId/ guide
 aIdZ /@blaIdZ/ oblige
 aIf /waIf/ wife
 aIg /aIgu/ aigu ("eye goo")
-aIj /aIji/ aiyee
+aIj /baIj@`/ buyer
 aIk /laIk/ like
 aIl /maIl/ mile
 aIm /maIm/ mime
@@ -196,45 +196,17 @@ aIt /laIt/ light
 aIv /daIv/ dive
 aIw /aIwEr/ eyewear
 aIz /aIz/ eyes
-aU@
-aU@`
-aUA
-aUD
-aUE
-aUI
-aUN
-aUOI
-aUS
-aUT
-aUU
-aUZ
-aU_
-aUaI
-aUb
-aUd
-aUdZ
-aUeI
-aUf
-aUg
-aUh
-aUi
-aUj
-aUk
-aUl
-aUm
-aUn
-aUo
-aUoU
-aUp
-aUr
-aUs
-aUt
-aUtS
-aUu
-aUv
-aUw
-aUz
-aU{}
+aUT /maUT/ mouth
+aUZ /kaUz/ cows
+aUd /laUd/ loud
+aUdZ /gaUdZ/ gouge
+aUl /dZaUl/ jowl
+aUn /daUn/ down
+aUr /skaUr/ scour
+aUs /maUs/ mouse
+aUt /aUt/ out
+aUtS /aUtS/ ouch
+aUz /raUz/ rouse
 b@
 b@`
 bA
