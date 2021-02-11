@@ -2,13 +2,20 @@ _@,@_ /@/ uh (long)
 _@`,@`_ /@`/ er (long)
 _A,A_ /A/ ah (long)
 _E,E_ /E/ E (long)
-_I,I_ /I/ I (long)
+_I,I_ /I/ ee (long)
 _OI,OI_ /OI/ oy (long "o," short "y")
+_U,U_ /U/ "oo" in "book" (long)
+_aI,aI_ /aI/ aye (long "a", short "ye")
+_aU,aU_ /aU/ ow (long "o", short "w")
+_eI,eI_ /eI/ ey (long "e", short "y")
+_i,i_ /i/ ee (long)
+_oU,oU_ /oU/ oh (long, short "w" at end)
+_u,u_ /u/ ooh (long)
+_{},{}_ /{}/ "a" in "after" (long)
 
 @D /@D@`/ other
 @N /m@N/ mung
 @S /l@S/ lush
-@T
 @b /k@b/ cub
 @d /m@d/ mud
 @dZ /f@dZ/ fudge
@@ -66,7 +73,7 @@ Av /mAv/ mauve
 Az /Az/ Oz
 D@ /D@/ the (pr. "thuh")
 D@`,@D /m@D@`/ mother
-DE /DEn/ then
+DE,_D /DEn/ then
 DI /DIs/ this
 D_ /loUD/ loathe
 DaU /DaU/ thou
@@ -130,7 +137,7 @@ SI /SIp/ ship
 SU /SUk/ shook
 S_ /liS/ leash
 SaI /SaI/ shy
-SaU /SaUw@`/ shower
+SaU,_S /SaUw@`/ shower
 SeI /SeI/ Shay
 Si /Sin/ sheen
 SoU /SoU/ show
@@ -143,161 +150,52 @@ TA /TA/ thaw
 TE /EpITEt/ epithet
 TI /TIn/ thin
 T_ /wIT/ with
-TaI /TaI/ thigh
+TaI,_T /TaI/ thigh
 Ti /Tij@d@`/ theater
-UD
-UE
-UI
-UN
-UOI
-US
-UT
-UZ
-U_
-UaI
-UaU
-Ub
-Ud
-UdZ
-UeI
-Uf
-Ug
-Uh
-Ui
-Uj
-Uk
-Ul
-Um
-Un
-Uo
-UoU
-Up
-Ur
-Us
-Ut
-UtS
-Uu
-Uv
-Uw
-Uz
-U{}
-Z@
-Z@`
-ZA
-ZD
-ZE
-ZI
-ZN
-ZOI
-ZS
-ZT
-ZU
-Z_
-ZaI
-ZaU
-Zb
-Zd
-ZdZ
-ZeI
-Zf
-Zg
-Zh
-Zi
-Zj
-Zk
-Zl
-Zm
-Zn
-Zo
-ZoU
-Zp
-Zr
-Zs
-Zt
-ZtS
-Zu
-Zv
-Zw
-Zz
-Z{}
-_@
-_@`
-_A
-_D
-_E
-_I
-_N
-_OI
-_S
-_T
-_U
-_Z
-_aI
-_aU
-_b
-_d
-_dZ
-_eI
-_f
-_g
-_h
-_i
-_j
-_k
-_l
-_m
-_n
-_o
-_oU
-_p
-_r
-_s
-_t
-_tS
-_u
-_v
-_w
-_z
-_{}
-aI@
-aI@`
-aIA
-aID
-aIE
-aII
-aIN
-aIOI
-aIS
-aIT
-aIU
-aIZ
-aI_
-aIaU
-aIb
-aId
-aIdZ
-aIeI
-aIf
-aIg
-aIh
-aIi
-aIj
-aIk
-aIl
-aIm
-aIn
-aIo
-aIoU
-aIp
-aIr
-aIs
-aIt
-aItS
-aIu
-aIv
-aIw
-aIz
-aI{}
+US /pUS/ push
+Ud /wUd/ wood
+Uk /lUk/ look
+Ut /rUt/ root ("oo" as in "book")
+Z@` /meZ@`/ measure
+Z_ /m@sAZ/ massage
+_Z /Z@/ je (French, soft "j")
+_b /bA/ baa
+_d /dAg/ dog
+_dZ /jAb/ job
+_f /fAD@`/ father
+_g /gAd/ god
+_h /hAt/ hot
+_j /yAn/ yawn
+_k /kAf/ caugh
+_l /lAg/ log
+_m,m_ /mAm/ mom
+_n,n_ /nAn/ naan
+_p /pA/ paw
+_r /rA/ rah
+_s /sAk/ sock
+_t,t_ /tAt/ tot
+_tS /tSak/ chalk
+_v /vAnz/ Vons
+_w /wAd@`/ water
+_z /zoUwi/ Zoe
+aID /laID/ lithe
+aIb /vaIb/ vibe
+aId /gaId/ guide
+aIdZ /@blaIdZ/ oblige
+aIf /waIf/ wife
+aIg /aIgu/ aigu ("eye goo")
+aIj /aIji/ aiyee
+aIk /laIk/ like
+aIl /maIl/ mile
+aIm /maIm/ mime
+aIn /laIn/ line
+aIp /paIp/ pipe
+aIr /faIr/ fire
+aIs /daIs/ dice
+aIt /laIt/ light
+aIv /daIv/ dive
+aIw /aIwEr/ eyewear
+aIz /aIz/ eyes
 aU@
 aU@`
 aUA
