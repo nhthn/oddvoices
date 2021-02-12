@@ -128,7 +128,7 @@ OIl /OIl/ oil
 OIn /lOIn/ loin
 OIs /rOIs/ Royce
 OIt /@drOIt/ adroit
-OIz /bOIz/ boys
+OIz,bOI /bOIz/ boys
 S@ /S@nt/ shunt
 S@` /S@`/ sure
 SA /SAk/ shock
@@ -159,7 +159,7 @@ Ut /rUt/ root ("oo" as in "book")
 Z@` /meZ@`/ measure
 Z_ /m@sAZ/ massage
 _Z /Z@/ je (French, soft "j")
-_b /bA/ baa
+_b,bA /bAg/ bog
 _d /dAg/ dog
 _dZ /jAb/ job
 _f /fAD@`/ father
@@ -167,7 +167,7 @@ _g /gAd/ god
 _h /hAt/ hot
 _j /yAn/ yawn
 _k /kAf/ caugh
-_l /lAg/ log
+_l,g_ /lAg/ log
 _m,m_ /mAm/ mom
 _n,n_ /nAn/ naan
 _p /pA/ paw
@@ -180,7 +180,7 @@ _w /wAd@`/ water
 _z /zoUwi/ Zoe
 aID /laID/ lithe
 aIb /vaIb/ vibe
-aId /gaId/ guide
+gaI,aId /gaId/ guide
 aIdZ /@blaIdZ/ oblige
 aIf /waIf/ wife
 aIg /aIgu/ aigu ("eye goo")
@@ -199,248 +199,111 @@ aIz /aIz/ eyes
 aUT /maUT/ mouth
 aUZ /kaUz/ cows
 aUd /laUd/ loud
-aUdZ /gaUdZ/ gouge
-aUl /dZaUl/ jowl
+gaU,aUdZ /gaUdZ/ gouge
+_dZ,aUl /dZaUl/ jowl
 aUn /daUn/ down
 aUr /skaUr/ scour
 aUs /maUs/ mouse
 aUt /aUt/ out
 aUtS /aUtS/ ouch
 aUz /raUz/ rouse
-b@
-b@`
-bA
-bD
-bE
-bI
-bN
-bOI
-bS
-bT
-bU
-bZ
-b_
-baI
-baU
-bd
-bdZ
-beI
-bf
-bg
-bh
-bi
-bj
-bk
-bl
-bm
-bn
-bo
-boU
-bp
-br
-bs
-bt
-btS
-bu
-bv
-bw
-bz
-b{}
-d@
-d@`
-dA
-dD
-dE
-dI
-dN
-dOI
-dS
-dT
-dU
-dZ
-d_
-daI
-daU
-db
-ddZ
-deI
-df
-dg
-dh
-di
-dj
-dk
-dl
-dm
-dn
-do
-doU
-dp
-dr
-ds
-dt
-dtS
-du
-dv
-dw
-dz
-d{}
-dZ@
-dZ@`
-dZA
-dZD
-dZE
-dZI
-dZN
-dZOI
-dZS
-dZT
-dZU
-dZZ
-dZ_
-dZaI
-dZaU
-dZb
-dZd
-dZeI
-dZf
-dZg
-dZh
-dZi
-dZj
-dZk
-dZl
-dZm
-dZn
-dZo
-dZoU
-dZp
-dZr
-dZs
-dZt
-dZtS
-dZu
-dZv
-dZw
-dZz
-dZ{}
-eI@
-eI@`
-eIA
-eID
-eIE
-eII
-eIN
-eIOI
-eIS
-eIT
-eIU
-eIZ
-eI_
-eIaI
-eIaU
-eIb
-eId
-eIdZ
-eIf
-eIg
-eIh
-eIi
-eIj
-eIk
-eIl
-eIm
-eIn
-eIo
-eIoU
-eIp
-eIr
-eIs
-eIt
-eItS
-eIu
-eIv
-eIw
-eIz
-eI{}
-f@
-f@`
-fA
-fD
-fE
-fI
-fN
-fOI
-fS
-fT
-fU
-fZ
-f_
-faI
-faU
-fb
-fd
-fdZ
-feI
-fg
-fh
-fi
-fj
-fk
-fl
-fm
-fn
-fo
-foU
-fp
-fr
-fs
-ft
-ftS
-fu
-fv
-fw
-fz
-f{}
-g@
-g@`
-gA
-gD
-gE
-gI
-gN
-gOI
-gS
-gT
-gU
-gZ
-g_
-gaI
-gaU
-gb
-gd
-gdZ
-geI
-gf
-gh
-gi
-gj
-gk
-gl
-gm
-gn
-go
-goU
-gp
-gr
-gs
-gt
-gtS
-gu
-gv
-gw
-gz
-g{}
+b@ /b@n/ bun
+b@` /b@`n/ burn
+bE /bEt/ bet
+bI /bIt/ bit
+bU /bUk/ book
+b_ /sAb/ sob
+baI /baI/ bye
+baU /baU/ bow (rhyming with "cow")
+beI /beI/ bay
+bi /bi/ bee
+bl /blA/ blah
+boU /boU/ bow (rhyming with "toe")
+br /brAd/ broad
+bu /bu/ boo
+bz /{}bz/ abs
+b{} /b{}d/ bad
+d@,Nk /d@Nk/ dunk
+d@` /d@`dZ/ dirge
+dA /dAt/ dot
+dE /dEn/ den
+dI /dId/ did
+dOI /dOIli/ doily
+dT /wIdT/ width
+d_ /tAd/ Todd
+daI /dAI/ dye
+daU /daU/ Dow
+deI /deI/ day
+di /dim/ deem
+doU /doU/ dough
+dr /draI/ dry
+du /dun/ dune
+dv /{}dv@`b/ adverb
+dw /dwaIt/ Dwight
+dz /Adz/ odds
+d{} /d{}d/ dad
+dZ@ /dZ@t/ jut
+dZ@` /dZ@`k/ jerk
+dZA /dZAb/ job
+dZE /dZEf/ Jeff
+dZI /dZIl/ Jill
+dZOI /dZOIn/ join
+dZ_ /lAdZ/ lodge
+dZaI /dZaIv/ jive
+dZeI /dZeI/ jay
+dZi /dZi/ gee
+dZoU /dZoUk/ joke
+dZu /dZun/ June
+dZ{} /dZ{}k/ Jack
+eIZ /beIZ/ beige
+geI,eIb /geIb/ Gabe
+eId /leId/ laid
+eIdZ /eIdZ/ age
+eIf /tSeIf/ chafe
+eIk /leIk/ lake
+eIl /veIl/ veil
+eIm /deIm/ dame
+eIn /leIn/ lane
+eIp /keIp/ cape
+eIs /keIs/ case
+eIt /deIt/ date
+eItS /eItS/ aitch
+eIv /deIv/ Dave
+eIw /weIw@`d/ wayward
+eIz /meIz/ maze
+f@ /f@n/ fun
+f@` /f@`n/ fern
+fA /fAt/ fought
+fE /fEl/ fell
+fI /fIn/ fin
+fOI /fOIb@l/ foible
+sk,f_ /skAf/ scoff
+faI /faIt/ fight
+faU /faUnd/ found
+feI /feI/ Faye
+fi /fit/ feet
+fl /flu/ flu
+foU /foU/ foe
+fr /freIm/ frame
+fs /l{}fs/ laughs
+ft /d{}ft/ daft
+fu /fud/ food
+f{} /f{}t/ fat
+g@ /g@n/ gun
+g@` /g@`l/ girl
+gA /gAd/ god
+gE /gEt/ get
+gI /gIft/ gift
+gOI /gOId@`/ goiter
+gU /gUd/ good
+gi /gis/ geese
+gl /glu/ glue
+goU /goU/ go
+gr /grAg/ grog
+gu /gu/ goo
+gw /gwEn/ Gwen
+gz /lAgz/ logs
+g{},{}g /g{}g/ gag
 h@
 h@`
 hA
