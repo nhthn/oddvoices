@@ -304,744 +304,323 @@ gu /gu/ goo
 gw /gwEn/ Gwen
 gz /lAgz/ logs
 g{},{}g /g{}g/ gag
-h@
-h@`
-hA
-hD
-hE
-hI
-hN
-hOI
-hS
-hT
-hU
-hZ
-h_
-haI
-haU
-hb
-hd
-hdZ
-heI
-hf
-hg
-hi
-hj
-hk
-hl
-hm
-hn
-ho
-hoU
-hp
-hr
-hs
-ht
-htS
-hu
-hv
-hw
-hz
-h{}
-i@
-i@`
-iA
-iD
-iE
-iI
-iN
-iOI
-iS
-iT
-iU
-iZ
-i_
-iaI
-iaU
-ib
-id
-idZ
-ieI
-if
-ig
-ih
-ij
-ik
-il
-im
-in
-io
-ioU
-ip
-ir
-is
-it
-itS
-iu
-iv
-iw
-iz
-i{}
-j@
-j@`
-jA
-jD
-jE
-jI
-jN
-jOI
-jS
-jT
-jU
-jZ
-j_
-jaI
-jaU
-jb
-jd
-jdZ
-jeI
-jf
-jg
-jh
-ji
-jk
-jl
-jm
-jn
-jo
-joU
-jp
-jr
-js
-jt
-jtS
-ju
-jv
-jw
-jz
-j{}
-k@
-k@`
-kA
-kD
-kE
-kI
-kN
-kOI
-kS
-kT
-kU
-kZ
-k_
-kaI
-kaU
-kb
-kd
-kdZ
-keI
-kf
-kg
-kh
-ki
-kj
-kl
-km
-kn
-ko
-koU
-kp
-kr
-ks
-kt
-ktS
-ku
-kv
-kw
-kz
-k{}
-l@
-l@`
-lA
-lD
-lE
-lI
-lN
-lOI
-lS
-lT
-lU
-lZ
-l_
-laI
-laU
-lb
-ld
-ldZ
-leI
-lf
-lg
-lh
-li
-lj
-lk
-lm
-ln
-lo
-loU
-lp
-lr
-ls
-lt
-ltS
-lu
-lv
-lw
-lz
-l{}
-m@
-m@`
-mA
-mD
-mE
-mI
-mN
-mOI
-mS
-mT
-mU
-mZ
-m_
-maI
-maU
-mb
-md
-mdZ
-meI
-mf
-mg
-mh
-mi
-mj
-mk
-ml
-mn
-mo
-moU
-mp
-mr
-ms
-mt
-mtS
-mu
-mv
-mw
-mz
-m{}
-n@
-n@`
-nA
-nD
-nE
-nI
-nN
-nOI
-nS
-nT
-nU
-nZ
-n_
-naI
-naU
-nb
-nd
-ndZ
-neI
-nf
-ng
-nh
-ni
-nj
-nk
-nl
-nm
-no
-noU
-np
-nr
-ns
-nt
-ntS
-nu
-nv
-nw
-nz
-n{}
-o@
-o@`
-oA
-oD
-oE
-oI
-oN
-oOI
-oS
-oT
-oU
-oZ
-o_
-oaI
-oaU
-ob
-od
-odZ
-oeI
-of
-og
-oh
-oi
-oj
-ok
-ol
-om
-on
-ooU
-op
-or
-os
-ot
-otS
-ou
-ov
-ow
-oz
-o{}
-oU@
-oU@`
-oUA
-oUD
-oUE
-oUI
-oUN
-oUOI
-oUS
-oUT
-oUU
-oUZ
-oU_
-oUaI
-oUaU
-oUb
-oUd
-oUdZ
-oUeI
-oUf
-oUg
-oUh
-oUi
-oUj
-oUk
-oUl
-oUm
-oUn
-oUo
-oUp
-oUr
-oUs
-oUt
-oUtS
-oUu
-oUv
-oUw
-oUz
-oU{}
-p@
-p@`
-pA
-pD
-pE
-pI
-pN
-pOI
-pS
-pT
-pU
-pZ
-p_
-paI
-paU
-pb
-pd
-pdZ
-peI
-pf
-pg
-ph
-pi
-pj
-pk
-pl
-pm
-pn
-po
-poU
-pr
-ps
-pt
-ptS
-pu
-pv
-pw
-pz
-p{}
-r@
-r@`
-rA
-rD
-rE
-rI
-rN
-rOI
-rS
-rT
-rU
-rZ
-r_
-raI
-raU
-rb
-rd
-rdZ
-reI
-rf
-rg
-rh
-ri
-rj
-rk
-rl
-rm
-rn
-ro
-roU
-rp
-rs
-rt
-rtS
-ru
-rv
-rw
-rz
-r{}
-s@
-s@`
-sA
-sD
-sE
-sI
-sN
-sOI
-sS
-sT
-sU
-sZ
-s_
-saI
-saU
-sb
-sd
-sdZ
-seI
-sf
-sg
-sh
-si
-sj
-sk
-sl
-sm
-sn
-so
-soU
-sp
-sr
-st
-stS
-su
-sv
-sw
-sz
-s{}
-t@
-t@`
-tA
-tD
-tE
-tI
-tN
-tOI
-tS
-tT
-tU
-tZ
-t_
-taI
-taU
-tb
-td
-tdZ
-teI
-tf
-tg
-th
-ti
-tj
-tk
-tl
-tm
-tn
-to
-toU
-tp
-tr
-ts
-ttS
-tu
-tv
-tw
-tz
-t{}
-tS@
-tS@`
-tSA
-tSD
-tSE
-tSI
-tSN
-tSOI
-tSS
-tST
-tSU
-tSZ
-tS_
-tSaI
-tSaU
-tSb
-tSd
-tSdZ
-tSeI
-tSf
-tSg
-tSh
-tSi
-tSj
-tSk
-tSl
-tSm
-tSn
-tSo
-tSoU
-tSp
-tSr
-tSs
-tSt
-tSu
-tSv
-tSw
-tSz
-tS{}
-u@
-u@`
-uA
-uD
-uE
-uI
-uN
-uOI
-uS
-uT
-uU
-uZ
-u_
-uaI
-uaU
-ub
-ud
-udZ
-ueI
-uf
-ug
-uh
-ui
-uj
-uk
-ul
-um
-un
-uo
-uoU
-up
-ur
-us
-ut
-utS
-uv
-uw
-uz
-u{}
-v@
-v@`
-vA
-vD
-vE
-vI
-vN
-vOI
-vS
-vT
-vU
-vZ
-v_
-vaI
-vaU
-vb
-vd
-vdZ
-veI
-vf
-vg
-vh
-vi
-vj
-vk
-vl
-vm
-vn
-vo
-voU
-vp
-vr
-vs
-vt
-vtS
-vu
-vw
-vz
-v{}
-w@
-w@`
-wA
-wD
-wE
-wI
-wN
-wOI
-wS
-wT
-wU
-wZ
-w_
-waI
-waU
-wb
-wd
-wdZ
-weI
-wf
-wg
-wh
-wi
-wj
-wk
-wl
-wm
-wn
-wo
-woU
-wp
-wr
-ws
-wt
-wtS
-wu
-wv
-wz
-w{}
-z@
-z@`
-zA
-zD
-zE
-zI
-zN
-zOI
-zS
-zT
-zU
-zZ
-z_
-zaI
-zaU
-zb
-zd
-zdZ
-zeI
-zf
-zg
-zh
-zi
-zj
-zk
-zl
-zm
-zn
-zo
-zoU
-zp
-zr
-zs
-zt
-ztS
-zu
-zv
-zw
-z{}
-{}@
-{}@`
-{}A
-{}D
-{}E
-{}I
-{}N
-{}OI
-{}S
-{}T
-{}U
-{}Z
-{}_
-{}aI
-{}aU
-{}b
-{}d
-{}dZ
-{}eI
-{}f
-{}g
-{}h
-{}i
-{}j
-{}k
-{}l
-{}m
-{}n
-{}o
-{}oU
-{}p
-{}r
-{}s
-{}t
-{}tS
-{}u
-{}v
-{}w
-{}z
+h@ /h@g/ hug
+h@` /h@`/ her
+hA /hAg/ hog
+hE /hEl/ hel
+hI /hIl/ hill
+hOI /@hOI/ ahoy
+hU /hUk/ hook
+h_ /h/ h ("aha" but without the "a"'s)
+haI /haI/ high
+haU /haU/ how
+heI /heI/ hey
+hi /hi/ he
+hoU /hoU/ hoe
+hu /hu/ who
+h{} /h{}t/ hat
+iD /siD/ seethe
+iS /liS/ leash
+iT /tiT/ teeth
+iZ /prEstiZ/ prestige
+ib /fib@l/ feeble
+id /nid/ need
+idZ /skwidZi/ squeegee
+if /lif/ leaf
+ig /lig/ league
+ij /mErij@n/ Marian
+ik /lik/ leek
+il /il/ eel
+im /dim/ deem
+in /lin/ lean
+ip /dip/ deep
+ir /dir/ deer
+is /flis/ fleece
+it /mit/ meet
+itS /litS/ leech
+iv /liv/ leave
+iw /liweI/ leeway
+iz /skwiz/ squeeze
+j@ /j@N/ young
+j@` /j@`n/ yearn
+jA /jA/ yaw
+jE /jEs/ yes
+jI /jIn/ yin
+jaU /jaU/ yow
+jeI /jeI/ yay
+ji /ji/ Yee
+joU /joU/ yo
+ju /ju/ you
+j{} /j{}/ yeah
+k@ /k@d/ cud
+k@` /k@`l/ curl
+kA /kAt/ caught
+kE /kEn/ Ken
+kI /kIt/ kit
+kOI /kOI/ coy
+kU /kUk/ cook
+k_ /lAk/ lock
+kaI /kaI/ Kai
+kaU /kaU/ cow
+keI /oUkeI/ okay
+ki /ki/ key
+kl /klA/ claw
+koU /koUt/ coat
+kr /krA/ craw
+ks /Aks/ ox
+kt /{}ct@`/ actor
+ku /kul/ cool
+kw /Akw@`d/ awkward
+k{} /k{}t/ cat
+l@ /l@g/ lug
+l@` /l@`n/ learn
+lA /lAN/ lang
+lE /lENT/ length
+lI /lIk/ lick
+lOI /lOIn/ loin
+lS /wElS/ Welsh
+lT /wElT/ wealth
+lU /lUk/ look
+l_ /hAl/ hall
+laI /laI/ lie
+laU /laUd/ loud
+lb /b@lb/ bulb
+ld /mEld/ meld
+ldZ /b@ldZ/ bulge
+leI /leI/ lay
+lf /Elf/ elf
+lg /{}lgoUrIDm/ algorithm
+li /li/ Lee
+lk /mIlk/ milk
+lm /Elm/ elm
+ln /kIln/ kiln
+loU /loU/ low
+lp /hElp/ help
+ls /Els@/ Elsa
+lt /wElt/ welt
+ltS /wEltS/ Welch
+lu,un /lun/ loon
+lv /{}lvIn/ Alvin
+lw /AlweIz/ always
+l{} /bElz/ bells
+m@ /m@d/ mud
+m@` /m@`k/ murk
+mA,m_ /mAm/ mom
+mE /mEt/ met
+mI /mIt/ mitt
+mOI /mOIst/ moist
+mT /wArmT/ warmth
+maI /maI/ my
+maU /maUs/ mouse
+mb /{}mb@`/ amber
+meI /meI/ may
+mf /k@mfi/ comfy
+mi /mi/ me
+ml /hoUmli/ homely
+mn /{}mnEsti/ amnesty
+moU /moU/ mow
+mp /rAmp/ romp
+mu /mu/ moo
+mz /y{}mz/ yams
+m{} /m{}tS/ match
+n@ /n@dZ/ nudge
+n@` /n@`d/ nerd
+nA /nAt/ not
+nE /nEt/ net
+nI /nIp/ nip
+nOI /nOIz/ noise
+nT /m@nT/ month
+nU /nUk/ nook
+n_ /fAn/ fawn
+naI /naIs/ nice
+naU /naU/ now
+nd /l{}nd/ land
+ndZ,tSeI /tSeIndZ/ change
+neI /neI/ nay
+nf /InfInIt/ infinite
+nh /InheIl/ inhale
+ni /ni/ knee
+nj /Enj@/ Enya
+nl /InlaIn/ inline
+nm /@nm{}sk/ unmask
+noU /noU/ no
+np /InpUt/ input
+nr /InroUd/ inroad
+ns /{}ns@`/ answer
+nt /Anti/ auntie (pronounced "ontie")
+ntS,tS_ /l@ntS/ lunch
+nu /nu/ knew
+nv /InvEnt/ invent
+nw /Anw@`d/ onward
+nz /dAnz/ dons
+n{} /n{}p/ nap
+oUD /loUD/ loathe
+oUT /oUT/ oath
+oUb /loUb/ lobe
+oUd /loUd/ load
+oUf /loUf/ loaf
+oUg /boUgi/ bogey
+oUk /koUk/ Coke
+oUl /boUl/ bowl
+oUm /loUm/ loam
+oUn /loUn/ lone
+oUp /koUp/ cope
+oUr /boUr/ bore
+oUs /doUs/ dose
+oUt /koUt/ coat
+oUtS /roUtS/ roach
+oUv /koUv/ cove
+oUz /doUz/ doze
+p@ /p@n/ pun
+p@` /p@`k/ perk
+pA /pAt/ pot
+pE /pEt/ pet
+pI /pIt/ pit
+pOI /pOInt/ point
+pT /dEpT/ depth
+p_ /hAp/ hop
+paI /paI/ pie
+paU /paU/ pow
+pd /hApd/ hopped
+peI /peI/ pay
+pi /pik/ peek
+pl /pl@S/ plush
+poU /poUtS/ poach
+pr /prAm/ prom
+ps /hAps/ hops
+pu /pul/ pool
+p{} /p{}k/ pack
+r@ /r@N/ rung
+rA /rAk/ rock
+rE /rEk/ wreck
+rI /rId/ rid
+rOI /rOIj@l/ royal
+rU /rUk/ rook
+raI /raI/ rye
+raU /raUdi/ rowdy
+reI /reI/ ray
+ri /rik/ reek
+roU /roU/ row (rhyming with "toe")
+ru /ru/ rue
+r{} /r{}t/ rat
+s@ /s@n/ sun
+s@` /s@`/ sir
+sA /sAk/ sock
+sE /sEt/ set
+sI /sIt/ sit
+sOI /sOI/ soy
+sU /sUt/ soot
+s_ /lAs/ loss
+saI /saI/ sigh
+saU /saUw@`/ sour
+seI /seI/ say
+si /si/ see
+sk /skeIt/ skate
+sl /slIp/ slip
+soU /soU/ so
+sp /sp@d/ spud
+st /stAk/ stalk
+su /sun/ soon
+sw /swEl/ swell
+s{} /s{}k/ sack
+t@ /t@n/ ton
+t@` /t@`k/ Turk
+tA /tAni/ tawny
+tE /tEn/ ten
+tI /tIn/ tin
+tOI /tOI/ toy
+tU /tUk/ took
+t_ /hAt/ hot
+taI /taI/ tie
+taU /taU/ tau
+teI /teIm/ tame
+ti /ti/ tea
+tl /{}tl@s/ atlas
+tm /{}tm@sfir/ atmosphere
+toU /toU/ toe
+tr /traI/ try
+ts /lAts/ lots
+tu /tu/ too
+tw /twIn/ twin
+t{} /t{}n/ tan
+tS@ /tS@g/ chug
+tS@` /tS@`n/ churn
+tSA /tSAk/ chalk
+tSE /tSEk/ check
+tSI /tSIk/ chick
+tSOI /tSOI/ choy
+tSaI /tSaI/ chai
+tSaU /tSaU/ chow
+tSi /tSik/ cheek
+tSoU /tSoUz/ chose
+tSu /tSuz/ choose
+tS{} /tS{}p/ chap
+uD /suD/ sooth
+uT /buT/ booth
+u_ /bu/ boo
+ub /bub/ boob
+ud /mud/ mood
+uf /guf/ goof
+ul /kul/ cool
+um /lum/ loom
+up /hup/ hoop
+ur /mur/ moor
+us /lus/ loose
+ut /but/ boot
+uv /muv/ move
+uz /buz/ booze
+v@ /v@g/ vug
+v@` /v@`n/ Vern
+vA /vAn/ Vaughn
+vE /vEst/ vest
+vI /vIzIt/ visit
+vOI /vOIj@dZ/ voyage
+v_ /l@v/ love
+vaI /vaI/ vye
+vaU /vaU/ vow
+vi /vil/ veal
+voU /voUt/ vote
+vu /vudu/ voodoo
+vz /l@vz/ loves
+v{} /v{}t/ vat
+w@ /w@nd@`/ wonder
+w@` /w@`ld/ world
+wA /wAk/ walk
+wE /wEt/ wet
+wI /wInd/ wind
+wU /wUd/ would
+waI /waIv@`n/ wyvern
+waU /waU/ wow
+weI /weI/ way
+wi /wi/ wee
+woU /woU/ whoa
+wu /wu/ woo
+w{} /w{}ki/ wacky
+zE /zEf@`/ zephyr
+zI /zIp/ zip
+z_ /lAz/ laws
+zi /zi/ zee
+zm /{}zm@/ asthma (as "azma")
+zoU /zoUwi/ Zoe
+zr /Ezr@/ Ezra
+zt /{}ztEk/ Aztec
+zu /zu/ zoo
+z{} /z{}p/ zap
+{}N /h{}N/ hang
+{}S /{}S/ ash
+{}T /b{}T/ bath
+{}b /t{}b/ tab
+{}d /b{}d/ bad
+{}dZ /b{}dZ/ badge
+{}f /l{}f/ laugh
+{}g /b{}g/ bag
+{}k /b{}k/ back
+{}l /{}l/ Al
+{}m /r{}m/ ram
+{}n /c{}n/ can
+{}p /n{}p/ nap
+{}s /l{}s/ lass
+{}t /{}t/ at
+{}tS /l{}tS/ latch
+{}v /h{}v/ have
+{}z /r{}z/ razz

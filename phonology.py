@@ -58,7 +58,6 @@ VOWELS = [
     "U",
     "@`",
     "i",
-    "o",
 ] + DIPHTHONGS
 
 SPECIAL = ["_"]
