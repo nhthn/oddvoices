@@ -156,16 +156,16 @@ US /pUS/ push
 Ud /wUd/ wood
 Uk /lUk/ look
 Ut /rUt/ root ("oo" as in "book")
-Z@` /meZ@`/ measure
+Z@` /mEZ@`/ measure
 Z_ /m@sAZ/ massage
 _Z /Z@/ je (French, soft "j")
 _b,bA /bAg/ bog
 _d /dAg/ dog
-_dZ /jAb/ job
+_dZ /dZAb/ job
 _f /fAD@`/ father
 _g /gAd/ god
 _h /hAt/ hot
-_j /yAn/ yawn
+_j /jAn/ yawn
 _k /kAf/ caugh
 _l,g_ /lAg/ log
 _m,m_ /mAm/ mom
@@ -174,7 +174,7 @@ _p /pA/ paw
 _r /rA/ rah
 _s /sAk/ sock
 _t,t_ /tAt/ tot
-_tS /tSak/ chalk
+_tS /tSAk/ chalk
 _v /vAnz/ Vons
 _w /wAd@`/ water
 _z /zoUwi/ Zoe
@@ -197,7 +197,6 @@ aIv /daIv/ dive
 aIw /aIwEr/ eyewear
 aIz /aIz/ eyes
 aUT /maUT/ mouth
-aUZ /kaUz/ cows
 aUd /laUd/ loud
 gaU,aUdZ /gaUdZ/ gouge
 _dZ,aUl /dZaUl/ jowl
@@ -231,7 +230,7 @@ dI /dId/ did
 dOI /dOIli/ doily
 dT /wIdT/ width
 d_ /tAd/ Todd
-daI /dAI/ dye
+daI /daI/ dye
 daU /daU/ Dow
 deI /deI/ day
 di /dim/ deem
@@ -368,7 +367,7 @@ kl /klA/ claw
 koU /koUt/ coat
 kr /krA/ craw
 ks /Aks/ ox
-kt /{}ct@`/ actor
+kt /{}kt@`/ actor
 ku /kul/ cool
 kw /Akw@`d/ awkward
 k{} /k{}t/ cat
@@ -402,7 +401,8 @@ ltS /wEltS/ Welch
 lu,un /lun/ loon
 lv /{}lvIn/ Alvin
 lw /AlweIz/ always
-l{} /bElz/ bells
+lz /bElz/ bells
+l{} /l{}f/ laugh
 m@ /m@d/ mud
 m@` /m@`k/ murk
 mA,m_ /mAm/ mom
@@ -421,7 +421,7 @@ mn /{}mnEsti/ amnesty
 moU /moU/ mow
 mp /rAmp/ romp
 mu /mu/ moo
-mz /y{}mz/ yams
+mz /j{}mz/ yams
 m{} /m{}tS/ match
 n@ /n@dZ/ nudge
 n@` /n@`d/ nerd
@@ -617,7 +617,7 @@ z{} /z{}p/ zap
 {}k /b{}k/ back
 {}l /{}l/ Al
 {}m /r{}m/ ram
-{}n /c{}n/ can
+{}n /k{}n/ can
 {}p /n{}p/ nap
 {}s /l{}s/ lass
 {}t /{}t/ at
