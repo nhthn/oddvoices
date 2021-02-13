@@ -113,6 +113,7 @@ def parse_pronunciation(pronunciation):
                 raise RuntimeError(f"Unrecognized phoneme: {pronunciation}")
     return phonemes
 
+
 def normalize_pronunciation(pronunciation):
     if pronunciation[0] != "_":
         pronunciation = ["_"] + pronunciation
@@ -129,7 +130,7 @@ def generate_base():
 
 
 def parse_wordlist(f):
-    orphaned_diphones = []
+    wordlist = []
     for line in f:
         line, __, __ = line.partition("#")
         line = line.strip()
@@ -137,21 +138,83 @@ def parse_wordlist(f):
             continue
         parts = line.strip().split(maxsplit=2)
         diphones = [parse_pronunciation(part) for part in parts[0].split(",")]
-        if len(parts) == 1:
-            orphaned_diphones.extend(diphones)
-        elif len(parts) == 3:
-            pronunciation = parse_pronunciation(parts[1][1:-1])
-            pronunciation = normalize_pronunciation(pronunciation)
-            text = parts[2]
-            for diphone in diphones:
-                if not is_sublist(diphone, pronunciation):
-                    raise RuntimeError(f"{diphone} is not in {pronunciation}")
-        else:
+        if len(parts) != 3:
             raise RuntimeError(f"Parse error: {line}")
+        pronunciation = parse_pronunciation(parts[1][1:-1])
+        normalized_pronunciation = normalize_pronunciation(pronunciation)
+        text = parts[2]
+        for diphone in diphones:
+            if not is_sublist(diphone, normalized_pronunciation):
+                raise RuntimeError(f"{diphone} is not in {pronunciation}")
+        wordlist.append({
+            "diphones": diphones,
+            "pronunciation": pronunciation,
+            "text": text,
+        })
+    return wordlist
+
+
+def escape_latex(string):
+    escaped_string = string
+    escaped_string = escaped_string.replace("{", r"\{")
+    escaped_string = escaped_string.replace("}", r"\}")
+    escaped_string = escaped_string.replace("_", r"\_")
+    return escaped_string
+
+
+def generate_latex(words):
+    result = []
+    result.append(r"\documentclass{article}")
+    result.append(r"\usepackage{setspace}")
+    result.append(r"\usepackage{multicol}")
+    result.append(r"\usepackage{xcolor}")
+    result.append(r"\setlength{\columnsep}{1cm}")
+    result.append(r"""
+    \usepackage[
+      margin=1.5cm,
+      includefoot,
+      footskip=30pt,
+    ]{geometry}
+    \usepackage{layout}
+    """)
+
+    result.append(r"\begin{document}")
+    result.append(r"\singlespacing")
+    result.append(r"\begin{multicols}{3}")
+    result.append(r"\begin{enumerate}")
+    result.append(r"""
+        \setlength{\itemsep}{0pt}
+        \setlength{\parskip}{0pt}
+        \setlength{\parsep}{0pt}
+    """)
+
+    for word in words:
+        diphone_info = []
+        for diphone in word["diphones"]:
+            diphone_info.append("".join(diphone))
+        diphone_info = ",".join(diphone_info)
+        diphone_info = escape_latex(diphone_info)
+        diphone_info = f"{{\\color{{lightgray}} {diphone_info}}}"
+        result.append(r"\item " + word["text"] + " " + diphone_info)
+        result.append("")
+
+    result.append(r"\end{enumerate}")
+    result.append(r"\end{multicols}")
+    result.append(r"\end{document}")
+    return result
+
 
 
 if __name__ == "__main__":
 
     with open("words.txt") as f:
-        parse_wordlist(f)
+        wordlist = parse_wordlist(f)
 
+    random.seed(0)
+    random.shuffle(wordlist)
+    with open("words.tex", "w") as f:
+        latex = generate_latex(wordlist)
+        for line in latex:
+            f.write(line + "\n")
+
+    subprocess.run(["pdflatex", "words.tex"])
