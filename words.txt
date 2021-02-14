@@ -1,8 +1,8 @@
 _@,@_ /@/ uh (long)
 _@`,@`_ /@`/ er (long)
 _A,A_ /A/ ah (long)
-_E,E_ /E/ E (long)
-_I,I_ /I/ ee (long)
+_E,E_ /E/ eh (long)
+_I,I_ /I/ "i" in "bit" (long)
 _OI,OI_ /OI/ oy (long "o," short "y")
 _U,U_ /U/ "oo" in "book" (long)
 _aI,aI_ /aI/ aye (long "a", short "ye")
@@ -166,7 +166,7 @@ _f /fAD@`/ father
 _g /gAd/ god
 _h /hAt/ hot
 _j /jAn/ yawn
-_k /kAf/ caugh
+_k /kAf/ caught
 _l,g_ /lAg/ log
 _m,m_ /mAm/ mom
 _n,n_ /nAn/ naan
@@ -217,7 +217,7 @@ baU /baU/ bow (rhyming with "cow")
 beI /beI/ bay
 bi /bi/ bee
 bl /blA/ blah
-boU /boU/ bow (rhyming with "toe")
+boU /boUn/ bone
 br /brAd/ broad
 bu /bu/ boo
 bz /{}bz/ abs
@@ -373,7 +373,7 @@ kw /Akw@`d/ awkward
 k{} /k{}t/ cat
 l@ /l@g/ lug
 l@` /l@`n/ learn
-lA /lAN/ lang
+lA /lAN/ long
 lE /lENT/ length
 lI /lIk/ lick
 lOI /lOIn/ loin
@@ -500,7 +500,7 @@ raI /raI/ rye
 raU /raUdi/ rowdy
 reI /reI/ ray
 ri /rik/ reek
-roU /roU/ row (rhyming with "toe")
+roU /roUd/ road
 ru /ru/ rue
 r{} /r{}t/ rat
 s@ /s@n/ sun
@@ -555,7 +555,7 @@ tSi /tSik/ cheek
 tSoU /tSoUz/ chose
 tSu /tSuz/ choose
 tS{} /tS{}p/ chap
-uD /suD/ sooth
+uD /suD/ soothe
 uT /buT/ booth
 u_ /bu/ boo
 ub /bub/ boob
@@ -566,7 +566,7 @@ um /lum/ loom
 up /hup/ hoop
 ur /mur/ moor
 us /lus/ loose
-ut /but/ boot
+ut /mut/ moot
 uv /muv/ move
 uz /buz/ booze
 v@ /v@g/ vug
