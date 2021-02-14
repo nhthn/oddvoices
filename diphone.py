@@ -168,12 +168,7 @@ class DiphoneDatabase:
                     start, end, text = entries
                     start = float(start)
                     end = float(end)
-                    text = text.split()
-                    try:
-                        text = tuple(phonology.parse_pronunciation(text[0]) + text[1:])
-                    except RuntimeError as e:
-                        print(seconds_to_timestamp(start))
-                        raise e from None
+                    text = tuple(phonology.parse_pronunciation(text))
 
                     self.segments[text] = {
                         "start_frame": int(float(start) * self.rate),
@@ -233,13 +228,6 @@ class DiphoneDatabase:
 
 
     def say_segment(self, segment_name, f0=200.0, duration=None, formant_shift=1.0):
-        if len(segment_name) == 1 and segment_name[0] in phonology.DIPHTHONGS:
-            return self.say_segment(
-                segment_name[0],
-                duration=duration,
-                f0=f0,
-                formant_shift=formant_shift,
-            )
         info = self.segments[segment_name]
         start_frame = info["start_frame"]
         end_frame = info["end_frame"]
