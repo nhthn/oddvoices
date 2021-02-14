@@ -88,8 +88,7 @@ class Segment:
         period_count: int = int(self.duration * self.out_f0)
         self.frames = []
         for i in range(period_count):
-            t = i / period_count
-            frame = self.original_frames[int(t * len(self.original_frames))]
+            frame = self.original_frames[int(i * self.in_f0 / self.out_f0) % len(self.original_frames)]
             self.frames.append(frame)
 
     @property
@@ -296,7 +295,6 @@ if __name__ == "__main__":
 
     database = DiphoneDatabase(
         "nathan_h_corpus.wav", "nathan_h_corpus.txt",
-        expected_f0=midi_note_to_hertz(51),
-    )
+        expected_f0=midi_note_to_hertz(51),)
     with open(sys.argv[1]) as f:
         database.sing(json.load(f), "out.wav")
