@@ -1,9 +1,9 @@
 {
     "time_scale": 0.3,
     "formant_shift": 1.1,
-    "transpose": 5,
+    "transpose": 0,
     "notes": [
-        {"midi_note": 57, "phonemes": "meIr"},
+        {"midi_note": 57, "phonemes": "mEr"},
         {"midi_note": 55, "phonemes": "ri"},
         {"midi_note": 53, "phonemes": "h{}d"},
         {"midi_note": 55, "phonemes": "@"},

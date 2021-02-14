@@ -234,18 +234,11 @@ class DiphoneDatabase:
 
     def say_segment(self, segment_name, f0=200.0, duration=None, formant_shift=1.0):
         if len(segment_name) == 1 and segment_name[0] in phonology.DIPHTHONGS:
-            return (
-                self.say_segment(
-                    (segment_name[0], "stable"),
-                    duration=duration,
-                    f0=f0,
-                    formant_shift=formant_shift,
-                )
-                + self.say_segment(
-                    (segment_name[0], "transition"),
-                    f0=f0,
-                    formant_shift=formant_shift,
-                )
+            return self.say_segment(
+                segment_name[0],
+                duration=duration,
+                f0=f0,
+                formant_shift=formant_shift,
             )
         info = self.segments[segment_name]
         start_frame = info["start_frame"]
@@ -314,9 +307,8 @@ if __name__ == "__main__":
     import json
 
     database = DiphoneDatabase(
-        "STE-049.wav",
-        "STE-049-labels.txt",
-        expected_f0=midi_note_to_hertz(53),
+        "nathan_h_corpus.wav", "nathan_h_corpus.txt",
+        expected_f0=midi_note_to_hertz(51),
     )
     with open(sys.argv[1]) as f:
         database.sing(json.load(f), "out.wav")
