@@ -15,6 +15,19 @@
         {"midi_note": 55, "phonemes": "l{}m", "duration": 2},
         {"midi_note": 57, "phonemes": "lId"},
         {"midi_note": 60, "phonemes": "@l"},
-        {"midi_note": 60, "phonemes": "l{}m", "duration": 2}
+        {"midi_note": 60, "phonemes": "l{}m", "duration": 2},
+        {"midi_note": 57, "phonemes": "mEr"},
+        {"midi_note": 55, "phonemes": "ri"},
+        {"midi_note": 53, "phonemes": "h{}d"},
+        {"midi_note": 55, "phonemes": "@"},
+        {"midi_note": 57, "phonemes": "lId"},
+        {"midi_note": 57, "phonemes": "@l"},
+        {"midi_note": 57, "phonemes": "l{}m"},
+        {"midi_note": 57, "phonemes": "its"},
+        {"midi_note": 55, "phonemes": "flis"},
+        {"midi_note": 55, "phonemes": "w@z"},
+        {"midi_note": 57, "phonemes": "waIt"},
+        {"midi_note": 55, "phonemes": "{}z"},
+        {"midi_note": 53, "phonemes": "snoU", "duration": 4}
     ]
 }
