@@ -87,6 +87,48 @@ XSAMPA_TO_IPA = {
     "aU": "aʊ",
 }
 
+ARPABET_TO_XSAMPA = {
+    "AA": "A",
+    "AE": "{}",
+    "AH": "@",
+    "AO": "A",
+    "AW": "aU",
+    "AY": "aI",
+    "B": "b",
+    "CH": "tS",
+    "D": "d",
+    "DH": "D",
+    "EH": "E",
+    "ER": "@`",
+    "EY": "eI",
+    "F": "f",
+    "G": "g",
+    "HH": "h",
+    "IH": "I",
+    "IY": "i",
+    "JH": "dZ",
+    "K": "k",
+    "L": "l",
+    "M": "m",
+    "N": "n",
+    "NG": "N",
+    "OW": "oU",
+    "OY": "OI",
+    "P": "p",
+    "R": "r",
+    "S": "s",
+    "SH": "S",
+    "T": "t",
+    "TH": "T",
+    "UH": "U",
+    "UW": "u",
+    "V": "v",
+    "W": "w",
+    "Y": "j",
+    "Z": "z",
+    "ZH": "Z",
+}
+
 def as_ipa_string(tokens):
     result = []
     for phoneme in tokens:
