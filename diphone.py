@@ -288,13 +288,3 @@ class DiphoneDatabase:
         audio = synthesize_psola(frames)
 
         soundfile.write(out_file, audio, samplerate=self.rate)
-
-if __name__ == "__main__":
-    import sys
-    import json
-
-    database = DiphoneDatabase(
-        "nathan_h_corpus.wav", "nathan_h_corpus.txt",
-        expected_f0=midi_note_to_hertz(51),)
-    with open(sys.argv[1]) as f:
-        database.sing(json.load(f), "out.wav")
