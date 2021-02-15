@@ -5,6 +5,27 @@ import diphone
 
 pronunciation_dict = {}
 
+NOTE_NAMES = ["c", "d", "e", "f", "g", "a", "b"]
+MAJOR_SCALE = [0, 2, 4, 5, 7, 9, 11]
+FLATS = "bf"
+SHARPS = "#s"
+
+def note_string_to_midinote(string):
+    if not 2 <= len(string) <= 3:
+        raise ValueError(f"Note string {string} is not 2-3 characters")
+    octave = int(string[-1])
+    degree = NOTE_NAMES.index(string[0].lower())
+    accidental = 0
+    if len(string) == 3:
+        accidental_string = string[1]
+        if accidental_string in FLATS:
+            accidental = -1
+        elif accidental_string in SHARPS:
+            accidental = 1
+        else:
+            raise ValueError(f"Invalid accidental: {accidental_string}")
+    return 60 + (octave - 4) * 12 + MAJOR_SCALE[degree] + accidental
+
 
 def arpabet_to_xsampa(string):
     if string[-1].isdigit():
@@ -68,8 +89,11 @@ if __name__ == "__main__":
     }
 
     for i, syllable in enumerate(syllables):
+        note = spec["notes"][i]
+        if isinstance(note, str):
+            note = note_string_to_midinote(note)
         music["notes"].append({
-            "midi_note": spec["notes"][i],
+            "midi_note": note,
             "phonemes": "".join(syllable),
             "duration": spec["durations"][i] * 60 / spec.get("bpm", 60)
         })
