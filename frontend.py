@@ -73,7 +73,7 @@ if __name__ == "__main__":
             pronunciation_dict[line[0].lower()] = [arpabet_to_xsampa(x) for x in line[1:]]
 
     syllables = []
-    for word in spec["utterance"].split():
+    for word in spec["text"].split():
         syllables.extend(split_syllables(pronunciation_dict[word]))
 
     database = diphone.DiphoneDatabase(
