@@ -11,7 +11,7 @@ Install Python dependencies:
 
 Run:
 
-    python diphone.py music.json
+    python frontend.py music.json
 
 Audio output is at `out.wav`.
 
