@@ -95,7 +95,7 @@ class Segment:
     def original_duration(self):
         return len(self.original_frames) / self.in_f0
 
-    def crossfade(self, other, duration=0.05):
+    def crossfade(self, other, duration=0.03):
         average_f0 = np.sqrt(self.out_f0 * other.out_f0)
         nominal_crossfade_length = int(duration * average_f0)
         crossfade_length = min([len(self.frames), len(other.frames), nominal_crossfade_length])
