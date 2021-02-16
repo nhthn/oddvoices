@@ -277,6 +277,16 @@ class DiphoneSynth:
             formant_shift=formant_shift,
         )
 
+    def break_unrecognized_diphones(self, phonemes):
+        result = []
+        for i in range(len(phonemes) - 1):
+            diphone = (phonemes[i], phonemes[i + 1])
+            result.append(phonemes[i])
+            if "".join(diphone) not in self.database:
+                result.append("_")
+        result.append(phonemes[-1])
+        return result
+
     def sing(self, music, out_file):
         out_segments = []
         psola_segments = []
@@ -286,6 +296,7 @@ class DiphoneSynth:
             f0 = midi_note_to_hertz(note["midi_note"] + music["transpose"])
 
             phonemes = phonology.normalize_pronunciation(note["phonemes"])
+            phonemes = self.break_unrecognized_diphones(phonemes)
 
             vowel_count = sum([
                 1 if phoneme in phonology.VOWELS else 0
