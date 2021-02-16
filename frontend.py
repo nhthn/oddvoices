@@ -76,10 +76,7 @@ if __name__ == "__main__":
     for word in spec["text"].split():
         syllables.extend(split_syllables(pronunciation_dict[word]))
 
-    database = synth.DiphoneSynth(
-        "nwh/audio.wav", "nwh/labels.txt",
-        expected_f0=synth.midi_note_to_hertz(51),
-    )
+    database = synth.DiphoneSynth("nwh")
 
     music = {
         "time_scale": 1,

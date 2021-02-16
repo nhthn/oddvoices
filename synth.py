@@ -1,3 +1,6 @@
+import json
+import pathlib
+
 import soundfile
 import scipy.signal
 import numpy as np
@@ -145,8 +148,16 @@ def smooth_f0(frames):
 
 class DiphoneSynth:
 
-    def __init__(self, sound_file, label_file, expected_f0):
-        self.expected_f0: float = expected_f0
+    def __init__(self, directory):
+        root = pathlib.Path(directory)
+        sound_file = root / "audio.wav"
+        label_file = root / "labels.txt"
+        info_file = root / "database.json"
+
+        with open(info_file) as f:
+            info = json.load(f)
+
+        self.expected_f0: float = midi_note_to_hertz(info["f0_midi_note"])
         self.bpm: float = 60.0
         self.beat: float = 60 / self.bpm
         self.audio: np.array
