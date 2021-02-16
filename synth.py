@@ -1,3 +1,4 @@
+import logging
 import json
 import pathlib
 
@@ -147,6 +148,103 @@ def smooth_f0(frames):
         k = 1 - (hop_in_seconds * 40)
         f0_midi_note = hertz_to_midi_note(frame.f0) * (1 - k) + f0_midi_note * k
         frame.f0 = midi_note_to_hertz(f0_midi_note)
+
+
+class CorpusAnalyzer:
+
+    def __init__(self, directory):
+        root = pathlib.Path(directory)
+        sound_file = root / "audio.wav"
+        label_file = root / "labels.txt"
+        info_file = root / "database.json"
+
+        with open(info_file) as f:
+            info = json.load(f)
+
+        self.expected_f0: float = midi_note_to_hertz(info["f0_midi_note"])
+        self.audio: np.array
+        self.rate: int
+        self.audio, self.rate = soundfile.read(sound_file)
+
+        self.n_randomized_phases = 30
+        self.randomized_phases = np.exp(np.random.random((self.n_randomized_phases,)) * 2 * np.pi * 1j)
+
+        self.parse_label_file(label_file)
+
+    def parse_label_file(self, label_file):
+        self.markers = {}
+        with open(label_file) as label_file:
+            for line in label_file:
+                entries = line.strip().split(maxsplit=2)
+                if len(entries) == 3:
+                    start, end, text = entries
+                    start = float(start)
+                    end = float(end)
+                    segment_id = tuple(phonology.parse_pronunciation(text))
+
+                    self.markers[segment_id] = {
+                        "start": int(float(start) * self.rate),
+                        "end": int(float(end) * self.rate),
+                    }
+
+    def get_audio_between_markers(self, markers):
+        start_frame = markers["start"]
+        end_frame = markers["end"]
+        return self.audio[start_frame:end_frame]
+
+    def render_database(self):
+        self.database = {}
+        for segment_id in sorted(list(self.markers.keys())):
+            print(segment_id)
+            markers = self.markers[segment_id]
+            segment = self.get_audio_between_markers(markers)
+            frames = self.analyze_psola(segment)
+            self.database["".join(segment_id)] = np.array(frames)
+        return self.database
+
+    def get_instantaneous_f0(self, signal, offset, window_size=2048):
+        unwindowed_frame: np.array = signal[offset:offset + window_size]
+        frame: np.array = unwindowed_frame * scipy.signal.get_window("hann", window_size)
+
+        autocorrelation: np.array = scipy.signal.correlate(frame, frame)
+        autocorrelation = autocorrelation[window_size:]
+        ascending_bins = np.where(np.diff(autocorrelation) >= 0)
+        if len(ascending_bins[0]) == 0:
+            return -1
+        first_ascending_bin = np.min(ascending_bins)
+        measured_period: int = np.argmax(autocorrelation[first_ascending_bin:]) + first_ascending_bin
+        measured_f0 = self.rate / measured_period
+        return measured_f0
+
+    def analyze_psola(self, segment):
+        autocorrelation_window_size: int = 2048
+        period: float = self.rate / self.expected_f0
+        frames = []
+        offset = 0
+        while offset + autocorrelation_window_size < len(segment):
+            f0 = self.get_instantaneous_f0(
+                segment, offset, window_size=autocorrelation_window_size
+            )
+            voiced = self.expected_f0 / 1.5 <= f0 <= self.expected_f0 * 1.5
+            measured_period = self.rate / f0 if voiced else period
+            window_size = int(measured_period * 2)
+
+            frame: np.array = segment[offset:offset + window_size]
+            frame = frame * scipy.signal.get_window("hann", len(frame))
+            frame = scipy.signal.resample(frame, int(period * 2))
+            if voiced:
+                frame = np.fft.rfft(frame)
+                frame[:self.n_randomized_phases] = (
+                    np.abs(frame[:self.n_randomized_phases]) * self.randomized_phases
+                )
+                frame = np.fft.irfft(frame)
+                frame = frame * scipy.signal.get_window("hann", len(frame))
+            if len(frame) < int(period * 2):
+                frame = np.concatenate([frame, np.zeros(int(period * 2) - len(frame))])
+            frames.append(frame)
+            offset += int(measured_period)
+        return frames
+
 
 
 class DiphoneSynth:
@@ -317,3 +415,7 @@ class DiphoneSynth:
         audio = synthesize_psola(frames)
 
         soundfile.write(out_file, audio, samplerate=self.rate)
+
+if __name__ == "__main__":
+    segment_database = CorpusAnalyzer("nwh").render_database()
+    np.savez("segments.npz", **segment_database)
