@@ -194,7 +194,6 @@ class CorpusAnalyzer:
     def render_database(self):
         self.database = {"rate": self.rate, "expected_f0": self.expected_f0}
         for segment_id in sorted(list(self.markers.keys())):
-            print(segment_id)
             markers = self.markers[segment_id]
             segment = self.get_audio_between_markers(markers)
             frames = self.analyze_psola(segment)
@@ -206,8 +205,6 @@ class CorpusAnalyzer:
     def normalize_database(self):
         max_ = 0
         for segment_id in sorted(list(self.markers.keys())):
-            print(segment_id)
-            print(self.database["".join(segment_id)])
             max_ = max(max_, np.max(np.abs(self.database["".join(segment_id)])))
         for segment_id in sorted(list(self.markers.keys())):
             name = "".join(segment_id)
