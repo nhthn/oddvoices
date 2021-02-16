@@ -261,8 +261,7 @@ class DiphoneSynth:
         for note in music["notes"]:
             f0 = midi_note_to_hertz(note["midi_note"] + music["transpose"])
 
-            phonemes = phonology.parse_pronunciation(note["phonemes"])
-            phonemes = phonology.normalize_pronunciation(phonemes)
+            phonemes = phonology.normalize_pronunciation(note["phonemes"])
 
             vowel_count = sum([
                 1 if phoneme in phonology.VOWELS else 0

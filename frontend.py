@@ -74,7 +74,11 @@ if __name__ == "__main__":
 
     syllables = []
     for word in spec["text"].split():
-        syllables.extend(split_syllables(pronunciation_dict[word]))
+        if word.startswith("/"):
+            pronunciation = phonology.parse_pronunciation(word[1:-1])
+        else:
+            pronunciation = pronunciation_dict[word]
+        syllables.extend(split_syllables(pronunciation))
 
     database = synth.DiphoneSynth("nwh")
 
@@ -91,7 +95,7 @@ if __name__ == "__main__":
             note = note_string_to_midinote(note)
         music["notes"].append({
             "midi_note": note,
-            "phonemes": "".join(syllable),
+            "phonemes": syllable,
             "duration": spec["durations"][i] * 60 / spec.get("bpm", 60)
         })
 
