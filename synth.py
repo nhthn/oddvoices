@@ -198,9 +198,21 @@ class CorpusAnalyzer:
             markers = self.markers[segment_id]
             segment = self.get_audio_between_markers(markers)
             frames = self.analyze_psola(segment)
-            self.database["".join(segment_id)] = np.array(frames)
+            self.database["".join(segment_id)] = frames
             self.database["".join(segment_id) + "_original_duration"] = len(frames) / self.expected_f0
+        self.normalize_database()
         return self.database
+
+    def normalize_database(self):
+        max_ = 0
+        for segment_id in sorted(list(self.markers.keys())):
+            print(segment_id)
+            print(self.database["".join(segment_id)])
+            max_ = max(max_, np.max(np.abs(self.database["".join(segment_id)])))
+        for segment_id in sorted(list(self.markers.keys())):
+            name = "".join(segment_id)
+            self.database[name] = self.database[name] * 32767 / max_
+            self.database[name] = self.database[name].astype(np.int16)
 
     def get_instantaneous_f0(self, signal, offset, window_size=2048):
         unwindowed_frame: np.array = signal[offset:offset + window_size]
@@ -237,14 +249,16 @@ class CorpusAnalyzer:
                 frame[:self.n_randomized_phases] = (
                     np.abs(frame[:self.n_randomized_phases]) * self.randomized_phases
                 )
+                frame[0] = 0
                 frame = np.fft.irfft(frame)
                 frame = frame * scipy.signal.get_window("hann", len(frame))
             if len(frame) < int(period * 2):
                 frame = np.concatenate([frame, np.zeros(int(period * 2) - len(frame))])
             frames.append(frame)
             offset += int(measured_period)
-        return frames
-
+        if len(frames) == 0:
+            raise RuntimeError("Zero frames")
+        return np.array(frames)
 
 
 class DiphoneSynth:
@@ -259,7 +273,7 @@ class DiphoneSynth:
             name=segment_id,
             rate=self.rate,
             in_f0=self.expected_f0,
-            frames=self.database["".join(segment_id)],
+            frames=self.database["".join(segment_id)] / 32767,
             out_f0=f0,
             duration=duration,
             original_duration=self.database["".join(segment_id) + "_original_duration"],
@@ -325,6 +339,7 @@ class DiphoneSynth:
         audio = synthesize_psola(frames)
 
         soundfile.write(out_file, audio, samplerate=self.rate)
+
 
 if __name__ == "__main__":
     segment_database = CorpusAnalyzer("nwh").render_database()
