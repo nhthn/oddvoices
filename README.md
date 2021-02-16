@@ -11,6 +11,7 @@ Install Python dependencies:
 
 Run:
 
+    python synth.py
     python frontend.py music.json
 
 Audio output is at `out.wav`.

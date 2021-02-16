@@ -70,6 +70,7 @@ class Segment:
         in_f0: float,
         frames,
         out_f0: float,
+        original_duration: float,
         formant_shift: float = 1.0,
         duration=None
     ):
@@ -79,11 +80,13 @@ class Segment:
         self.out_f0: float = out_f0
         self.formant_shift: float = formant_shift
         self.original_frames = []
-        for wavetable in frames:
-            frame = Frame(self.rate, wavetable, self.out_f0, formant_shift=formant_shift)
+        for i in range(frames.shape[0]):
+            frame = Frame(self.rate, frames[i, :], self.out_f0, formant_shift=formant_shift)
             self.original_frames.append(frame)
         if len(self.original_frames) == 0:
             raise RuntimeError("Empty segment")
+
+        self.original_duration = original_duration
 
         self.duration: float
         if duration is None:
@@ -97,10 +100,6 @@ class Segment:
         for i in range(period_count):
             frame = self.original_frames[int(i * self.in_f0 / self.out_f0) % len(self.original_frames)]
             self.frames.append(frame)
-
-    @property
-    def original_duration(self):
-        return len(self.original_frames) / self.in_f0
 
     def crossfade(self, other, duration=0.03):
         average_f0 = np.sqrt(self.out_f0 * other.out_f0)
@@ -193,13 +192,14 @@ class CorpusAnalyzer:
         return self.audio[start_frame:end_frame]
 
     def render_database(self):
-        self.database = {}
+        self.database = {"rate": self.rate, "expected_f0": self.expected_f0}
         for segment_id in sorted(list(self.markers.keys())):
             print(segment_id)
             markers = self.markers[segment_id]
             segment = self.get_audio_between_markers(markers)
             frames = self.analyze_psola(segment)
             self.database["".join(segment_id)] = np.array(frames)
+            self.database["".join(segment_id) + "_original_duration"] = len(frames) / self.expected_f0
         return self.database
 
     def get_instantaneous_f0(self, signal, offset, window_size=2048):
@@ -249,110 +249,20 @@ class CorpusAnalyzer:
 
 class DiphoneSynth:
 
-    def __init__(self, directory):
-        root = pathlib.Path(directory)
-        sound_file = root / "audio.wav"
-        label_file = root / "labels.txt"
-        info_file = root / "database.json"
+    def __init__(self, database):
+        self.rate = database["rate"]
+        self.expected_f0 = database["expected_f0"]
+        self.database = database
 
-        with open(info_file) as f:
-            info = json.load(f)
-
-        self.expected_f0: float = midi_note_to_hertz(info["f0_midi_note"])
-        self.bpm: float = 60.0
-        self.beat: float = 60 / self.bpm
-        self.audio: np.array
-        self.rate: int
-        self.audio, self.rate = soundfile.read(sound_file)
-
-        self.n_randomized_phases = 30
-        self.randomized_phases = np.exp(np.random.random((self.n_randomized_phases,)) * 2 * np.pi * 1j)
-
-        self.parse_label_file(label_file)
-
-    def parse_label_file(self, label_file):
-        self.segments = {}
-        with open(label_file) as label_file:
-            for line in label_file:
-                entries = line.strip().split(maxsplit=2)
-                if len(entries) == 3:
-                    start, end, text = entries
-                    start = float(start)
-                    end = float(end)
-                    text = tuple(phonology.parse_pronunciation(text))
-
-                    self.segments[text] = {
-                        "start_frame": int(float(start) * self.rate),
-                        "end_frame": int(float(end) * self.rate),
-                    }
-
-    def get_instantaneous_f0(self, signal, offset, window_size=2048):
-        unwindowed_frame: np.array = signal[offset:offset + window_size]
-        frame: np.array = unwindowed_frame * scipy.signal.get_window("hann", window_size)
-
-        autocorrelation: np.array = scipy.signal.correlate(frame, frame)
-        autocorrelation = autocorrelation[window_size:]
-        ascending_bins = np.where(np.diff(autocorrelation) >= 0)
-        if len(ascending_bins[0]) == 0:
-            return -1
-        first_ascending_bin = np.min(ascending_bins)
-        measured_period: int = np.argmax(autocorrelation[first_ascending_bin:]) + first_ascending_bin
-        measured_f0 = self.rate / measured_period
-        return measured_f0
-
-    def analyze_psola(self, segment):
-        autocorrelation_window_size: int = 2048
-        period: float = self.rate / self.expected_f0
-        frames = []
-        offset = 0
-
-        while offset + autocorrelation_window_size < len(segment):
-
-            f0 = self.get_instantaneous_f0(
-                segment, offset, window_size=autocorrelation_window_size
-            )
-
-            voiced = self.expected_f0 / 1.5 <= f0 <= self.expected_f0 * 1.5
-            measured_period = self.rate / f0 if voiced else period
-            window_size = int(measured_period * 2)
-
-            frame: np.array = segment[offset:offset + window_size]
-            frame = frame * scipy.signal.get_window("hann", len(frame))
-            frame = scipy.signal.resample(frame, int(period * 2))
-
-            if voiced:
-                frame = np.fft.rfft(frame)
-                frame[:self.n_randomized_phases] = (
-                    np.abs(frame[:self.n_randomized_phases]) * self.randomized_phases
-                )
-                frame = np.fft.irfft(frame)
-                frame = frame * scipy.signal.get_window("hann", len(frame))
-
-            if len(frame) < int(period * 2):
-                frame = np.concatenate([frame, np.zeros(int(period * 2) - len(frame))])
-
-            frames.append(frame)
-
-            offset += int(measured_period)
-
-        return frames
-
-
-    def say_segment(self, segment_name, f0=200.0, duration=None, formant_shift=1.0):
-        info = self.segments[segment_name]
-        start_frame = info["start_frame"]
-        end_frame = info["end_frame"]
-        segment = self.audio[start_frame:end_frame]
-
-        frames = self.analyze_psola(segment)
-
+    def say_segment(self, segment_id, f0=200.0, duration=None, formant_shift=1.0):
         return Segment(
-            name=segment_name,
+            name=segment_id,
             rate=self.rate,
             in_f0=self.expected_f0,
-            frames=frames,
+            frames=self.database["".join(segment_id)],
             out_f0=f0,
             duration=duration,
+            original_duration=self.database["".join(segment_id) + "_original_duration"],
             formant_shift=formant_shift,
         )
 
@@ -380,7 +290,7 @@ class DiphoneSynth:
                         formant_shift=music["formant_shift"],
                     )
                     syllable_segments.append(segment)
-                if diphone in self.segments:
+                if "".join(diphone) in self.database:
                     segment = self.say_segment(
                         diphone,
                         f0=f0,

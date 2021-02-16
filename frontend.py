@@ -1,4 +1,5 @@
 import json
+import numpy as np
 
 import phonology
 import synth
@@ -80,7 +81,8 @@ if __name__ == "__main__":
             pronunciation = pronunciation_dict[word]
         syllables.extend(split_syllables(pronunciation))
 
-    database = synth.DiphoneSynth("nwh")
+    database = np.load("segments.npz")
+    diphone_synth = synth.DiphoneSynth(database)
 
     music = {
         "time_scale": 1,
@@ -99,4 +101,4 @@ if __name__ == "__main__":
             "duration": spec["durations"][i] * 60 / spec.get("bpm", 60)
         })
 
-    database.sing(music, "out.wav")
+    diphone_synth.sing(music, "out.wav")
