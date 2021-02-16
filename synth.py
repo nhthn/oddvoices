@@ -143,7 +143,7 @@ def smooth_f0(frames):
         frame.f0 = midi_note_to_hertz(f0_midi_note)
 
 
-class DiphoneDatabase:
+class DiphoneSynth:
 
     def __init__(self, sound_file, label_file, expected_f0):
         self.expected_f0: float = expected_f0

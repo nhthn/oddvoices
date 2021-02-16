@@ -1,7 +1,7 @@
 import json
 
 import phonology
-import diphone
+import synth
 
 pronunciation_dict = {}
 
@@ -76,9 +76,9 @@ if __name__ == "__main__":
     for word in spec["text"].split():
         syllables.extend(split_syllables(pronunciation_dict[word]))
 
-    database = diphone.DiphoneDatabase(
-        "nathan_h_corpus.wav", "nathan_h_corpus.txt",
-        expected_f0=diphone.midi_note_to_hertz(51),
+    database = synth.DiphoneSynth(
+        "nwh/audio.wav", "nwh/labels.txt",
+        expected_f0=synth.midi_note_to_hertz(51),
     )
 
     music = {
