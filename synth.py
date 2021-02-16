@@ -328,4 +328,4 @@ class DiphoneSynth:
 
 if __name__ == "__main__":
     segment_database = CorpusAnalyzer("nwh").render_database()
-    np.savez("segments.npz", **segment_database)
+    np.savez_compressed("segments.npz", **segment_database)
