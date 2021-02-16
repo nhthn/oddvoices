@@ -64,6 +64,7 @@ class Segment:
 
     def __init__(
         self,
+        name,
         rate: float,
         in_f0: float,
         frames,
@@ -71,6 +72,7 @@ class Segment:
         formant_shift: float = 1.0,
         duration=None
     ):
+        self.name = name
         self.rate: float = rate
         self.in_f0: float = in_f0
         self.out_f0: float = out_f0
@@ -88,6 +90,7 @@ class Segment:
         else:
             self.duration = duration
 
+    def compute_frames(self):
         period_count: int = int(self.duration * self.out_f0)
         self.frames = []
         for i in range(period_count):
@@ -245,20 +248,22 @@ class DiphoneSynth:
 
         frames = self.analyze_psola(segment)
 
-        return [Segment(
+        return Segment(
+            name=segment_name,
             rate=self.rate,
             in_f0=self.expected_f0,
             frames=frames,
             out_f0=f0,
             duration=duration,
             formant_shift=formant_shift,
-        )]
+        )
 
     def sing(self, music, out_file):
         out_segments = []
-
         psola_segments = []
+
         for note in music["notes"]:
+            syllable_segments = []
             f0 = midi_note_to_hertz(note["midi_note"] + music["transpose"])
 
             phonemes = phonology.normalize_pronunciation(note["phonemes"])
@@ -267,8 +272,6 @@ class DiphoneSynth:
                 1 if phoneme in phonology.VOWELS else 0
                 for phoneme in phonemes
             ])
-            vowel_duration = note.get("duration", 1) / vowel_count
-            vowel_duration *= music["time_scale"]
 
             for i in range(len(phonemes) - 1):
                 diphone = (phonemes[i], phonemes[i + 1])
@@ -276,17 +279,33 @@ class DiphoneSynth:
                     segment = self.say_segment(
                         (phonemes[i],),
                         f0=f0,
-                        duration=vowel_duration,
                         formant_shift=music["formant_shift"],
                     )
-                    psola_segments.extend(segment)
+                    syllable_segments.append(segment)
                 if diphone in self.segments:
                     segment = self.say_segment(
                         diphone,
                         f0=f0,
                         formant_shift=music["formant_shift"],
                     )
-                    psola_segments.extend(segment)
+                    syllable_segments.append(segment)
+
+            diphones_duration = 0
+            for segment in syllable_segments:
+                if len(segment.name) == 2:
+                    diphones_duration += segment.duration
+            total_duration = note.get("duration", 1)
+            vowels_duration = total_duration - diphones_duration
+            vowel_duration = vowels_duration / vowel_count
+
+            for segment in syllable_segments:
+                if len(segment.name) == 1:
+                    segment.duration = vowel_duration
+
+            psola_segments.extend(syllable_segments)
+
+        for segment in psola_segments:
+            segment.compute_frames()
 
         for i in range(len(psola_segments) - 1):
             psola_segments[i].crossfade(psola_segments[i + 1])
