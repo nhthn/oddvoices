@@ -35,7 +35,8 @@ class Synth:
 
         self.grains = []
 
-        self.segment_queue = ["_h", "hE", "E", "El", "loU", "oU", "oU_"]
+        self.segment_queue = ["_h", "hE", "E", "El", "|", "loU", "oU", "oU_"]
+        self.new_syllable()
         self.new_segment()
 
     def start_grain(self):
@@ -50,12 +51,18 @@ class Synth:
         )
         self.grains.append(grain)
 
+    def new_syllable(self):
+        self.locked_frequency = self.frequency
+
     def new_segment(self):
         self.segment_time = 0.0
         if len(self.segment_queue) == 0:
             self.segment_id = None
             self.segment_length = 0.0
             return
+        if self.segment_queue[0] == "|":
+            self.segment_queue.pop(0)
+            self.new_syllable()
         self.segment_id = self.segment_queue.pop(0)
         self.segment_length = self.database[self.segment_id].shape[0] / self.database["expected_f0"]
         self.vowel = self.segment_id in phonology.VOWELS
@@ -64,7 +71,7 @@ class Synth:
         self.grains = [grain for grain in self.grains if grain.playing]
         result = sum([grain.process() for grain in self.grains])
 
-        self.phase += self.frequency / self.rate
+        self.phase += self.locked_frequency / self.rate
         if self.phase >= 1:
             self.start_grain()
             self.phase -= 1
@@ -84,6 +91,7 @@ if __name__ == "__main__":
     result = []
     for i in range(int(1.0 * synth.rate)):
         result.append(synth.process())
+    synth.frequency *= 1.5
     synth.new_segment()
     for i in range(int(1.0 * synth.rate)):
         result.append(synth.process())
