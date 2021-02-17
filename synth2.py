@@ -35,11 +35,7 @@ class Synth:
 
         self.grains = []
 
-        self.segment_queue = [
-            "_h", "hE", "E", "El",
-            "|", "loU", "oU", "oU_",
-            "|", "_w", "w@`", "@`", "@`l", "ld", "d_",
-        ]
+        self.segment_queue = []
         self.new_syllable()
         self.new_segment()
 
@@ -92,6 +88,14 @@ if __name__ == "__main__":
 
     database = np.load("segments.npz")
     synth = Synth(database)
+
+    synth.segment_queue = [
+        "_h", "hE", "E", "El",
+        "|", "loU", "oU", "oU_",
+        "|", "_w", "w@`", "@`", "@`l", "ld", "d_",
+    ]
+    synth.frequency = 100
+
     result = []
     for i in range(int(1.0 * synth.rate)):
         result.append(synth.process())
