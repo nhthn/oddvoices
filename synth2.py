@@ -1,6 +1,7 @@
 import numpy as np
 import soundfile
 
+import phonology
 
 class Grain:
 
@@ -32,11 +33,15 @@ class Synth:
         self.frequency = 100
         self.phase = 0.0
 
-        self.segment_id = "A"
-        self.segment_time = 0.0
         self.grains = []
 
+        self.segment_queue = ["_h", "hE", "E", "El", "loU", "oU", "oU_"]
+        self.new_segment()
+
     def start_grain(self):
+        if self.segment_id is None:
+            return
+
         frame_index = int(self.segment_time * self.database["expected_f0"])
         frame_index = frame_index % self.database[self.segment_id].shape[0]
         grain = Grain(
@@ -44,6 +49,16 @@ class Synth:
             self.frame_length
         )
         self.grains.append(grain)
+
+    def new_segment(self):
+        self.segment_time = 0.0
+        if len(self.segment_queue) == 0:
+            self.segment_id = None
+            self.segment_length = 0.0
+            return
+        self.segment_id = self.segment_queue.pop(0)
+        self.segment_length = self.database[self.segment_id].shape[0] / self.database["expected_f0"]
+        self.vowel = self.segment_id in phonology.VOWELS
 
     def process(self):
         self.grains = [grain for grain in self.grains if grain.playing]
@@ -55,6 +70,8 @@ class Synth:
             self.phase -= 1
 
         self.segment_time += 1 / self.rate
+        if self.segment_time >= self.segment_length and not self.vowel:
+            self.new_segment()
 
         return result
 
@@ -65,7 +82,13 @@ if __name__ == "__main__":
     database = np.load("segments.npz")
     synth = Synth(database)
     result = []
-    for i in range(int(3.0 * synth.rate)):
+    for i in range(int(1.0 * synth.rate)):
+        result.append(synth.process())
+    synth.new_segment()
+    for i in range(int(1.0 * synth.rate)):
+        result.append(synth.process())
+    synth.new_segment()
+    for i in range(int(1.0 * synth.rate)):
         result.append(synth.process())
 
     soundfile.write("out.wav", result, samplerate=int(synth.rate))
