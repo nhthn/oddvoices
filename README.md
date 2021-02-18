@@ -11,7 +11,7 @@ Install Python dependencies:
 
 Analyze segments and generate the database file at `segments.npz` (you only need to do this once):
 
-    python synth.py
+    python corpus.py
 
 Sing:
 
@@ -31,7 +31,9 @@ In a quiet recording environment, record all words in `words.pdf` in order. I re
 
 All words should be sung in monotone without vibrato. Pick a note in a comfortable register where you can safely avoid cracks, vocal fries, and other artifacts, and keep that note fixed through the entire corpus. Poor intonation is not a big deal, but keep within 50 cents of the target frequency. It is fine to do multiple takes for a word.
 
-Any word tagged "long" is a vowel. Make these a few seconds long. For diphthongs, always sing with a long stable region and a short transition at the end. For example, the diphone `aU` should sound like a long "aah" followed by a short "ow."
+Sing at a moderate pace and anunciate consonants well.
+
+Any word tagged "(long)" is an isolated vowel. Make these a few seconds long. For diphthongs, always sing with a long stable region and a short transition at the end. For example, the diphone `aU` should sound like a long "aah" followed by a short "ow."
 
 ## Processing and tagging the corpus
 
