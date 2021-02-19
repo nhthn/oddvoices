@@ -62,6 +62,8 @@ class CorpusAnalyzer:
             markers = self.markers[segment_id]
             segment = self.get_audio_between_markers(markers)
             frames = self.analyze_psola(segment)
+            if len(segment_id) == 1 and segment_id[0] in phonology.VOWELS:
+                frames = self.make_loopable(frames)
             self.database["".join(segment_id)] = frames
             self.database["".join(segment_id) + "_original_duration"] = len(frames) / self.expected_f0
         self.normalize_database()
@@ -121,6 +123,17 @@ class CorpusAnalyzer:
         if len(frames) == 0:
             raise RuntimeError("Zero frames")
         return np.array(frames)
+
+    def make_loopable(self, frames):
+        n_old = frames.shape[0]
+        if n_old % 2 == 1:
+            n_old -= 1
+        n_new = n_old // 2
+        t = np.linspace(0, 1, n_new, endpoint=False)
+        return (
+            frames[:n_new, :] * t[:, np.newaxis]
+            + frames[n_new:n_old, :] * (1 - t[:, np.newaxis])
+        )
 
 
 if __name__ == "__main__":

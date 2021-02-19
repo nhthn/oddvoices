@@ -1,5 +1,6 @@
-RT synth: gate parameter for note off
 RT synth: Crossfades
+
+RT synth: gate parameter for note off
 
 Rests (pitch 0)
 Melismas (negative pitch)
@@ -7,3 +8,4 @@ Fix rhythm issues caused by crossfades
 
 x Fix rhythm issues caused by consonants
 x Real-time synth
+x Corpus: loopable vowels
