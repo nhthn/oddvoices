@@ -79,7 +79,6 @@ class Synth:
         self.locked_frequency = self.frequency
 
     def new_segment(self):
-        self.segment_time = 0.0
         if len(self.segment_queue) == 0:
             self.segment_id = None
             self.segment_length = 0.0
@@ -97,6 +96,7 @@ class Synth:
             self.crossfade = 1
             self.crossfade_ramp = -1 / (self.crossfade_length * self.rate)
 
+        self.segment_time = 0.0
         self.segment_id = self.segment_queue.pop(0)
         self.segment_length = self.database[self.segment_id].shape[0] / self.database["expected_f0"]
         self.vowel = self.segment_id in phonology.VOWELS
@@ -136,11 +136,9 @@ if __name__ == "__main__":
     result = []
     for i in range(int(1.0 * synth.rate)):
         result.append(synth.process())
-    synth.frequency *= 9/8
     synth.new_segment()
     for i in range(int(1.0 * synth.rate)):
         result.append(synth.process())
-    synth.frequency *= 9/8
     synth.new_segment()
     for i in range(int(1.0 * synth.rate)):
         result.append(synth.process())
