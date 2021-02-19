@@ -83,7 +83,7 @@ class Synth:
             self.segment_id = None
             self.segment_length = 0.0
             return
-        if self.segment_queue[0] == "|":
+        if self.segment_queue[0] == "-":
             self.segment_queue.pop(0)
             self.new_syllable()
 
@@ -127,23 +127,17 @@ if __name__ == "__main__":
     synth = Synth(database)
 
     synth.segment_queue = [
-        "_h", "hE", "E", "El",
-        "|", "loU", "oU", "oU_",
-        "|", "_w", "w@`", "@`", "@`l", "ld", "d_",
+        "-", "_h", "hE", "E", "El",
+        "-", "loU", "oU", "oU_",
+        "-", "_w", "w@`", "@`", "@`l", "ld", "d_",
     ]
-    synth.frequency = 100
+    synth.frequency = 150
 
     result = []
-    for i in range(int(1.0 * synth.rate)):
-        result.append(synth.process())
-    synth.new_segment()
-    for i in range(int(1.0 * synth.rate)):
-        result.append(synth.process())
-    synth.new_segment()
-    for i in range(int(1.0 * synth.rate)):
-        result.append(synth.process())
-    synth.new_segment()
-    for i in range(int(1.0 * synth.rate)):
-        result.append(synth.process())
+
+    for duration in range(6):
+        for i in range(int(2 * synth.rate)):
+            result.append(synth.process())
+        synth.new_segment()
 
     soundfile.write("out.wav", result, samplerate=int(synth.rate))

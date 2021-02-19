@@ -1,5 +1,3 @@
-RT synth: Crossfades
-
 RT synth: gate parameter for note off
 
 Rests (pitch 0)
@@ -9,3 +7,4 @@ Fix rhythm issues caused by crossfades
 x Fix rhythm issues caused by consonants
 x Real-time synth
 x Corpus: loopable vowels
+x RT synth: Crossfades
