@@ -3,6 +3,11 @@ import soundfile
 
 import phonology
 
+
+def midi_note_to_hertz(midi_note):
+    return 440 * 2 ** ((midi_note - 69) / 12)
+
+
 class Grain:
 
     def __init__(self, frame, old_frame, frame_length, crossfade):
@@ -30,16 +35,18 @@ class Synth:
     def __init__(self, database):
         self.database = database
         self.rate: float = float(self.database["rate"])
-
         self.max_frequency = 2000
         self.frame_length = self.database["A"].shape[1]
+        self.crossfade_length = 0.03
 
-        self.frequency = 100
+        self.status = "inactive"
+        self.note_on_queue = []
+        self.pending_note_off = False
+
+        self.frequency = 0
         self.phase = 0.0
 
         self.grains = []
-
-        self.crossfade_length = 0.03
 
         self.segment_id = None
         self.segment_time = 0.0
@@ -76,16 +83,23 @@ class Synth:
         self.grains.append(grain)
 
     def new_syllable(self):
-        self.locked_frequency = self.frequency
+        if len(self.note_on_queue) == 0:
+            return
+        self.frequency = self.note_on_queue.pop(0)
 
     def new_segment(self):
         if len(self.segment_queue) == 0:
+            self.status = "inactive"
             self.segment_id = None
             self.segment_length = 0.0
             return
         if self.segment_queue[0] == "-":
             self.segment_queue.pop(0)
-            self.new_syllable()
+            if len(self.note_on_queue) != 0:
+                self.new_syllable()
+            else:
+                self.status = "inactive"
+                return
 
         self.old_segment_id = self.segment_id
         self.old_segment_time = self.segment_time
@@ -102,12 +116,20 @@ class Synth:
         self.vowel = self.segment_id in phonology.VOWELS
 
     def process(self):
+        if self.status == "inactive":
+            if len(self.note_on_queue) != 0:
+                self.status = "active"
+                self.new_segment()
+            else:
+                return 0.0
+
         self.grains = [grain for grain in self.grains if grain.playing]
         result = sum([grain.process() for grain in self.grains])
 
-        self.phase += self.locked_frequency / self.rate
+        self.phase += self.frequency / self.rate
         if self.phase >= 1:
-            self.start_grain()
+            if self.status == "active":
+                self.start_grain()
             self.phase -= 1
 
         self.crossfade = max(self.crossfade + self.crossfade_ramp, 0.0)
@@ -116,8 +138,18 @@ class Synth:
         self.segment_time += 1 / self.rate
         if self.segment_time >= self.segment_length - self.crossfade_length and not self.vowel:
             self.new_segment()
+        elif self.vowel and self.pending_note_off:
+            self.pending_note_off = False
+            self.new_segment()
 
         return result
+
+    def note_on(self, frequency):
+        self.pending_note_off = False
+        self.note_on_queue.append(frequency)
+
+    def note_off(self):
+        self.pending_note_off = True
 
 
 if __name__ == "__main__":
@@ -131,13 +163,19 @@ if __name__ == "__main__":
         "-", "loU", "oU", "oU_",
         "-", "_w", "w@`", "@`", "@`l", "ld", "d_",
     ]
-    synth.frequency = 150
 
     result = []
 
-    for duration in range(6):
-        for i in range(int(2 * synth.rate)):
+    durations = [0.5, 0.5, 0.5]
+    trim_amounts = [0.2, 0.3, 0.25]
+
+    for i, duration in enumerate(durations):
+        trim_amount = trim_amounts[i]
+        synth.note_on(200)
+        for i in range(int((duration - trim_amount) * synth.rate)):
             result.append(synth.process())
-        synth.new_segment()
+        synth.note_off()
+        for i in range(int(trim_amount * synth.rate)):
+            result.append(synth.process())
 
     soundfile.write("out.wav", result, samplerate=int(synth.rate))
