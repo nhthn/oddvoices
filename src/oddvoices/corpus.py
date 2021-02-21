@@ -3,7 +3,7 @@ import pathlib
 import soundfile
 import scipy.signal
 import numpy as np
-import phonology
+import oddvoices.phonology
 
 def midi_note_to_hertz(midi_note):
     return 440 * 2 ** ((midi_note - 69) / 12)
@@ -44,7 +44,7 @@ class CorpusAnalyzer:
                     start, end, text = entries
                     start = float(start)
                     end = float(end)
-                    segment_id = tuple(phonology.parse_pronunciation(text))
+                    segment_id = tuple(oddvoices.phonology.parse_pronunciation(text))
 
                     self.markers[segment_id] = {
                         "start": int(float(start) * self.rate),
@@ -62,7 +62,7 @@ class CorpusAnalyzer:
             markers = self.markers[segment_id]
             segment = self.get_audio_between_markers(markers)
             frames = self.analyze_psola(segment)
-            if len(segment_id) == 1 and segment_id[0] in phonology.VOWELS:
+            if len(segment_id) == 1 and segment_id[0] in oddvoices.phonology.VOWELS:
                 frames = self.make_loopable(frames)
             self.database["".join(segment_id)] = frames
             self.database["".join(segment_id) + "_original_duration"] = len(frames) / self.expected_f0
@@ -136,6 +136,13 @@ class CorpusAnalyzer:
         )
 
 
-if __name__ == "__main__":
-    segment_database = CorpusAnalyzer("nwh").render_database()
-    np.savez_compressed("segments.npz", **segment_database)
+def main():
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("in_dir")
+    parser.add_argument("out_file")
+    args = parser.parse_args()
+
+    segment_database = CorpusAnalyzer(args.in_dir).render_database()
+    np.savez_compressed(args.out_file, **segment_database)

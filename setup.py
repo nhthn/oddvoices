@@ -12,7 +12,11 @@ setuptools.setup(
     install_requires=["numpy", "scipy", "soundfile"],
     entry_points={
         "console_scripts": [
-            "sing = oddvoices.frontend:main"
-        ]
+            "sing = oddvoices.frontend:main",
+            "oddvoices-compile = oddvoices.corpus:main",
+        ],
+    },
+    package_data={
+        "oddvoices": ["cmudict-0.7b"],
     }
 )
