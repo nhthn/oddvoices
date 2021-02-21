@@ -1,7 +1,7 @@
 import numpy as np
 import soundfile
 
-import phonology
+import oddvoices.phonology
 
 
 def midi_note_to_hertz(midi_note):
@@ -111,7 +111,7 @@ class Synth:
         self.segment_time = 0.0
         self.segment_id = self.segment_queue.pop(0)
         self.segment_length = self.database[self.segment_id].shape[0] / self.database["expected_f0"]
-        self.vowel = self.segment_id in phonology.VOWELS
+        self.vowel = self.segment_id in oddvoices.phonology.VOWELS
 
     def process(self):
         if self.status == "inactive":
@@ -155,9 +155,9 @@ def sing(synth, music):
     segments = []
     for syllable in music["syllables"]:
         segments.append("-")
-        syllable = phonology.normalize_pronunciation(syllable)
+        syllable = oddvoices.phonology.normalize_pronunciation(syllable)
         for i in range(len(syllable) - 1):
-            if syllable[i] in phonology.VOWELS:
+            if syllable[i] in oddvoices.phonology.VOWELS:
                 segments.append(syllable[i])
             diphone = syllable[i] + syllable[i + 1]
             if diphone in synth.database:

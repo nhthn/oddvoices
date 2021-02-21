@@ -2,8 +2,9 @@ import json
 import numpy as np
 import soundfile
 
-import phonology
-import synth2
+import oddvoices.utils
+import oddvoices.phonology
+import oddvoices.synth2
 
 pronunciation_dict = {}
 
@@ -31,8 +32,8 @@ def note_string_to_midinote(string):
 
 def arpabet_to_xsampa(string):
     if string[-1].isdigit():
-        return phonology.ARPABET_TO_XSAMPA[string[:-1]]
-    return phonology.ARPABET_TO_XSAMPA[string]
+        return oddvoices.phonology.ARPABET_TO_XSAMPA[string[:-1]]
+    return oddvoices.phonology.ARPABET_TO_XSAMPA[string]
 
 
 def split_syllables(word):
@@ -47,12 +48,12 @@ def split_syllables(word):
         result.append(current_syllable)
     new_syllable()
     for phoneme in word:
-        if phoneme in phonology.VOWELS:
+        if phoneme in oddvoices.phonology.VOWELS:
             if current_syllable_has_vowel:
                 new_syllable()
             current_syllable_has_vowel = True
         else:
-            if current_syllable_has_vowel and current_syllable[-1] in phonology.CONSONANTS:
+            if current_syllable_has_vowel and current_syllable[-1] in oddvoices.phonology.CONSONANTS:
                 new_syllable()
         current_syllable.append(phoneme)
 
@@ -61,13 +62,14 @@ def split_syllables(word):
 
     return result
 
-if __name__ == "__main__":
+
+def main():
     import sys
 
     with open(sys.argv[1]) as f:
         spec = json.load(f)
 
-    with open("cmudict-0.7b", encoding="windows-1252") as f:
+    with open(oddvoices.utils.BASE_DIR / "cmudict-0.7b", encoding="windows-1252") as f:
         for line in f:
             if line.startswith(";;;"):
                 continue
@@ -77,13 +79,13 @@ if __name__ == "__main__":
     syllables = []
     for word in spec["text"].split():
         if word.startswith("/"):
-            pronunciation = phonology.parse_pronunciation(word[1:-1])
+            pronunciation = oddvoices.phonology.parse_pronunciation(word[1:-1])
         else:
             pronunciation = pronunciation_dict[word]
         syllables.extend(split_syllables(pronunciation))
 
     database = np.load("segments.npz")
-    synth = synth2.Synth(database)
+    synth = oddvoices.synth2.Synth(database)
 
     music = {
         "syllables": [],
@@ -100,5 +102,5 @@ if __name__ == "__main__":
             "duration": spec["durations"][i] * 60 / spec.get("bpm", 60)
         })
 
-    result = synth2.sing(synth, music)
+    result = oddvoices.synth2.sing(synth, music)
     soundfile.write("out.wav", result, samplerate=int(synth.rate))

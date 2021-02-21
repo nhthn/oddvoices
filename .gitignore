@@ -10,3 +10,5 @@ out.wav
 
 *.aup
 *_data
+
+*.egg-info
