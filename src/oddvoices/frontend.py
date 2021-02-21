@@ -62,38 +62,31 @@ def split_syllables(word):
 
     return result
 
-
-def main():
-    import argparse
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("voice_npz")
-    parser.add_argument("music_file")
-    parser.add_argument("out_file")
-
-    args = parser.parse_args()
-
-    music_file = args.music_file
-
-    with open(music_file) as f:
-        spec = json.load(f)
-
+def read_cmu_dict():
     with open(oddvoices.utils.BASE_DIR / "cmudict-0.7b", encoding="windows-1252") as f:
         for line in f:
             if line.startswith(";;;"):
                 continue
             line = line.split()
             pronunciation_dict[line[0].lower()] = [arpabet_to_xsampa(x) for x in line[1:]]
+    return pronunciation_dict
 
+
+def pronounce_and_split_syllables(text):
+    pronunciation_dict = read_cmu_dict()
     syllables = []
-    for word in spec["text"].split():
+    for word in text.split():
         if word.startswith("/"):
             pronunciation = oddvoices.phonology.parse_pronunciation(word[1:-1])
         else:
-            pronunciation = pronunciation_dict[word]
+            pronunciation = pronunciation_dict[word.lower()]
         syllables.extend(split_syllables(pronunciation))
+    return syllables
 
-    database = np.load(args.voice_npz)
+def sing(voice_npz, spec, out_file):
+    syllables = pronounce_and_split_syllables(spec["text"])
+
+    database = np.load(voice_npz)
     synth = oddvoices.synth2.Synth(database)
 
     music = {
@@ -112,4 +105,21 @@ def main():
         })
 
     result = oddvoices.synth2.sing(synth, music)
-    soundfile.write(args.out_file, result, samplerate=int(synth.rate))
+    soundfile.write(out_file, result, samplerate=int(synth.rate))
+
+
+def main():
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("voice_npz")
+    parser.add_argument("music_file")
+    parser.add_argument("out_file")
+
+    args = parser.parse_args()
+
+    music_file = args.music_file
+    with open(music_file) as f:
+        music = json.load(f)
+
+    sing(args.voice_npz, music, args.out_file)
