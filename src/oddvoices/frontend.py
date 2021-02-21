@@ -64,9 +64,18 @@ def split_syllables(word):
 
 
 def main():
-    import sys
+    import argparse
 
-    with open(sys.argv[1]) as f:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("voice_npz")
+    parser.add_argument("music_file")
+    parser.add_argument("out_file")
+
+    args = parser.parse_args()
+
+    music_file = args.music_file
+
+    with open(music_file) as f:
         spec = json.load(f)
 
     with open(oddvoices.utils.BASE_DIR / "cmudict-0.7b", encoding="windows-1252") as f:
@@ -84,7 +93,7 @@ def main():
             pronunciation = pronunciation_dict[word]
         syllables.extend(split_syllables(pronunciation))
 
-    database = np.load("segments.npz")
+    database = np.load(args.voice_npz)
     synth = oddvoices.synth2.Synth(database)
 
     music = {
@@ -103,4 +112,4 @@ def main():
         })
 
     result = oddvoices.synth2.sing(synth, music)
-    soundfile.write("out.wav", result, samplerate=int(synth.rate))
+    soundfile.write(args.out_file, result, samplerate=int(synth.rate))
