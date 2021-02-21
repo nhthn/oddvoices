@@ -490,6 +490,7 @@ pr /prAm/ prom
 ps /hAps/ hops
 pu /pul/ pool
 p{} /p{}k/ pack
+r_ /keIr/ care
 r@ /r@N/ rung
 rA /rAk/ rock
 rE /rEk/ wreck
