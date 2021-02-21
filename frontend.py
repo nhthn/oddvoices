@@ -1,8 +1,9 @@
 import json
 import numpy as np
+import soundfile
 
 import phonology
-import synth
+import synth2
 
 pronunciation_dict = {}
 
@@ -82,23 +83,22 @@ if __name__ == "__main__":
         syllables.extend(split_syllables(pronunciation))
 
     database = np.load("segments.npz")
-    diphone_synth = synth.DiphoneSynth(database)
+    synth = synth2.Synth(database)
 
     music = {
-        "time_scale": 1,
-        "formant_shift": 1.0,
-        "transpose": 0,
-        "notes": []
+        "syllables": [],
+        "notes": [],
     }
 
     for i, syllable in enumerate(syllables):
         note = spec["notes"][i]
         if isinstance(note, str):
             note = note_string_to_midinote(note)
+        music["syllables"].append(syllable)
         music["notes"].append({
-            "midi_note": note,
-            "phonemes": syllable,
+            "pitch": note,
             "duration": spec["durations"][i] * 60 / spec.get("bpm", 60)
         })
 
-    diphone_synth.sing(music, "out.wav")
+    result = synth2.sing(synth, music)
+    soundfile.write("out.wav", result, samplerate=int(synth.rate))

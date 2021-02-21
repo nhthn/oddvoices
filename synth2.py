@@ -40,7 +40,7 @@ class Synth:
         self.crossfade_length = 0.03
 
         self.status = "inactive"
-        self.note_on_queue = []
+        self.gate = False
         self.pending_note_off = False
 
         self.frequency = 0
@@ -83,9 +83,7 @@ class Synth:
         self.grains.append(grain)
 
     def _new_syllable(self):
-        if len(self.note_on_queue) == 0:
-            return
-        self.frequency = self.note_on_queue.pop(0)
+        pass
 
     def _new_segment(self):
         if len(self.segment_queue) == 0:
@@ -95,7 +93,7 @@ class Synth:
             return
         if self.segment_queue[0] == "-":
             self.segment_queue.pop(0)
-            if len(self.note_on_queue) != 0:
+            if self.gate:
                 self._new_syllable()
             else:
                 self.status = "inactive"
@@ -117,7 +115,7 @@ class Synth:
 
     def process(self):
         if self.status == "inactive":
-            if len(self.note_on_queue) != 0:
+            if self.gate:
                 self.status = "active"
                 self._new_segment()
             else:
@@ -146,10 +144,45 @@ class Synth:
 
     def note_on(self, frequency):
         self.pending_note_off = False
-        self.note_on_queue.append(frequency)
+        self.frequency = frequency
+        self.gate = True
 
     def note_off(self):
         self.pending_note_off = True
+
+
+def sing(synth, music):
+    segments = []
+    for syllable in music["syllables"]:
+        segments.append("-")
+        syllable = phonology.normalize_pronunciation(syllable)
+        for i in range(len(syllable) - 1):
+            if syllable[i] in phonology.VOWELS:
+                segments.append(syllable[i])
+            diphone = syllable[i] + syllable[i + 1]
+            if diphone in synth.database:
+                segments.append(diphone)
+            else:
+                if syllable[i] + "_" in synth.database:
+                    segments.append(syllable[i] + "_")
+                if "_" + syllable[i + 1] in synth.database:
+                    segments.append("_" + syllable[i + 1])
+
+    synth.segment_queue = segments
+
+    result = []
+    for note in music["notes"]:
+        frequency = midi_note_to_hertz(note["pitch"])
+        duration = note["duration"]
+        trim_amount = note.get("trim_amount", 0.1)
+        synth.note_on(frequency)
+        for i in range(int((duration - trim_amount) * synth.rate)):
+            result.append(synth.process())
+        synth.note_off()
+        for i in range(int(trim_amount * synth.rate)):
+            result.append(synth.process())
+
+    return np.array(result)
 
 
 if __name__ == "__main__":
@@ -158,24 +191,10 @@ if __name__ == "__main__":
     database = np.load("segments.npz")
     synth = Synth(database)
 
-    synth.segment_queue = [
-        "-", "_h", "hE", "E", "El",
-        "-", "loU", "oU", "oU_",
-        "-", "_w", "w@`", "@`", "@`l", "ld", "d_",
-    ]
+    music = {
+        'syllables': [['m', 'E', 'r'], ['i']],
+        'notes': [{'pitch': 52, 'duration': 0.5}, {'pitch': 50, 'duration': 0.5}]
+    }
 
-    result = []
-
-    durations = [0.5, 0.5, 0.5]
-    trim_amounts = [0.2, 0.3, 0.25]
-
-    for i, duration in enumerate(durations):
-        trim_amount = trim_amounts[i]
-        synth.note_on(200)
-        for i in range(int((duration - trim_amount) * synth.rate)):
-            result.append(synth.process())
-        synth.note_off()
-        for i in range(int(trim_amount * synth.rate)):
-            result.append(synth.process())
-
+    result = sing(synth, music)
     soundfile.write("out.wav", result, samplerate=int(synth.rate))
