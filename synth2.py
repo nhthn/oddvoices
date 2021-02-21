@@ -57,10 +57,10 @@ class Synth:
 
         self.segment_queue = []
         self.vowel = False
-        self.new_syllable()
-        self.new_segment()
+        self._new_syllable()
+        self._new_segment()
 
-    def start_grain(self):
+    def _start_grain(self):
         if self.segment_id is None:
             return
 
@@ -82,12 +82,12 @@ class Synth:
         )
         self.grains.append(grain)
 
-    def new_syllable(self):
+    def _new_syllable(self):
         if len(self.note_on_queue) == 0:
             return
         self.frequency = self.note_on_queue.pop(0)
 
-    def new_segment(self):
+    def _new_segment(self):
         if len(self.segment_queue) == 0:
             self.status = "inactive"
             self.segment_id = None
@@ -96,7 +96,7 @@ class Synth:
         if self.segment_queue[0] == "-":
             self.segment_queue.pop(0)
             if len(self.note_on_queue) != 0:
-                self.new_syllable()
+                self._new_syllable()
             else:
                 self.status = "inactive"
                 return
@@ -119,7 +119,7 @@ class Synth:
         if self.status == "inactive":
             if len(self.note_on_queue) != 0:
                 self.status = "active"
-                self.new_segment()
+                self._new_segment()
             else:
                 return 0.0
 
@@ -129,7 +129,7 @@ class Synth:
         self.phase += self.frequency / self.rate
         if self.phase >= 1:
             if self.status == "active":
-                self.start_grain()
+                self._start_grain()
             self.phase -= 1
 
         self.crossfade = max(self.crossfade + self.crossfade_ramp, 0.0)
@@ -137,10 +137,10 @@ class Synth:
         self.old_segment_time += 1 / self.rate
         self.segment_time += 1 / self.rate
         if self.segment_time >= self.segment_length - self.crossfade_length and not self.vowel:
-            self.new_segment()
+            self._new_segment()
         elif self.vowel and self.pending_note_off:
             self.pending_note_off = False
-            self.new_segment()
+            self._new_segment()
 
         return result
 
