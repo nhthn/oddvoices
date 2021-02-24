@@ -1,23 +1,23 @@
+This is a PSOLA-based singing synthesizer in a very early stage of development. It's barely intelligible.
+
 ## Using the synthesizer
 
 Install [Git LFS](https://git-lfs.github.com/) and make sure you are up to date:
 
-    git lfs init
     git lfs pull
 
-Install Python dependencies:
+Set up Python virtualenv:
 
-    pip install soundfile numpy scipy
+    python -m venv .venv
+    pip install -e .
 
-Analyze segments and generate the database file at `segments.npz` (you only need to do this once):
+Analyze segments in `nwh` directory and generate the database file at `nwh.npz` (you only need to do this once):
 
-    python corpus.py
+    oddvoices-compile nwh nwh.npz
 
-Sing:
+Sing the file `music.json` to `out.wav`:
 
-    python frontend.py music.json
-
-Audio output is at `out.wav`.
+    sing nwh.npz music.json out.wav
 
 ## Corpus
 
