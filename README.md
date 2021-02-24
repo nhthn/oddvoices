@@ -9,6 +9,7 @@ Install [Git LFS](https://git-lfs.github.com/) and make sure you are up to date:
 Set up Python virtualenv:
 
     python -m venv .venv
+    source .venv/bin/activate
     pip install -e .
 
 Analyze segments in `nwh` directory and generate the database file at `nwh.npz` (you only need to do this once):
