@@ -4,7 +4,7 @@ import soundfile
 
 import oddvoices.utils
 import oddvoices.phonology
-import oddvoices.synth2
+import oddvoices.synth
 
 pronunciation_dict = {}
 
@@ -87,7 +87,7 @@ def sing(voice_npz, spec, out_file):
     syllables = pronounce_and_split_syllables(spec["text"])
 
     database = np.load(voice_npz)
-    synth = oddvoices.synth2.Synth(database)
+    synth = oddvoices.synth.Synth(database)
 
     music = {
         "syllables": [],
@@ -104,7 +104,7 @@ def sing(voice_npz, spec, out_file):
             "duration": spec["durations"][i] * 60 / spec.get("bpm", 60)
         })
 
-    result = oddvoices.synth2.sing(synth, music)
+    result = oddvoices.synth.sing(synth, music)
     soundfile.write(out_file, result, samplerate=int(synth.rate))
 
 
