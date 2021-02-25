@@ -110,8 +110,11 @@ class Synth:
 
         self.segment_time = 0.0
         self.segment_id = self.segment_queue.pop(0)
-        self.segment_length = self.database[self.segment_id].shape[0] / self.database["expected_f0"]
+        self.segment_length = self.get_segment_length(self.segment_id)
         self.vowel = self.segment_id in oddvoices.phonology.VOWELS
+
+    def get_segment_length(self, segment_id):
+        return self.database[segment_id].shape[0] / self.database["expected_f0"]
 
     def process(self):
         if self.status == "inactive":
@@ -152,29 +155,42 @@ class Synth:
 
 
 def sing(synth, music):
+    trim_amounts = []
     segments = []
     for syllable in music["syllables"]:
-        segments.append("-")
+        syllable_segments = ["-"]
         syllable = oddvoices.phonology.normalize_pronunciation(syllable)
         for i in range(len(syllable) - 1):
             if syllable[i] in oddvoices.phonology.VOWELS:
-                segments.append(syllable[i])
+                syllable_segments.append(syllable[i])
             diphone = syllable[i] + syllable[i + 1]
             if diphone in synth.database:
-                segments.append(diphone)
+                syllable_segments.append(diphone)
             else:
                 if syllable[i] + "_" in synth.database:
-                    segments.append(syllable[i] + "_")
+                    syllable_segments.append(syllable[i] + "_")
                 if "_" + syllable[i + 1] in synth.database:
-                    segments.append("_" + syllable[i + 1])
+                    syllable_segments.append("_" + syllable[i + 1])
+        segments.extend(syllable_segments)
+
+        vowel_index = 0
+        for i, segment in enumerate(syllable_segments):
+            if segment in oddvoices.phonology.VOWELS:
+                vowel_index = i
+        final_segments = syllable_segments[vowel_index + 1:]
+        final_segment_lengths = [
+            synth.get_segment_length(segment) for segment in final_segments
+        ]
+        trim_amount = sum(final_segment_lengths)
+        trim_amounts.append(trim_amount)
 
     synth.segment_queue = segments
 
     result = []
-    for note in music["notes"]:
+    for i, note in enumerate(music["notes"]):
         frequency = midi_note_to_hertz(note["pitch"])
         duration = note["duration"]
-        trim_amount = note.get("trim_amount", 0.1)
+        trim_amount = note.get("trim_amount", trim_amounts[i])
         synth.note_on(frequency)
         for i in range(int((duration - trim_amount) * synth.rate)):
             result.append(synth.process())
@@ -183,18 +199,3 @@ def sing(synth, music):
             result.append(synth.process())
 
     return np.array(result)
-
-
-if __name__ == "__main__":
-    import matplotlib.pyplot as plt
-
-    database = np.load("segments.npz")
-    synth = Synth(database)
-
-    music = {
-        'syllables': [['m', 'E', 'r'], ['i']],
-        'notes': [{'pitch': 52, 'duration': 0.5}, {'pitch': 50, 'duration': 0.5}]
-    }
-
-    result = sing(synth, music)
-    soundfile.write("out.wav", result, samplerate=int(synth.rate))
