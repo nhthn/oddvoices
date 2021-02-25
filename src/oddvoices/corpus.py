@@ -1,5 +1,6 @@
 import json
 import pathlib
+import struct
 import soundfile
 import scipy.signal
 import numpy as np
@@ -56,27 +57,15 @@ class CorpusAnalyzer:
         end_frame = markers["end"]
         return self.audio[start_frame:end_frame]
 
-    def render_database(self):
-        self.database = {"rate": self.rate, "expected_f0": self.expected_f0}
-        for segment_id in sorted(list(self.markers.keys())):
-            markers = self.markers[segment_id]
-            segment = self.get_audio_between_markers(markers)
-            frames = self.analyze_psola(segment)
-            if len(segment_id) == 1 and segment_id[0] in oddvoices.phonology.VOWELS:
-                frames = self.make_loopable(frames)
-            self.database["".join(segment_id)] = frames
-            self.database["".join(segment_id) + "_original_duration"] = len(frames) / self.expected_f0
-        self.normalize_database()
-        return self.database
-
     def normalize_database(self):
         max_ = 0
         for segment_id in sorted(list(self.markers.keys())):
-            max_ = max(max_, np.max(np.abs(self.database["".join(segment_id)])))
+            name = "".join(segment_id)
+            max_ = max(max_, np.max(np.abs(self.database["segments"][name]["frames"])))
         for segment_id in sorted(list(self.markers.keys())):
             name = "".join(segment_id)
-            self.database[name] = self.database[name] * 32767 / max_
-            self.database[name] = self.database[name].astype(np.int16)
+            self.database["segments"][name]["frames"] = self.database["segments"][name]["frames"] * 32767 / max_
+            self.database["segments"][name]["frames"] = self.database["segments"][name]["frames"].astype(np.int16)
 
     def get_instantaneous_f0(self, signal, offset, window_size=2048):
         unwindowed_frame: np.array = signal[offset:offset + window_size]
@@ -135,6 +124,52 @@ class CorpusAnalyzer:
             + frames[n_new:n_old, :] * (1 - t[:, np.newaxis])
         )
 
+    def render_database(self):
+        self.database = {
+            "rate": self.rate,
+            "period": int(self.rate / self.expected_f0),
+            "segments_list": ["".join(x) for x in sorted(list(self.markers.keys()))],
+            "segments": {},
+        }
+
+        for segment_id in sorted(list(self.markers.keys())):
+            markers = self.markers[segment_id]
+            segment = self.get_audio_between_markers(markers)
+            frames = self.analyze_psola(segment)
+            if len(segment_id) == 1 and segment_id[0] in oddvoices.phonology.VOWELS:
+                frames = self.make_loopable(frames)
+            self.database["segments"]["".join(segment_id)] = {
+                "frames": frames,
+                "num_frames": len(frames),
+            }
+        self.normalize_database()
+        return self.database
+
+def write_voice_file_header(f, database, offset=0):
+    f.seek(0)
+    f.write(b"ODDVOICES\0\0\0")
+    f.write(struct.pack("<l", database["rate"]))
+    f.write(struct.pack("<l", database["period"]))
+
+    segment_offset = offset
+    for segment_name in database["segments_list"]:
+        f.write(segment_name.encode("ascii") + b"\0")
+        num_frames = database["segments"][segment_name]["num_frames"]
+        f.write(struct.pack("<l", num_frames))
+        f.write(struct.pack("<l", segment_offset))
+        segment_offset += num_frames * database["period"]
+    f.write(b"\0")
+
+
+def write_voice_file(f, database):
+
+    write_voice_file_header(f, database)
+
+    for segment_name in database["segments_list"]:
+        array = database["segments"][segment_name]["frames"].flatten()
+        packed_array = struct.pack(f"<{len(array)}h", *array)
+        f.write(packed_array)
+
 
 def main():
     import argparse
@@ -145,4 +180,6 @@ def main():
     args = parser.parse_args()
 
     segment_database = CorpusAnalyzer(args.in_dir).render_database()
-    np.savez_compressed(args.out_file, **segment_database)
+
+    with open(args.out_file, "wb") as f:
+        write_voice_file(f, segment_database)
