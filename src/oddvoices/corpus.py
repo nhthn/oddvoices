@@ -127,7 +127,7 @@ class CorpusAnalyzer:
     def render_database(self):
         self.database = {
             "rate": self.rate,
-            "period": int(self.rate / self.expected_f0),
+            "grain_length": 2 * int(self.rate / self.expected_f0),
             "segments_list": ["".join(x) for x in sorted(list(self.markers.keys()))],
             "segments": {},
         }
@@ -145,11 +145,13 @@ class CorpusAnalyzer:
         self.normalize_database()
         return self.database
 
+MAGIC_WORD = b"ODDVOICES\0\0\0"
+
 def write_voice_file_header(f, database, offset=0):
     f.seek(0)
-    f.write(b"ODDVOICES\0\0\0")
+    f.write(MAGIC_WORD)
     f.write(struct.pack("<l", database["rate"]))
-    f.write(struct.pack("<l", database["period"]))
+    f.write(struct.pack("<l", database["grain_length"]))
 
     segment_offset = offset
     for segment_name in database["segments_list"]:
@@ -157,18 +159,57 @@ def write_voice_file_header(f, database, offset=0):
         num_frames = database["segments"][segment_name]["num_frames"]
         f.write(struct.pack("<l", num_frames))
         f.write(struct.pack("<l", segment_offset))
-        segment_offset += num_frames * database["period"]
+        segment_offset += num_frames * database["grain_length"]
     f.write(b"\0")
 
 
 def write_voice_file(f, database):
-
     write_voice_file_header(f, database)
-
     for segment_name in database["segments_list"]:
         array = database["segments"][segment_name]["frames"].flatten()
         packed_array = struct.pack(f"<{len(array)}h", *array)
         f.write(packed_array)
+
+
+def read_voice_file_header(f, database):
+    f.seek(0)
+    if f.read(len(MAGIC_WORD)) != MAGIC_WORD:
+        raise RuntimeError("Invalid voice file")
+    database["rate"] = struct.unpack("<l", f.read(4))[0]
+    database["grain_length"] = struct.unpack("<l", f.read(4))[0]
+
+    database["segments_list"] = []
+    database["segments"] = {}
+    while True:
+        segment_id = []
+        while True:
+            c = f.read(1)
+            if c == b"\0":
+                break
+            if len(segment_id) > 256:
+                raise ValueError("String longer than 256 characters")
+            segment_id.append(c)
+        if len(segment_id) == 0:
+            break
+        segment_id = b"".join(segment_id).decode("ascii")
+        database["segments_list"].append(segment_id)
+        database["segments"][segment_id] = {}
+        database["segments"][segment_id]["num_frames"] = struct.unpack("<l", f.read(4))[0]
+        database["segments"][segment_id]["offset"] = struct.unpack("<l", f.read(4))[0]
+
+
+def read_voice_file(f):
+    database = {}
+    read_voice_file_header(f, database)
+
+    for segment_id in database["segments_list"]:
+        num_frames = database["segments"][segment_id]["num_frames"]
+        num_samples = num_frames * database["grain_length"]
+        array = np.array(struct.unpack(f"<{num_samples}h", f.read(num_samples * 2)))
+        array = array.reshape(num_frames, database["grain_length"])
+        database["segments"][segment_id]["frames"] = array
+
+    return database
 
 
 def main():
