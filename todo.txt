@@ -1,9 +1,0 @@
-Rests (pitch 0)
-Melismas (negative pitch)
-
-x Fix rhythm issues caused by consonants
-x Real-time synth
-x Corpus: loopable vowels
-x RT synth: Crossfades
-x RT synth: gate parameter for note off
-x Auto-trim

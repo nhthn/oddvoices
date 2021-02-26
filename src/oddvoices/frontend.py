@@ -2,6 +2,7 @@ import json
 import numpy as np
 import soundfile
 
+import oddvoices.corpus
 import oddvoices.utils
 import oddvoices.phonology
 import oddvoices.synth
@@ -83,10 +84,12 @@ def pronounce_and_split_syllables(text):
         syllables.extend(split_syllables(pronunciation))
     return syllables
 
-def sing(voice_npz, spec, out_file):
+def sing(voice_file, spec, out_file):
     syllables = pronounce_and_split_syllables(spec["text"])
 
-    database = np.load(voice_npz)
+    with open(voice_file, "rb") as f:
+        database = oddvoices.corpus.read_voice_file(f)
+
     synth = oddvoices.synth.Synth(database)
 
     music = {

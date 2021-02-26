@@ -1,4 +1,4 @@
-This is a PSOLA-based singing synthesizer in a very early stage of development. It's barely intelligible.
+This is a PSOLA-based singing synthesizer for General American English in a very early stage of development. It's barely intelligible.
 
 ## Using the synthesizer
 
@@ -12,13 +12,13 @@ Set up Python virtualenv:
     source .venv/bin/activate
     pip install -e .
 
-Analyze segments in `nwh` directory and generate the database file at `nwh.npz` (you only need to do this once):
+Analyze segments in `nwh` directory and generate the database file at `nwh.voice` (you only need to do this once):
 
-    oddvoices-compile nwh nwh.npz
+    oddvoices-compile nwh nwh.voice
 
 Sing the file `music.json` to `out.wav`:
 
-    sing nwh.npz music.json out.wav
+    sing nwh.voice music.json out.wav
 
 ## Corpus
 

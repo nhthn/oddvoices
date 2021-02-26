@@ -35,8 +35,9 @@ class Synth:
     def __init__(self, database):
         self.database = database
         self.rate: float = float(self.database["rate"])
+        self.expected_f0: float = self.rate / (0.5 * self.database["grain_length"])
         self.max_frequency = 2000
-        self.frame_length = self.database["A"].shape[1]
+        self.frame_length = self.database["grain_length"]
         self.crossfade_length = 0.03
 
         self.status = "inactive"
@@ -64,18 +65,18 @@ class Synth:
         if self.segment_id is None:
             return
 
-        frame_index = int(self.segment_time * self.database["expected_f0"])
-        frame_index = frame_index % self.database[self.segment_id].shape[0]
+        frame_index = int(self.segment_time * self.expected_f0)
+        frame_index = frame_index % self.database["segments"][self.segment_id]["num_frames"]
 
         if self.old_segment_id is not None:
-            old_frame_index = int(self.old_segment_time * self.database["expected_f0"])
-            old_frame_index = old_frame_index % self.database[self.old_segment_id].shape[0]
-            old_frame = self.database[self.old_segment_id][old_frame_index, :]
+            old_frame_index = int(self.old_segment_time * self.expected_f0)
+            old_frame_index = old_frame_index % self.database["segments"][self.old_segment_id]["num_frames"]
+            old_frame = self.database["segments"][self.old_segment_id]["frames"][old_frame_index, :]
         else:
             old_frame = None
 
         grain = Grain(
-            self.database[self.segment_id][frame_index, :],
+            self.database["segments"][self.segment_id]["frames"][frame_index, :],
             old_frame,
             self.frame_length,
             crossfade=self.crossfade
@@ -114,7 +115,7 @@ class Synth:
         self.vowel = self.segment_id in oddvoices.phonology.VOWELS
 
     def get_segment_length(self, segment_id):
-        return self.database[segment_id].shape[0] / self.database["expected_f0"]
+        return self.database["segments"][segment_id]["num_frames"] / self.expected_f0
 
     def process(self):
         if self.status == "inactive":
@@ -164,12 +165,12 @@ def sing(synth, music):
             if syllable[i] in oddvoices.phonology.VOWELS:
                 syllable_segments.append(syllable[i])
             diphone = syllable[i] + syllable[i + 1]
-            if diphone in synth.database:
+            if diphone in synth.database["segments_list"]:
                 syllable_segments.append(diphone)
             else:
-                if syllable[i] + "_" in synth.database:
+                if syllable[i] + "_" in synth.database["segments_list"]:
                     syllable_segments.append(syllable[i] + "_")
-                if "_" + syllable[i + 1] in synth.database:
+                if "_" + syllable[i + 1] in synth.database["segments_list"]:
                     syllable_segments.append("_" + syllable[i + 1])
         segments.extend(syllable_segments)
 
