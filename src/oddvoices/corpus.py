@@ -127,6 +127,7 @@ class CorpusAnalyzer:
     def render_database(self):
         self.database = {
             "rate": self.rate,
+            "phonemes": oddvoices.phonology.ALL_PHONEMES,
             "grain_length": 2 * int(self.rate / self.expected_f0),
             "segments_list": ["".join(x) for x in sorted(list(self.markers.keys()))],
             "segments": {},
@@ -136,30 +137,35 @@ class CorpusAnalyzer:
             markers = self.markers[segment_id]
             segment = self.get_audio_between_markers(markers)
             frames = self.analyze_psola(segment)
-            if len(segment_id) == 1 and segment_id[0] in oddvoices.phonology.VOWELS:
+            is_long = len(segment_id) == 1 and segment_id[0] in oddvoices.phonology.VOWELS
+            if is_long:
                 frames = self.make_loopable(frames)
             self.database["segments"]["".join(segment_id)] = {
                 "frames": frames,
                 "num_frames": len(frames),
+                "long": is_long,
             }
         self.normalize_database()
         return self.database
 
 MAGIC_WORD = b"ODDVOICES\0\0\0"
 
-def write_voice_file_header(f, database, offset=0):
+def write_voice_file_header(f, database):
     f.seek(0)
     f.write(MAGIC_WORD)
     f.write(struct.pack("<l", database["rate"]))
     f.write(struct.pack("<l", database["grain_length"]))
 
-    segment_offset = offset
+    for phoneme in database["phonemes"]:
+        f.write(phoneme.encode("ascii") + b"\0")
+    f.write(b"\0")
+
     for segment_name in database["segments_list"]:
         f.write(segment_name.encode("ascii") + b"\0")
         num_frames = database["segments"][segment_name]["num_frames"]
+        is_long = database["segments"][segment_name]["long"]
         f.write(struct.pack("<l", num_frames))
-        f.write(struct.pack("<l", segment_offset))
-        segment_offset += num_frames * database["grain_length"]
+        f.write(struct.pack("<l", 1 if is_long else 0))
     f.write(b"\0")
 
 
@@ -178,6 +184,21 @@ def read_voice_file_header(f, database):
     database["rate"] = struct.unpack("<l", f.read(4))[0]
     database["grain_length"] = struct.unpack("<l", f.read(4))[0]
 
+    database["phonemes"] = []
+    while True:
+        phoneme = []
+        while True:
+            c = f.read(1)
+            if c == b"\0":
+                break
+            if len(phoneme) > 256:
+                raise ValueError("String longer than 256 characters")
+            phoneme.append(c)
+        if len(phoneme) == 0:
+            break
+        phoneme = b"".join(phoneme).decode("ascii")
+        database["phonemes"].append(phoneme)
+
     database["segments_list"] = []
     database["segments"] = {}
     while True:
@@ -195,7 +216,7 @@ def read_voice_file_header(f, database):
         database["segments_list"].append(segment_id)
         database["segments"][segment_id] = {}
         database["segments"][segment_id]["num_frames"] = struct.unpack("<l", f.read(4))[0]
-        database["segments"][segment_id]["offset"] = struct.unpack("<l", f.read(4))[0]
+        database["segments"][segment_id]["long"] = struct.unpack("<l", f.read(4))[0] != 0
 
 
 def read_voice_file(f):
