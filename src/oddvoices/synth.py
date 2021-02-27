@@ -57,7 +57,7 @@ class Synth:
         self.crossfade_ramp = 0
 
         self.segment_queue = []
-        self.vowel = False
+        self.segment_is_long = False
         self._new_syllable()
         self._new_segment()
 
@@ -112,7 +112,7 @@ class Synth:
         self.segment_time = 0.0
         self.segment_id = self.segment_queue.pop(0)
         self.segment_length = self.get_segment_length(self.segment_id)
-        self.vowel = self.segment_id in oddvoices.phonology.VOWELS
+        self.segment_is_long = self.database["segments"][self.segment_id]["long"]
 
     def get_segment_length(self, segment_id):
         return self.database["segments"][segment_id]["num_frames"] / self.expected_f0
@@ -138,9 +138,9 @@ class Synth:
 
         self.old_segment_time += 1 / self.rate
         self.segment_time += 1 / self.rate
-        if self.segment_time >= self.segment_length - self.crossfade_length and not self.vowel:
+        if self.segment_time >= self.segment_length - self.crossfade_length and not self.segment_is_long:
             self._new_segment()
-        elif self.vowel and self.pending_note_off:
+        elif self.segment_is_long and self.pending_note_off:
             self.pending_note_off = False
             self._new_segment()
 
