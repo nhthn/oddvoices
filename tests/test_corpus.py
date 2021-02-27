@@ -1,3 +1,4 @@
+import io
 import numpy as np
 import oddvoices.corpus
 
@@ -23,10 +24,9 @@ def test_write_and_read_voice_file():
         }
     }
 
-    with open("file.voice", "wb") as f:
-        oddvoices.corpus.write_voice_file(f, database)
-    with open("file.voice", "rb") as f:
-        result = oddvoices.corpus.read_voice_file(f)
+    f = io.BytesIO()
+    oddvoices.corpus.write_voice_file(f, database)
+    result = oddvoices.corpus.read_voice_file(f)
 
     assert database["rate"] == result["rate"]
     assert database["grain_length"] == result["grain_length"]
