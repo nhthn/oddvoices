@@ -151,7 +151,6 @@ class CorpusAnalyzer:
 MAGIC_WORD = b"ODDVOICES\0\0\0"
 
 def write_voice_file_header(f, database):
-    f.seek(0)
     f.write(MAGIC_WORD)
     f.write(struct.pack("<l", database["rate"]))
     f.write(struct.pack("<l", database["grain_length"]))
@@ -178,7 +177,6 @@ def write_voice_file(f, database):
 
 
 def read_voice_file_header(f, database):
-    f.seek(0)
     if f.read(len(MAGIC_WORD)) != MAGIC_WORD:
         raise RuntimeError("Invalid voice file")
     database["rate"] = struct.unpack("<l", f.read(4))[0]

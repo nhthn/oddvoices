@@ -26,6 +26,7 @@ def test_write_and_read_voice_file():
 
     f = io.BytesIO()
     oddvoices.corpus.write_voice_file(f, database)
+    f.seek(0)
     result = oddvoices.corpus.read_voice_file(f)
 
     assert database["rate"] == result["rate"]
