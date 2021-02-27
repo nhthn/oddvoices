@@ -37,4 +37,5 @@ def test_write_and_read_voice_file():
         expected = database["segments"][segment_id]
         actual = result["segments"][segment_id]
         assert expected["num_frames"] == actual["num_frames"]
+        assert expected["long"] == actual["long"]
         assert np.all(expected["frames"] == actual["frames"])
