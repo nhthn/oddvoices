@@ -1,4 +1,5 @@
 #pragma once
+#include <deque>
 #include <memory>
 #include <vector>
 #include <iostream>
@@ -59,8 +60,9 @@ public:
     Synth(float sampleRate, std::shared_ptr<Database> database);
 
     int32_t process();
-
     void setFrequency(float frequency) { m_frequency = frequency; };
+    void queueSegment(int segment);
+    bool isActive();
 
 private:
     const float m_sampleRate;
@@ -75,6 +77,11 @@ private:
 
     int m_segment;
     float m_segmentTime;
+    float m_segmentLength;
+
+    std::deque<int> m_segmentQueue;
+
+    void newSegment();
 };
 
 

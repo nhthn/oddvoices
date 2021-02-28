@@ -154,12 +154,51 @@ Synth::Synth(float sampleRate, std::shared_ptr<Database> database)
 
     m_originalF0 = m_database->getSampleRate() / (0.5 * m_database->getGrainLength());
 
-    m_segment = m_database->segmentToSegmentIndex("E");
+    newSegment();
+}
+
+void Synth::queueSegment(int segment)
+{
+    m_segmentQueue.push_back(segment);
+}
+
+void Synth::newSegment()
+{
+    if (m_segmentQueue.empty()) {
+        m_segment = -1;
+        m_segmentTime = 0;
+        m_segmentLength = 0;
+        return;
+    }
+    m_segment = m_segmentQueue[0];
+    m_segmentQueue.pop_front();
     m_segmentTime = 0;
+    m_segmentLength = m_database->segmentNumFrames(m_segment) / m_originalF0;
+}
+
+bool Synth::isActive()
+{
+    return m_segment != -1;
 }
 
 int32_t Synth::process()
 {
+    if (!isActive()) {
+        if (m_segmentQueue.empty()) {
+            return 0;
+        } else {
+            newSegment();
+        }
+    }
+
+    if (m_segmentTime >= m_segmentLength) {
+        if (m_database->segmentIsLong(m_segment)) {
+            m_segmentTime = 0;
+        } else {
+            newSegment();
+        }
+    }
+
     if (m_phase >= 1) {
         m_phase -= 1;
 
