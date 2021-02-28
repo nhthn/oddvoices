@@ -8,10 +8,11 @@ int32_t read32BitIntegerLE(std::ifstream& ifstream) {
     return c[0] | (c[1] << 8) | (c[2] << 16) | (c[3] << 24);
 }
 
-int32_t read16BitIntegerLE(std::ifstream& ifstream) {
-    char c[2];
-    ifstream.read(c, 2);
-    return c[0] | (c[1] << 8);
+int16_t read16BitIntegerLE(std::ifstream& ifstream) {
+    unsigned char c[2];
+    ifstream.read(reinterpret_cast<char*>(c), 2);
+    int16_t result = c[0] | (c[1] << 8);
+    return result;
 }
 
 std::string readString(std::ifstream& ifstream) {
