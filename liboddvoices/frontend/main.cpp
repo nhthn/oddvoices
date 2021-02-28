@@ -1,11 +1,27 @@
-#include "liboddvoices.hpp"
+#include "json.hpp"
 #include <sndfile.h>
+
+#include "liboddvoices.hpp"
+
+using json = nlohmann::json;
 
 int main(int argc, char** argv)
 {
     auto database = std::make_shared<oddvoices::Database>("nwh.voice");
     float sampleRate = database->getSampleRate();
     oddvoices::Synth synth(sampleRate, database);
+
+    json j;
+    {
+        std::ifstream ifstream("music.json");
+        ifstream >> j;
+    }
+
+    float totalDuration = 0;
+    for (auto& note : j["notes"]) {
+        float duration = note["duration"];
+        totalDuration += duration;
+    }
 
     SF_INFO sf_info;
     sf_info.samplerate = sampleRate;
@@ -15,35 +31,32 @@ int main(int argc, char** argv)
     sf_info.seekable = 0;
     auto soundFile = sf_open("out.wav", SFM_WRITE, &sf_info);
 
-    synth.setFrequency(150);
-    synth.queueSegment(database->segmentToSegmentIndex("_h"));
-    synth.queueSegment(database->segmentToSegmentIndex("hE"));
-    synth.queueSegment(database->segmentToSegmentIndex("E"));
-    synth.queueSegment(database->segmentToSegmentIndex("El"));
-    synth.queueSegment(-1);
-    synth.queueSegment(database->segmentToSegmentIndex("loU"));
-    synth.queueSegment(database->segmentToSegmentIndex("oU"));
-    synth.queueSegment(database->segmentToSegmentIndex("oU_"));
-    synth.noteOn();
-
-    int numSamples = sampleRate * 4.0;
+    int numSamples = sampleRate * totalDuration;
     float* samples = new float[numSamples];
 
-    int i = 0;
-    for (; i < sampleRate * 0.9; i++) {
-        samples[i] = synth.process() / 32768.0;
-    }
-    synth.noteOff();
-    for (; i < sampleRate * 1.0; i++) {
-        samples[i] = synth.process() / 32768.0;
-    }
-    synth.noteOn();
-    for (; i < sampleRate * 2.0; i++) {
-        samples[i] = synth.process() / 32768.0;
-    }
-    synth.noteOff();
-    for (; i < numSamples; i++) {
-        samples[i] = synth.process() / 32768.0;
+    int t = 0;
+    for (auto& note : j["notes"]) {
+        synth.setFrequency(note["frequency"]);
+
+        // TODO: Fix crash when starting with syllable boundary
+        // synth.queueSegment(-1);
+        for (auto& segment : note["segments"]) {
+            int index = database->segmentToSegmentIndex(segment);
+            synth.queueSegment(index);
+        }
+
+        float duration = note["duration"];
+        float trim = note["trim"];
+        synth.noteOn();
+        for (int j = 0; j < sampleRate * (duration - trim); j++) {
+            samples[t] = synth.process() / 32768.0;
+            t++;
+        }
+        synth.noteOff();
+        for (int j = 0; j < sampleRate * trim; j++) {
+            samples[t] = synth.process() / 32768.0;
+            t++;
+        }
     }
 
     sf_write_float(soundFile, samples, numSamples);
