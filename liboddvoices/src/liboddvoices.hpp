@@ -43,15 +43,17 @@ public:
     Grain(std::shared_ptr<Database> database);
 
     bool isActive() { return m_active; };
-    void play(int offset);
+    void play(int offset1, int offset2, float crossfade);
 
     int16_t process();
 
 private:
     std::shared_ptr<Database> m_database;
     bool m_active = false;
-    int m_offset;
+    int m_offset1;
+    int m_offset2;
     int m_readPos = 0;
+    float m_crossfade;
 };
 
 
@@ -83,10 +85,18 @@ private:
     int m_segment;
     float m_segmentTime;
     float m_segmentLength;
+    int m_oldSegment;
+    float m_oldSegmentTime;
+    float m_oldSegmentLength;
+
+    float m_crossfade;
+    float m_crossfadeRamp;
+    float m_crossfadeLength = 0.03;
 
     std::deque<int> m_segmentQueue;
 
     void newSegment();
+    int getOffset(int segment, float segmentTime);
 };
 
 

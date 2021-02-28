@@ -120,10 +120,12 @@ Grain::Grain(std::shared_ptr<Database> database)
 {
 }
 
-void Grain::play(int offset)
+void Grain::play(int offset1, int offset2, float crossfade)
 {
     m_readPos = 0;
-    m_offset = offset;
+    m_offset1 = offset1;
+    m_offset2 = offset2;
+    m_crossfade = crossfade;
     m_active = true;
 }
 
@@ -133,7 +135,10 @@ int16_t Grain::process()
         return 0;
     }
     auto& memory = m_database->getWavetableMemory();
-    auto result = memory[m_offset + m_readPos];
+    auto result = m_crossfade == 0 ? memory[m_offset1 + m_readPos] : (
+        memory[m_offset1 + m_readPos] * (1 - m_crossfade)
+        + memory[m_offset2 + m_readPos] * m_crossfade
+    );
     m_readPos += 1;
     if (m_readPos == m_database->getGrainLength()) {
         m_active = false;
@@ -170,6 +175,10 @@ void Synth::newSegment()
         m_segmentLength = 0;
         return;
     }
+    m_oldSegment = m_segment;
+    m_oldSegmentTime = m_segmentTime;
+    m_oldSegmentLength = m_oldSegmentLength;
+
     m_segment = m_segmentQueue[0];
     m_segmentQueue.pop_front();
     m_segmentTime = 0;
@@ -177,6 +186,13 @@ void Synth::newSegment()
         m_segmentLength = 0;
     } else {
         m_segmentLength = m_database->segmentNumFrames(m_segment) / m_originalF0;
+    }
+    if (m_oldSegment == -1) {
+        m_crossfade = 0;
+        m_crossfadeRamp = 0;
+    } else {
+        m_crossfade = 1;
+        m_crossfadeRamp = -1 / (m_crossfadeLength * m_sampleRate);
     }
 }
 
@@ -193,6 +209,19 @@ void Synth::noteOn()
 void Synth::noteOff()
 {
     m_gate = false;
+}
+
+int Synth::getOffset(int segment, float segmentTime)
+{
+    if (segment == -1) {
+        return 0;
+    }
+    int segmentNumFrames = m_database->segmentNumFrames(segment);
+    int frameIndex = segmentTime * m_originalF0;
+    frameIndex = frameIndex % segmentNumFrames;
+    int segmentOffset = m_database->segmentOffset(segment);
+    int offset = segmentOffset + frameIndex * m_database->getGrainLength();
+    return offset;
 }
 
 int32_t Synth::process()
@@ -214,14 +243,14 @@ int32_t Synth::process()
     }
 
     // 3. If the synth is active and gate is off, AND we are currently playing a long
-    // segment, then skip the current segment.
+    // segment, then proceed to the next segment.
     if (isActive() && !m_gate) {
         if (m_database->segmentIsLong(m_segment)) {
             newSegment();
         }
     }
 
-    if (m_segmentTime >= m_segmentLength) {
+    if (m_segmentTime >= m_segmentLength - m_crossfadeLength) {
         if (m_database->segmentIsLong(m_segment)) {
             if (m_gate) {
                 m_segmentTime = 0;
@@ -236,17 +265,15 @@ int32_t Synth::process()
     if (m_phase >= 1) {
         m_phase -= 1;
 
-        int segmentNumFrames = m_database->segmentNumFrames(m_segment);
-        int frameIndex = m_segmentTime * m_originalF0;
-        frameIndex = frameIndex % segmentNumFrames;
+        auto offset = getOffset(m_segment, m_segmentTime);
+        auto oldOffset = getOffset(m_oldSegment, m_oldSegmentTime);
 
-        int segmentOffset = m_database->segmentOffset(m_segment);
-        int offset = segmentOffset + frameIndex * m_database->getGrainLength();
-
-        m_grains[m_nextGrain]->play(offset);
+        m_grains[m_nextGrain]->play(offset, oldOffset, m_crossfade);
         m_nextGrain = (m_nextGrain + 1) % m_maxGrains;
     }
     m_segmentTime += 1.0 / m_sampleRate;
+    m_oldSegmentTime += 1.0 / m_sampleRate;
+    m_crossfade = std::max(m_crossfade + m_crossfadeRamp, 0.0f);
     m_phase += m_frequency / m_sampleRate;
 
     int32_t result = 0;
