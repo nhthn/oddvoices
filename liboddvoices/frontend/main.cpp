@@ -20,16 +20,25 @@ int main(int argc, char** argv)
     synth.queueSegment(database->segmentToSegmentIndex("hE"));
     synth.queueSegment(database->segmentToSegmentIndex("E"));
     synth.queueSegment(database->segmentToSegmentIndex("El"));
+    synth.queueSegment(-1);
     synth.queueSegment(database->segmentToSegmentIndex("loU"));
     synth.queueSegment(database->segmentToSegmentIndex("oU"));
     synth.queueSegment(database->segmentToSegmentIndex("oU_"));
     synth.noteOn();
 
-    int numSamples = sampleRate * 1;
+    int numSamples = sampleRate * 4.0;
     float* samples = new float[numSamples];
 
     int i = 0;
-    for (; i < numSamples / 2; i++) {
+    for (; i < sampleRate * 0.9; i++) {
+        samples[i] = synth.process() / 32768.0;
+    }
+    synth.noteOff();
+    for (; i < sampleRate * 1.0; i++) {
+        samples[i] = synth.process() / 32768.0;
+    }
+    synth.noteOn();
+    for (; i < sampleRate * 2.0; i++) {
         samples[i] = synth.process() / 32768.0;
     }
     synth.noteOff();

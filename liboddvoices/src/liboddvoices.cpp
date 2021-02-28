@@ -173,7 +173,11 @@ void Synth::newSegment()
     m_segment = m_segmentQueue[0];
     m_segmentQueue.pop_front();
     m_segmentTime = 0;
-    m_segmentLength = m_database->segmentNumFrames(m_segment) / m_originalF0;
+    if (m_segment == -1) {
+        m_segmentLength = 0;
+    } else {
+        m_segmentLength = m_database->segmentNumFrames(m_segment) / m_originalF0;
+    }
 }
 
 bool Synth::isActive()
