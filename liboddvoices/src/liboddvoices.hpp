@@ -60,14 +60,21 @@ public:
 
     int32_t process();
 
+    void setFrequency(float frequency) { m_frequency = frequency; };
+
 private:
-    float m_sampleRate;
+    const float m_sampleRate;
     float m_phase = 1;
     float m_frequency = 200;
     std::shared_ptr<Database> m_database;
     const int m_maxGrains = 10;
     int m_nextGrain = 0;
     std::vector<std::unique_ptr<Grain>> m_grains;
+
+    float m_originalF0;
+
+    int m_segment;
+    float m_segmentTime;
 };
 
 

@@ -151,17 +151,30 @@ Synth::Synth(float sampleRate, std::shared_ptr<Database> database)
             std::make_unique<Grain>(m_database)
         );
     }
+
+    m_originalF0 = m_database->getSampleRate() / (0.5 * m_database->getGrainLength());
+
+    m_segment = m_database->segmentToSegmentIndex("E");
+    m_segmentTime = 0;
 }
 
 int32_t Synth::process()
 {
-    m_phase += m_frequency / m_sampleRate;
     if (m_phase >= 1) {
         m_phase -= 1;
-        int offset = m_database->segmentOffset(m_database->segmentToSegmentIndex("A"));
+
+        int segmentNumFrames = m_database->segmentNumFrames(m_segment);
+        int frameIndex = m_segmentTime * m_originalF0;
+        frameIndex = frameIndex % segmentNumFrames;
+
+        int segmentOffset = m_database->segmentOffset(m_segment);
+        int offset = segmentOffset + frameIndex * m_database->getGrainLength();
+
         m_grains[m_nextGrain]->play(offset);
         m_nextGrain = (m_nextGrain + 1) % m_maxGrains;
     }
+    m_segmentTime += 1.0 / m_sampleRate;
+    m_phase += m_frequency / m_sampleRate;
 
     int32_t result = 0;
     for (int i = 0; i < static_cast<int>(m_grains.size()); i++) {
