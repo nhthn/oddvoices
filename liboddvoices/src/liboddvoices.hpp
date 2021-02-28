@@ -64,6 +64,9 @@ public:
     void queueSegment(int segment);
     bool isActive();
 
+    void noteOn();
+    void noteOff();
+
 private:
     const float m_sampleRate;
     float m_phase = 1;
@@ -74,6 +77,8 @@ private:
     std::vector<std::unique_ptr<Grain>> m_grains;
 
     float m_originalF0;
+
+    bool m_gate = false;
 
     int m_segment;
     float m_segmentTime;

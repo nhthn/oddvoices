@@ -15,15 +15,25 @@ int main(int argc, char** argv)
     sf_info.seekable = 0;
     auto soundFile = sf_open("out.wav", SFM_WRITE, &sf_info);
 
+    synth.setFrequency(150);
     synth.queueSegment(database->segmentToSegmentIndex("_h"));
     synth.queueSegment(database->segmentToSegmentIndex("hE"));
+    synth.queueSegment(database->segmentToSegmentIndex("E"));
     synth.queueSegment(database->segmentToSegmentIndex("El"));
     synth.queueSegment(database->segmentToSegmentIndex("loU"));
+    synth.queueSegment(database->segmentToSegmentIndex("oU"));
     synth.queueSegment(database->segmentToSegmentIndex("oU_"));
+    synth.noteOn();
 
     int numSamples = sampleRate * 1;
     float* samples = new float[numSamples];
-    for (int i = 0; i < numSamples; i++) {
+
+    int i = 0;
+    for (; i < numSamples / 2; i++) {
+        samples[i] = synth.process() / 32768.0;
+    }
+    synth.noteOff();
+    for (; i < numSamples; i++) {
         samples[i] = synth.process() / 32768.0;
     }
 

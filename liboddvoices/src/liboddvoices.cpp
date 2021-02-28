@@ -181,9 +181,27 @@ bool Synth::isActive()
     return m_segment != -1;
 }
 
+void Synth::noteOn()
+{
+    m_gate = true;
+}
+
+void Synth::noteOff()
+{
+    m_gate = false;
+}
+
 int32_t Synth::process()
 {
-    if (!isActive()) {
+    // 1. If the synth is inactive and the gate is off, return silence.
+    if (!isActive() && !m_gate) {
+        return 0;
+    }
+
+    // 2. If the synth is inactive but the gate is on...
+    // 2a. if the segment queue is empty, return silence.
+    // 2b. if the segment queue is not empty, start a new segment.
+    if (!isActive() && m_gate) {
         if (m_segmentQueue.empty()) {
             return 0;
         } else {
@@ -191,9 +209,21 @@ int32_t Synth::process()
         }
     }
 
+    // 3. If the synth is active and gate is off, AND we are currently playing a long
+    // segment, then skip the current segment.
+    if (isActive() && !m_gate) {
+        if (m_database->segmentIsLong(m_segment)) {
+            newSegment();
+        }
+    }
+
     if (m_segmentTime >= m_segmentLength) {
         if (m_database->segmentIsLong(m_segment)) {
-            m_segmentTime = 0;
+            if (m_gate) {
+                m_segmentTime = 0;
+            } else {
+                newSegment();
+            }
         } else {
             newSegment();
         }
