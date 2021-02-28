@@ -8,7 +8,7 @@ namespace oddvoices {
 
 class Database {
 public:
-    Database();
+    Database(std::string filename);
 
     auto getSampleRate() { return m_sampleRate; }
     auto getGrainLength() { return m_grainLength; }

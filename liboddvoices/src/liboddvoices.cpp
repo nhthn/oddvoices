@@ -29,8 +29,7 @@ std::string readString(std::ifstream& ifstream) {
     return "";
 }
 
-Database::Database() {
-    std::string filename = "nwh.voice";
+Database::Database(std::string filename) {
     std::ifstream stream(filename, std::ios::binary);
     if (!stream.is_open()) {
         return;

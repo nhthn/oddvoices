@@ -3,16 +3,17 @@
 
 int main(int argc, char** argv)
 {
+    auto database = std::make_shared<oddvoices::Database>("nwh.voice");
+    float sampleRate = database->getSampleRate();
+    oddvoices::Synth synth(sampleRate, database);
+
     SF_INFO sf_info;
-    sf_info.samplerate = 48000;
+    sf_info.samplerate = sampleRate;
     sf_info.channels = 1;
     sf_info.format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
-    sf_info.sections = 1;
+    sf_info.sections = 0;
     sf_info.seekable = 0;
     auto soundFile = sf_open("out.wav", SFM_WRITE, &sf_info);
-
-    float sampleRate = 48000;
-    oddvoices::Synth synth(sampleRate, std::make_shared<oddvoices::Database>());
 
     int numSamples = sampleRate * 1;
     float* samples = new float[numSamples];

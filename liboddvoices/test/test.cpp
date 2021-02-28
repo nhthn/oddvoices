@@ -4,7 +4,7 @@
 #include "liboddvoices.hpp"
 
 TEST_CASE("Database metadata") {
-    oddvoices::Database database;
+    oddvoices::Database database("nwh.voice");
     REQUIRE(database.getSampleRate() == 44100);
     REQUIRE(database.getGrainLength() == 566);
 
@@ -46,7 +46,8 @@ TEST_CASE("Database metadata") {
 }
 
 TEST_CASE("Synth") {
-    oddvoices::Synth synth(44100.0f, std::make_shared<oddvoices::Database>());
+    auto database = std::make_shared<oddvoices::Database>("nwh.voice");
+    oddvoices::Synth synth(44100.0f, database);
 
     for (int i = 0; i < 500; i++) {
         auto sample = synth.process();
