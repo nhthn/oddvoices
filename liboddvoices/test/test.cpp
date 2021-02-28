@@ -44,3 +44,17 @@ TEST_CASE("Database metadata") {
     REQUIRE(memory[offset + database.getGrainLength() / 2] != 0);
     REQUIRE(memory[offset + database.getGrainLength() - 1] == 0);
 }
+
+TEST_CASE("Synth") {
+    oddvoices::Synth synth(44100.0f, std::make_shared<oddvoices::Database>());
+
+    for (int i = 0; i < 500; i++) {
+        auto sample = synth.process();
+        if (i == 0) {
+            REQUIRE(sample == 0);
+        }
+        if (i == 100) {
+            REQUIRE(sample != 0);
+        }
+    }
+}

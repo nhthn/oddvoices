@@ -115,4 +115,60 @@ int Database::segmentOffset(int segmentIndex) {
     return m_segmentsOffset[segmentIndex];
 }
 
+Grain::Grain(std::shared_ptr<Database> database)
+    : m_database(database)
+{
+}
+
+void Grain::play(int offset)
+{
+    m_readPos = 0;
+    m_offset = offset;
+    m_active = true;
+}
+
+int16_t Grain::process()
+{
+    if (!m_active) {
+        return 0;
+    }
+    auto& memory = m_database->getWavetableMemory();
+    auto result = memory[m_offset + m_readPos];
+    m_readPos += 1;
+    if (m_readPos == m_database->getGrainLength()) {
+        m_active = false;
+    }
+    return result;
+}
+
+
+Synth::Synth(float sampleRate, std::shared_ptr<Database> database)
+    : m_sampleRate(sampleRate)
+    , m_database(database)
+{
+    for (int i = 0; i < m_maxGrains; i++) {
+        m_grains.push_back(
+            std::make_unique<Grain>(m_database)
+        );
+    }
+}
+
+int32_t Synth::process()
+{
+    m_phase += m_frequency / m_sampleRate;
+    if (m_phase >= 1) {
+        m_phase -= 1;
+        int offset = m_database->segmentOffset(m_database->segmentToSegmentIndex("A"));
+        m_grains[m_nextGrain]->play(offset);
+        m_nextGrain = (m_nextGrain + 1) % m_maxGrains;
+    }
+
+    int32_t result = 0;
+    for (int i = 0; i < static_cast<int>(m_grains.size()); i++) {
+        result += m_grains[i]->process();
+    }
+    return result;
+}
+
+
 } // namespace oddvoices
