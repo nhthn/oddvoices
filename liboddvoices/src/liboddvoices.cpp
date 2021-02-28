@@ -8,6 +8,12 @@ int32_t read32BitIntegerLE(std::ifstream& ifstream) {
     return c[0] | (c[1] << 8) | (c[2] << 16) | (c[3] << 24);
 }
 
+int32_t read16BitIntegerLE(std::ifstream& ifstream) {
+    char c[2];
+    ifstream.read(c, 2);
+    return c[0] | (c[1] << 8);
+}
+
 std::string readString(std::ifstream& ifstream) {
     char string[256];
     for (int i = 0; i < 256; i++) {
@@ -50,6 +56,7 @@ Database::Database() {
         m_phonemes.push_back(phoneme);
     }
 
+    int offset = 0;
     while (true) {
         std::string segmentName = std::move(readString(stream));
         if (segmentName.size() == 0) {
@@ -60,6 +67,13 @@ Database::Database() {
         m_segments.push_back(segmentName);
         m_segmentsNumFrames.push_back(segmentNumFrames);
         m_segmentsIsLong.push_back(segmentIsLong);
+        m_segmentsOffset.push_back(offset);
+        offset += segmentNumFrames * m_grainLength;
+    }
+
+    m_wavetableMemory.reserve(offset);
+    for (int i = 0; i < offset; i++) {
+        m_wavetableMemory.push_back(read16BitIntegerLE(stream));
     }
 }
 
@@ -95,6 +109,10 @@ int Database::segmentNumFrames(int segmentIndex) {
 
 bool Database::segmentIsLong(int segmentIndex) {
     return m_segmentsIsLong[segmentIndex];
+}
+
+int Database::segmentOffset(int segmentIndex) {
+    return m_segmentsOffset[segmentIndex];
 }
 
 } // namespace oddvoices

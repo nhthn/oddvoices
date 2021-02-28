@@ -3,7 +3,7 @@
 
 #include "liboddvoices.hpp"
 
-TEST_CASE("Database works") {
+TEST_CASE("Database metadata") {
     oddvoices::Database database;
     REQUIRE(database.getSampleRate() == 44100);
     REQUIRE(database.getGrainLength() == 566);
@@ -37,4 +37,10 @@ TEST_CASE("Database works") {
             database.segmentToSegmentIndex("dA")
         )
     );
+
+    auto memory = database.getWavetableMemory();
+    auto offset = database.segmentOffset(database.segmentToSegmentIndex("A"));
+    REQUIRE(memory[offset] == 0);
+    REQUIRE(memory[offset + database.getGrainLength() / 2] != 0);
+    REQUIRE(memory[offset + database.getGrainLength() - 1] == 0);
 }
