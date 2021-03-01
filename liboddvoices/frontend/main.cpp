@@ -7,13 +7,18 @@ using json = nlohmann::json;
 
 int main(int argc, char** argv)
 {
-    auto database = std::make_shared<oddvoices::Database>("nwh.voice");
+    if (argc < 4) {
+        std::cerr << "usage: liboddvoices_frontend VOICE_FILE IN_JSON OUT_WAV" << std::endl;
+        return 1;
+    }
+
+    auto database = std::make_shared<oddvoices::Database>(argv[1]);
     float sampleRate = database->getSampleRate();
     oddvoices::Synth synth(sampleRate, database);
 
     json j;
     {
-        std::ifstream ifstream("music.json");
+        std::ifstream ifstream(argv[2]);
         ifstream >> j;
     }
 
@@ -29,7 +34,7 @@ int main(int argc, char** argv)
     sf_info.format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
     sf_info.sections = 0;
     sf_info.seekable = 0;
-    auto soundFile = sf_open("out.wav", SFM_WRITE, &sf_info);
+    auto soundFile = sf_open(argv[3], SFM_WRITE, &sf_info);
 
     int numSamples = sampleRate * totalDuration;
     float* samples = new float[numSamples];
