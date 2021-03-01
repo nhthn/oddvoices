@@ -1,0 +1,16 @@
+{
+    "notes": [
+        {
+            "frequency": 200,
+            "segments": ["_h", "hE", "E", "El"],
+            "duration": 0.5,
+            "trim": 0.1
+        },
+        {
+            "frequency": 200,
+            "segments": ["loU", "oU", "oU_"],
+            "duration": 0.5,
+            "trim": 0.1
+        }
+    ]
+}

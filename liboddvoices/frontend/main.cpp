@@ -38,8 +38,7 @@ int main(int argc, char** argv)
     for (auto& note : j["notes"]) {
         synth.setFrequency(note["frequency"]);
 
-        // TODO: Fix crash when starting with syllable boundary
-        // synth.queueSegment(-1);
+        synth.queueSegment(-1);
         for (auto& segment : note["segments"]) {
             int index = database->segmentToSegmentIndex(segment);
             synth.queueSegment(index);

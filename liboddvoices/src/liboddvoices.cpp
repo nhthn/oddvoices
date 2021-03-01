@@ -104,14 +104,23 @@ int Database::segmentToSegmentIndex(std::string segment) {
 }
 
 int Database::segmentNumFrames(int segmentIndex) {
+    if (segmentIndex < 0) {
+        return 0;
+    }
     return m_segmentsNumFrames[segmentIndex];
 }
 
 bool Database::segmentIsLong(int segmentIndex) {
+    if (segmentIndex < 0) {
+        return false;
+    }
     return m_segmentsIsLong[segmentIndex];
 }
 
 int Database::segmentOffset(int segmentIndex) {
+    if (segmentIndex < 0) {
+        return 0;
+    }
     return m_segmentsOffset[segmentIndex];
 }
 
