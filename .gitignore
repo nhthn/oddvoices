@@ -12,3 +12,5 @@ out.wav
 *_data
 
 *.egg-info
+
+*.voice
