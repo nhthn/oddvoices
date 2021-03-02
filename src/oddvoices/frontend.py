@@ -103,7 +103,7 @@ def sing(voice_file, spec, out_file):
             note = note_string_to_midinote(note)
         music["syllables"].append(syllable)
         music["notes"].append({
-            "pitch": note,
+            "frequency": oddvoices.utils.midi_note_to_hertz(note),
             "duration": spec["durations"][i] * 60 / spec.get("bpm", 60)
         })
 

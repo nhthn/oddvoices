@@ -4,10 +4,6 @@ import soundfile
 import oddvoices.phonology
 
 
-def midi_note_to_hertz(midi_note):
-    return 440 * 2 ** ((midi_note - 69) / 12)
-
-
 class Grain:
 
     def __init__(self, frame, old_frame, frame_length, crossfade):
@@ -189,7 +185,7 @@ def sing(synth, music):
 
     result = []
     for i, note in enumerate(music["notes"]):
-        frequency = midi_note_to_hertz(note["pitch"])
+        frequency = note["frequency"]
         duration = note["duration"]
         trim_amount = note.get("trim_amount", trim_amounts[i])
         synth.note_on(frequency)
