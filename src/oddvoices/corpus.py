@@ -176,6 +176,18 @@ def write_voice_file(f, database):
         f.write(packed_array)
 
 
+def read_string(f):
+    result = []
+    while True:
+        c = f.read(1)
+        if c == b"\0":
+            break
+        if len(result) > 255:
+            raise ValueError("String longer than 255 characters")
+        result.append(c)
+    return b"".join(result).decode("ascii")
+
+
 def read_voice_file_header(f, database):
     if f.read(len(MAGIC_WORD)) != MAGIC_WORD:
         raise RuntimeError("Invalid voice file")
@@ -184,33 +196,17 @@ def read_voice_file_header(f, database):
 
     database["phonemes"] = []
     while True:
-        phoneme = []
-        while True:
-            c = f.read(1)
-            if c == b"\0":
-                break
-            if len(phoneme) > 256:
-                raise ValueError("String longer than 256 characters")
-            phoneme.append(c)
+        phoneme = read_string(f)
         if len(phoneme) == 0:
             break
-        phoneme = b"".join(phoneme).decode("ascii")
         database["phonemes"].append(phoneme)
 
     database["segments_list"] = []
     database["segments"] = {}
     while True:
-        segment_id = []
-        while True:
-            c = f.read(1)
-            if c == b"\0":
-                break
-            if len(segment_id) > 256:
-                raise ValueError("String longer than 256 characters")
-            segment_id.append(c)
+        segment_id = read_string(f)
         if len(segment_id) == 0:
             break
-        segment_id = b"".join(segment_id).decode("ascii")
         database["segments_list"].append(segment_id)
         database["segments"][segment_id] = {}
         database["segments"][segment_id]["num_frames"] = struct.unpack("<l", f.read(4))[0]
