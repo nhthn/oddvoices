@@ -39,15 +39,14 @@ int main(int argc, char** argv)
     int numSamples = sampleRate * totalDuration;
     float* samples = new float[numSamples];
 
+    for (auto& segmentName : j["segments"]) {
+        auto segmentIndex = database->segmentToSegmentIndex(segmentName);
+        synth.queueSegment(segmentIndex);
+    }
+
     int t = 0;
     for (auto& note : j["notes"]) {
         synth.setFrequency(note["frequency"]);
-
-        synth.queueSegment(-1);
-        for (auto& segment : note["segments"]) {
-            int index = database->segmentToSegmentIndex(segment);
-            synth.queueSegment(index);
-        }
 
         float duration = note["duration"];
         float trim = note["trim"];
