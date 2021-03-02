@@ -1,14 +1,19 @@
 {
-    "segments": ["-", "_h", "hE", "E", "El", "-", "loU", "oU", "oU_"],
+    "phonemes": ["-", "_", "h", "E", "-", "l", "oU", "_", "-", "_", "w", "@`", "l", "d", "_"],
     "notes": [
         {
-            "frequency": 200,
+            "frequency": 100,
             "duration": 0.5,
             "trim": 0.2
         },
         {
-            "frequency": 200,
+            "frequency": 150,
             "duration": 0.5,
+            "trim": 0.25
+        },
+        {
+            "frequency": 200,
+            "duration": 1.0,
             "trim": 0.2
         }
     ]
