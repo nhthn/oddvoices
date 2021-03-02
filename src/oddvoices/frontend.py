@@ -93,7 +93,7 @@ def sing(voice_file, spec, out_file):
     synth = oddvoices.synth.Synth(database)
 
     music = {
-        "syllables": [],
+        "phonemes": [],
         "notes": [],
     }
 
@@ -101,10 +101,12 @@ def sing(voice_file, spec, out_file):
         note = spec["notes"][i]
         if isinstance(note, str):
             note = note_string_to_midinote(note)
-        music["syllables"].append(syllable)
+        music["phonemes"].append("-")
+        music["phonemes"].extend(syllable)
         music["notes"].append({
             "frequency": oddvoices.utils.midi_note_to_hertz(note),
-            "duration": spec["durations"][i] * 60 / spec.get("bpm", 60)
+            "duration": spec["durations"][i] * 60 / spec.get("bpm", 60),
+            "trim": 0.1,
         })
 
     result = oddvoices.synth.sing(synth, music)

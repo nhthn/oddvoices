@@ -1,3 +1,5 @@
+from typing import List
+
 import numpy as np
 import soundfile
 
@@ -151,35 +153,50 @@ class Synth:
         self.pending_note_off = True
 
 
+def phonemes_to_segments(synth: Synth, phonemes: List[str]) -> List[str]:
+    segments: List[str] = []
+    for i in range(len(phonemes) - 1):
+        syllableBreak = False
+        phoneme_1 = phonemes[i]
+        if phoneme_1 in synth.database["segments_list"]:
+            segments.append(phoneme_1)
+        phoneme_2_index = i + 1
+        phoneme_2 = phonemes[phoneme_2_index]
+        while phoneme_2 == "-" and phoneme_2_index < len(phonemes):
+            syllableBreak = True
+            phoneme_2_index += 1
+            phoneme_2 = phonemes[phoneme_2_index]
+        diphone = phoneme_1 + phoneme_2
+        if diphone in synth.database["segments_list"]:
+            segments.append(diphone)
+            if syllableBreak:
+                segments.append("-")
+        else:
+            if phoneme_1 + "_" in synth.database["segments_list"]:
+                segments.append(phoneme_1 + "_")
+            if syllableBreak:
+                segments.append("-")
+            if "_" + phoneme_2 in synth.database["segments_list"]:
+                segments.append("_" + phoneme_2)
+    return segments
+
+
+def get_trim_amount(syllable, segments):
+    vowel_index = 0
+    for i, segment in enumerate(syllable_segments):
+        if segment in oddvoices.phonology.VOWELS:
+            vowel_index = i
+    final_segments = segments[vowel_index + 1:]
+    final_segment_lengths = [
+        synth.get_segment_length(segment) for segment in final_segments
+    ]
+    trim_amount = sum(final_segment_lengths)
+    return trim_amount
+
+
 def sing(synth, music):
     trim_amounts = []
-    segments = []
-    for syllable in music["syllables"]:
-        syllable_segments = ["-"]
-        syllable = oddvoices.phonology.normalize_pronunciation(syllable)
-        for i in range(len(syllable) - 1):
-            if syllable[i] in oddvoices.phonology.VOWELS:
-                syllable_segments.append(syllable[i])
-            diphone = syllable[i] + syllable[i + 1]
-            if diphone in synth.database["segments_list"]:
-                syllable_segments.append(diphone)
-            else:
-                if syllable[i] + "_" in synth.database["segments_list"]:
-                    syllable_segments.append(syllable[i] + "_")
-                if "_" + syllable[i + 1] in synth.database["segments_list"]:
-                    syllable_segments.append("_" + syllable[i + 1])
-        segments.extend(syllable_segments)
-
-        vowel_index = 0
-        for i, segment in enumerate(syllable_segments):
-            if segment in oddvoices.phonology.VOWELS:
-                vowel_index = i
-        final_segments = syllable_segments[vowel_index + 1:]
-        final_segment_lengths = [
-            synth.get_segment_length(segment) for segment in final_segments
-        ]
-        trim_amount = sum(final_segment_lengths)
-        trim_amounts.append(trim_amount)
+    segments = phonemes_to_segments(synth, music["phonemes"])
 
     synth.segment_queue = segments
 
@@ -187,12 +204,12 @@ def sing(synth, music):
     for i, note in enumerate(music["notes"]):
         frequency = note["frequency"]
         duration = note["duration"]
-        trim_amount = note.get("trim_amount", trim_amounts[i])
+        trim = note["trim"]
         synth.note_on(frequency)
-        for i in range(int((duration - trim_amount) * synth.rate)):
+        for i in range(int((duration - trim) * synth.rate)):
             result.append(synth.process())
         synth.note_off()
-        for i in range(int(trim_amount * synth.rate)):
+        for i in range(int(trim * synth.rate)):
             result.append(synth.process())
 
     return np.array(result)
