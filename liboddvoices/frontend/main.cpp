@@ -39,9 +39,30 @@ int main(int argc, char** argv)
     int numSamples = sampleRate * totalDuration;
     float* samples = new float[numSamples];
 
-    for (auto& segmentName : j["segments"]) {
+    for (unsigned int i = 0; i < j["phonemes"].size() - 1; i++) {
+        auto syllableBreak = false;
+        std::string phoneme1 = j["phonemes"][i];
+
+        int phoneme1SegmentIndex = database->segmentToSegmentIndex(phoneme1);
+        if (phoneme1SegmentIndex != -1) {
+            synth.queueSegment(phoneme1SegmentIndex);
+        }
+
+        auto phoneme2Index = i + 1;
+        std::string phoneme2 = j["phonemes"][phoneme2Index];
+        while (phoneme2 == "-" && (i + 2 < j["phonemes"].size())) {
+            syllableBreak = true;
+            phoneme2Index += 1;
+            phoneme2 = j["phonemes"][phoneme2Index];
+        }
+        auto segmentName = phoneme1 + phoneme2;
         auto segmentIndex = database->segmentToSegmentIndex(segmentName);
-        synth.queueSegment(segmentIndex);
+        if (segmentIndex != -1) {
+            synth.queueSegment(segmentIndex);
+        }
+        if (syllableBreak) {
+            synth.queueSegment(-1);
+        }
     }
 
     int t = 0;
