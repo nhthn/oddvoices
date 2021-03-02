@@ -20,6 +20,16 @@ Sing the file `music.json` to `out.wav`:
 
     sing nwh.voice music.json out.wav
 
+### Building and using the C++ synthesizer
+
+The C++ synthesizer in the `liboddvoices` directory is a port of the Python synthesizer.
+
+    cd liboddvoices
+    mkdir build && cd build
+    cmake ..
+
+    liboddvoices_frontend ../../nwh.voice ../example/music.json out.wav
+
 ## Corpus
 
 The corpus was created manually in the file `words.txt`, which spans most common CV and CC diphones in General American English (GA).
