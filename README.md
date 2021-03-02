@@ -24,9 +24,9 @@ Set up Python virtualenv:
     source .venv/bin/activate
     pip install -e .
 
-Analyze segments in `nwh` directory and generate the database file at `nwh.voice` (you only need to do this once):
+Analyze segments in `voices/nwh` directory and generate the database file at `nwh.voice` (you only need to do this once):
 
-    oddvoices-compile nwh nwh.voice
+    oddvoices-compile voices/nwh nwh.voice
 
 Sing the file `music.json` to `out.wav`:
 
