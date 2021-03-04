@@ -24,13 +24,13 @@ Set up Python virtualenv:
     source .venv/bin/activate
     pip install -e .
 
-Analyze segments in `voices/nwh` directory and generate the database file at `nwh.voice` (you only need to do this once):
+Analyze segments in `voices/nwh` directory and generate the database file at `nwh.voice`. You only need to do this once:
 
     oddvoices-compile voices/nwh nwh.voice
 
-Sing the file `music.json` to `out.wav`:
+Sing the JSON file at `example/music.json`:
 
-    sing nwh.voice music.json out.wav
+    sing nwh.voice example/music.json out.wav
 
 ## Corpus
 
