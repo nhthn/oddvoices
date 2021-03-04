@@ -2,7 +2,10 @@
 
 **OddVoices** is a project to create open-source singing synths inspired by retro speech synthesis algorithms. The goal is to create interesting voices for use in experimental music. Expect quirky and unusual voices, and not necessarily intelligible ones.
 
-Currently, OddVoices consists of a single PSOLA-based singing synthesizer for General American English.
+Currently, OddVoices consists of two PSOLA-based singing synthesizers for General American English:
+
+- nt, a deep, dark basso profondo
+- nwh, a synthesizer-like baritone (barely intelligible)
 
 ## Roadmap
 
