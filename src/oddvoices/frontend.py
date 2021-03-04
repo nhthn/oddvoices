@@ -103,7 +103,7 @@ def sing(voice_file, spec, out_file):
             note = note_string_to_midinote(note)
         music["syllables"].append(syllable)
         music["notes"].append({
-            "pitch": note,
+            "pitch": note + spec.get("transposition", 0),
             "duration": spec["durations"][i] * 60 / spec.get("bpm", 60)
         })
 
