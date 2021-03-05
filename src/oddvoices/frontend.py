@@ -81,6 +81,7 @@ def pronounce_and_split_syllables(text):
             pronunciation = oddvoices.phonology.parse_pronunciation(word[1:-1])
         else:
             pronunciation = pronunciation_dict[word.lower()]
+        pronunciation = oddvoices.phonology.normalize_pronunciation(pronunciation)
         syllables.extend(split_syllables(pronunciation))
     return syllables
 
@@ -101,10 +102,12 @@ def sing(voice_file, spec, out_file):
         note = spec["notes"][i]
         if isinstance(note, str):
             note = note_string_to_midinote(note)
+        note += spec.get("transposition", 0)
+        frequency = oddvoices.utils.midi_note_to_hertz(note)
         music["phonemes"].append("-")
         music["phonemes"].extend(syllable)
         music["notes"].append({
-            "frequency": oddvoices.utils.midi_note_to_hertz(note + spec.get("transposition", 0)),
+            "frequency": frequency,
             "duration": spec["durations"][i] * 60 / spec.get("bpm", 60),
             "trim": 0.1,
         })
