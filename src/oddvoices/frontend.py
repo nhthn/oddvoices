@@ -104,7 +104,7 @@ def sing(voice_file, spec, out_file):
         music["phonemes"].append("-")
         music["phonemes"].extend(syllable)
         music["notes"].append({
-            "frequency": oddvoices.utils.midi_note_to_hertz(note),
+            "frequency": oddvoices.utils.midi_note_to_hertz(note + spec.get("transposition", 0)),
             "duration": spec["durations"][i] * 60 / spec.get("bpm", 60),
             "trim": 0.1,
         })

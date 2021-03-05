@@ -1,4 +1,19 @@
-This is a PSOLA-based singing synthesizer for General American English in a very early stage of development. It's barely intelligible.
+# OddVoices
+
+**OddVoices** is a project to create open-source singing synths inspired by retro speech synthesis algorithms. The goal is to create interesting voices for use in experimental music. Expect quirky and unusual voices, and not necessarily intelligible ones.
+
+Currently, OddVoices consists of two PSOLA-based singing synthesizers for General American English:
+
+- nt, a deep, dark basso profondo
+- nwh, a synthesizer-like baritone (barely intelligible)
+
+## Roadmap
+
+- Basic prototype in Python (done)
+- C++ port (in progress)
+- SuperCollider UGen
+- Standalone C++ app
+- VST plugin
 
 ## Using the synthesizer
 
@@ -12,13 +27,13 @@ Set up Python virtualenv:
     source .venv/bin/activate
     pip install -e .
 
-Analyze segments in `nwh` directory and generate the database file at `nwh.voice` (you only need to do this once):
+Analyze segments in `voices/nt` directory and generate the database file at `nt.voice`. You only need to do this once:
 
-    oddvoices-compile nwh nwh.voice
+    oddvoices-compile voices/nt nt.voice
 
-Sing the file `music.json` to `out.wav`:
+Sing the JSON file at `example/music.json`:
 
-    sing nwh.voice music.json out.wav
+    sing nt.voice example/music.json out.wav
 
 ### Building and using the C++ synthesizer
 

@@ -69,7 +69,7 @@ Ar /kAr/ car
 As /mAs/ moss
 At /kAt/ caught
 AtS /nAtS/ notch
-Av /mAv/ mauve
+Av /mAv/ mauve (pr. "mahv")
 Az /Az/ Oz
 D@ /D@/ the (pr. "thuh")
 D@`,@D /m@D@`/ mother
@@ -130,7 +130,7 @@ OIs /rOIs/ Royce
 OIt /@drOIt/ adroit
 OIz,bOI /bOIz/ boys
 S@ /S@nt/ shunt
-S@` /S@`/ sure
+S@` /S@`k/ shirk
 SA /SAk/ shock
 SE /SEp@`d/ shepherd
 SI /SIp/ ship
@@ -561,7 +561,7 @@ tS{} /tS{}p/ chap
 uD /suD/ soothe
 uT /buT/ booth
 u_ /bu/ boo
-ub /bub/ boob
+ub /tub/ tube
 ud /mud/ mood
 uf /guf/ goof
 ul /kul/ cool

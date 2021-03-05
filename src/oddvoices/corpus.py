@@ -15,6 +15,9 @@ def seconds_to_timestamp(seconds):
     return str(minutes) + ":" + str(remaining_seconds)
 
 
+AUTOCORRELATION_WINDOW_SIZE_NUMBER_OF_PERIODS = 8
+
+
 class CorpusAnalyzer:
 
     def __init__(self, directory):
@@ -82,8 +85,8 @@ class CorpusAnalyzer:
         return measured_f0
 
     def analyze_psola(self, segment):
-        autocorrelation_window_size: int = 2048
         period: float = self.rate / self.expected_f0
+        autocorrelation_window_size: int = int(period * AUTOCORRELATION_WINDOW_SIZE_NUMBER_OF_PERIODS)
         frames = []
         offset = 0
         while offset + autocorrelation_window_size < len(segment):
