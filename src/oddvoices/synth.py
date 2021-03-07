@@ -19,8 +19,10 @@ class Grain:
     def process(self):
         if not self.playing:
             return 0
-        result = self.frame[self.read_pos] / 32767 * (1 - self.crossfade)
-        if self.crossfade != 0:
+        result = 0
+        if self.frame is not None:
+            result += self.frame[self.read_pos] / 32767 * (1 - self.crossfade)
+        if self.old_frame is not None:
             result += self.old_frame[self.read_pos] / 32767 * self.crossfade
         self.read_pos += 1
         if self.read_pos == self.frame_length:
@@ -38,16 +40,15 @@ class Synth:
         self.frame_length = self.database["grain_length"]
         self.crossfade_length = 0.03
 
-        self.status = "inactive"
-        self.gate = False
-        self.pending_note_off = False
+        self.note_ons = 0
+        self.note_offs = 0
 
         self.frequency = 0
         self.phase = 0.0
 
         self.grains = []
 
-        self.segment_id = None
+        self.segment_id = "-"
         self.segment_time = 0.0
         self.old_segment_id = None
         self.old_segment_time = 0.0
@@ -56,17 +57,17 @@ class Synth:
 
         self.segment_queue = []
         self.segment_is_long = False
-        self._new_syllable()
         self._new_segment()
 
     def _start_grain(self):
-        if self.segment_id is None:
+        if self.segment_id == "-":
             return
 
         frame_index = int(self.segment_time * self.expected_f0)
         frame_index = frame_index % self.database["segments"][self.segment_id]["num_frames"]
+        frame = self.database["segments"][self.segment_id]["frames"][frame_index, :]
 
-        if self.old_segment_id is not None:
+        if self.old_segment_id != "-":
             old_frame_index = int(self.old_segment_time * self.expected_f0)
             old_frame_index = old_frame_index % self.database["segments"][self.old_segment_id]["num_frames"]
             old_frame = self.database["segments"][self.old_segment_id]["frames"][old_frame_index, :]
@@ -74,32 +75,31 @@ class Synth:
             old_frame = None
 
         grain = Grain(
-            self.database["segments"][self.segment_id]["frames"][frame_index, :],
+            frame,
             old_frame,
             self.frame_length,
             crossfade=self.crossfade
         )
         self.grains.append(grain)
 
-    def _new_syllable(self):
-        pass
-
     def _new_segment(self):
         if len(self.segment_queue) == 0:
-            self.status = "inactive"
-            self.segment_id = None
+            self.segment_id = "-"
             self.segment_length = 0.0
             return
-        if self.segment_queue[0] == "-":
-            self.segment_queue.pop(0)
-            if self.gate:
-                self._new_syllable()
-            else:
-                self.status = "inactive"
-                return
 
         self.old_segment_id = self.segment_id
         self.old_segment_time = self.segment_time
+
+        self.segment_id = self.segment_queue.pop(0)
+        self.segment_time = 0.0
+        if self.segment_id == "-":
+            self.segment_length = 0
+            self.segment_is_long = False
+        else:
+            self.segment_length = self.get_segment_length(self.segment_id)
+            self.segment_is_long = self.database["segments"][self.segment_id]["long"]
+
         if self.old_segment_id is None:
             self.crossfade = 0
             self.crossfade_ramp = 0
@@ -107,50 +107,55 @@ class Synth:
             self.crossfade = 1
             self.crossfade_ramp = -1 / (self.crossfade_length * self.rate)
 
-        self.segment_time = 0.0
-        self.segment_id = self.segment_queue.pop(0)
-        self.segment_length = self.get_segment_length(self.segment_id)
-        self.segment_is_long = self.database["segments"][self.segment_id]["long"]
-
     def get_segment_length(self, segment_id):
         return self.database["segments"][segment_id]["num_frames"] / self.expected_f0
 
+    def is_active(self):
+        return self.segment_id != "-"
+
     def process(self):
-        if self.status == "inactive":
-            if self.gate:
-                self.status = "active"
-                self._new_segment()
+        if not self.is_active() and self.note_ons == 0:
+            return 0.0
+
+        if not self.is_active() and self.note_ons != 0:
+            if len(self.segment_queue) == 0:
+                return 0
             else:
-                return 0.0
+                self.note_ons -= 1
+                self._new_segment()
 
-        self.grains = [grain for grain in self.grains if grain.playing]
-        result = sum([grain.process() for grain in self.grains])
+        if self.is_active() and self.note_offs != 0:
+            if self.segment_is_long:
+                self.note_offs -= 1
+                self._new_segment()
 
-        self.phase += self.frequency / self.rate
+        if self.segment_time >= self.segment_length - self.crossfade_length:
+            if self.segment_is_long:
+                self.segment_time = 0
+            else:
+                self._new_segment()
+
         if self.phase >= 1:
-            if self.status == "active":
+            if self.is_active():
                 self._start_grain()
             self.phase -= 1
 
-        self.crossfade = max(self.crossfade + self.crossfade_ramp, 0.0)
-
         self.old_segment_time += 1 / self.rate
         self.segment_time += 1 / self.rate
-        if self.segment_time >= self.segment_length - self.crossfade_length and not self.segment_is_long:
-            self._new_segment()
-        elif self.segment_is_long and self.pending_note_off:
-            self.pending_note_off = False
-            self._new_segment()
+        self.crossfade = max(self.crossfade + self.crossfade_ramp, 0.0)
+        self.phase += self.frequency / self.rate
 
+        self.grains = [grain for grain in self.grains if grain.playing]
+        result = sum([grain.process() for grain in self.grains])
         return result
 
     def note_on(self, frequency):
-        self.pending_note_off = False
+        self.note_ons += 1
         self.frequency = frequency
         self.gate = True
 
     def note_off(self):
-        self.pending_note_off = True
+        self.note_offs += 1
 
 
 def phonemes_to_segments(synth: Synth, phonemes: List[str]) -> List[str]:
@@ -212,4 +217,4 @@ def sing(synth, music):
         for i in range(int(trim * synth.rate)):
             result.append(synth.process())
 
-    return np.array(result)
+    return np.array(result, dtype="float32")
