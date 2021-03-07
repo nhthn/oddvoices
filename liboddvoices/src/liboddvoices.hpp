@@ -80,7 +80,8 @@ private:
 
     float m_originalF0;
 
-    bool m_gate = false;
+    int m_noteOns = 0;
+    int m_noteOffs = 0;
 
     int m_segment;
     float m_segmentTime;

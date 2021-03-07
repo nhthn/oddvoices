@@ -186,7 +186,6 @@ void Synth::newSegment()
     }
     m_oldSegment = m_segment;
     m_oldSegmentTime = m_segmentTime;
-    m_oldSegmentLength = m_oldSegmentLength;
 
     m_segment = m_segmentQueue[0];
     m_segmentQueue.pop_front();
@@ -212,12 +211,12 @@ bool Synth::isActive()
 
 void Synth::noteOn()
 {
-    m_gate = true;
+    m_noteOns += 1;
 }
 
 void Synth::noteOff()
 {
-    m_gate = false;
+    m_noteOffs += 1;
 }
 
 int Synth::getOffset(int segment, float segmentTime)
@@ -235,37 +234,35 @@ int Synth::getOffset(int segment, float segmentTime)
 
 int32_t Synth::process()
 {
-    // 1. If the synth is inactive and the gate is off, return silence.
-    if (!isActive() && !m_gate) {
+    // 1. If the synth is inactive and there are no pending note ons, return silence.
+    if (!isActive() && m_noteOns == 0) {
         return 0;
     }
 
-    // 2. If the synth is inactive but the gate is on...
+    // 2. If the synth is inactive and there are pending note ons...
     // 2a. if the segment queue is empty, return silence.
     // 2b. if the segment queue is not empty, start a new segment.
-    if (!isActive() && m_gate) {
+    if (!isActive() && m_noteOns != 0) {
         if (m_segmentQueue.empty()) {
             return 0;
         } else {
+            m_noteOns -= 1;
             newSegment();
         }
     }
 
-    // 3. If the synth is active and gate is off, AND we are currently playing a long
-    // segment, then proceed to the next segment.
-    if (isActive() && !m_gate) {
+    // 3. If the synth is active and there are pending note offs, AND we are currently
+    // playing a long segment, then proceed to the next segment.
+    if (isActive() && m_noteOffs != 0) {
         if (m_database->segmentIsLong(m_segment)) {
+            m_noteOffs -= 1;
             newSegment();
         }
     }
 
     if (m_segmentTime >= m_segmentLength - m_crossfadeLength) {
         if (m_database->segmentIsLong(m_segment)) {
-            if (m_gate) {
-                m_segmentTime = 0;
-            } else {
-                newSegment();
-            }
+            m_segmentTime = 0;
         } else {
             newSegment();
         }

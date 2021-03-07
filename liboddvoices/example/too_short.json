@@ -3,18 +3,18 @@
     "notes": [
         {
             "frequency": 100,
-            "duration": 2,
-            "trim": 0.2
+            "duration": 0.01,
+            "trim": 0.01
         },
         {
             "frequency": 150,
-            "duration": 2,
-            "trim": 0.25
+            "duration": 0.01,
+            "trim": 0.01
         },
         {
             "frequency": 200,
-            "duration": 2,
-            "trim": 0.5
+            "duration": 5,
+            "trim": 4.99
         }
     ]
 }
