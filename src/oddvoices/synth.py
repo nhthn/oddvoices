@@ -193,7 +193,8 @@ def get_trim_amount(synth, syllable):
             vowel_index = i
     final_segments = syllable[vowel_index + 1:]
     final_segment_lengths = [
-        synth.get_segment_length(segment) for segment in final_segments
+        synth.get_segment_length(segment) - synth.crossfade_length
+        for segment in final_segments
     ]
     trim_amount = sum(final_segment_lengths)
     return trim_amount
