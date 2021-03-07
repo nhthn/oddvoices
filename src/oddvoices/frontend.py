@@ -104,12 +104,16 @@ def sing(voice_file, spec, out_file):
             note = note_string_to_midinote(note)
         note += spec.get("transposition", 0)
         frequency = oddvoices.utils.midi_note_to_hertz(note)
-        music["phonemes"].append("-")
-        music["phonemes"].extend(syllable)
         music["notes"].append({
             "frequency": frequency,
             "duration": spec["durations"][i] * 60 / spec.get("bpm", 60),
         })
+        music["phonemes"].append("-")
+        music["phonemes"].extend(syllable)
+
+    trim_amounts = oddvoices.synth.calculate_auto_trim_amounts(synth, music["phonemes"])
+    for i, note in enumerate(music["notes"]):
+        note["trim"] = trim_amounts[i]
 
     result = oddvoices.synth.sing(synth, music)
     soundfile.write(out_file, result, samplerate=int(synth.rate))

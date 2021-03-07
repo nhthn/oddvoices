@@ -199,10 +199,8 @@ def get_trim_amount(synth, syllable):
     trim_amount = sum(final_segment_lengths)
     return trim_amount
 
-
-def sing(synth, music):
-    segments = phonemes_to_segments(synth, music["phonemes"])
-
+def calculate_auto_trim_amounts(synth, phonemes):
+    segments = phonemes_to_segments(synth, phonemes)
     trim_amounts = []
     syllable = []
     for segment in segments:
@@ -213,14 +211,17 @@ def sing(synth, music):
         else:
             syllable.append(segment)
     trim_amounts.append(get_trim_amount(synth, syllable))
+    return trim_amounts
 
+def sing(synth, music):
+    segments = phonemes_to_segments(synth, music["phonemes"])
     synth.segment_queue = segments
 
     result = []
     for i, note in enumerate(music["notes"]):
         frequency = note["frequency"]
         duration = note["duration"]
-        trim = note.get("trim", trim_amounts[i])
+        trim = note["trim"]
         synth.note_on(frequency)
         for i in range(int((duration - trim) * synth.rate)):
             result.append(synth.process())
