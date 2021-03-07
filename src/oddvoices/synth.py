@@ -186,12 +186,12 @@ def phonemes_to_segments(synth: Synth, phonemes: List[str]) -> List[str]:
     return segments
 
 
-def get_trim_amount(syllable, segments):
+def get_trim_amount(synth, syllable):
     vowel_index = 0
-    for i, segment in enumerate(syllable_segments):
+    for i, segment in enumerate(syllable):
         if segment in oddvoices.phonology.VOWELS:
             vowel_index = i
-    final_segments = segments[vowel_index + 1:]
+    final_segments = syllable[vowel_index + 1:]
     final_segment_lengths = [
         synth.get_segment_length(segment) for segment in final_segments
     ]
@@ -200,8 +200,18 @@ def get_trim_amount(syllable, segments):
 
 
 def sing(synth, music):
-    trim_amounts = []
     segments = phonemes_to_segments(synth, music["phonemes"])
+
+    trim_amounts = []
+    syllable = []
+    for segment in segments:
+        if segment == "-":
+            if len(syllable) != 0:
+                trim_amounts.append(get_trim_amount(synth, syllable))
+            syllable = []
+        else:
+            syllable.append(segment)
+    trim_amounts.append(get_trim_amount(synth, syllable))
 
     synth.segment_queue = segments
 
@@ -209,7 +219,7 @@ def sing(synth, music):
     for i, note in enumerate(music["notes"]):
         frequency = note["frequency"]
         duration = note["duration"]
-        trim = note["trim"]
+        trim = note.get("trim", trim_amounts[i])
         synth.note_on(frequency)
         for i in range(int((duration - trim) * synth.rate)):
             result.append(synth.process())

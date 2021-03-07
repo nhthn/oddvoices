@@ -109,7 +109,6 @@ def sing(voice_file, spec, out_file):
         music["notes"].append({
             "frequency": frequency,
             "duration": spec["durations"][i] * 60 / spec.get("bpm", 60),
-            "trim": 0.1,
         })
 
     result = oddvoices.synth.sing(synth, music)
