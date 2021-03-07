@@ -1,3 +1,4 @@
 *.wav filter=lfs diff=lfs merge=lfs -text
 *.pdf filter=lfs diff=lfs merge=lfs -text
 cmudict-0.7b filter=lfs diff=lfs merge=lfs -text
+*.voice filter=lfs diff=lfs merge=lfs -text
