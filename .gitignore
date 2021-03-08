@@ -6,8 +6,6 @@ out.wav
 *.log
 *.aux
 
-*.npz
-
 *.aup
 *_data
 
