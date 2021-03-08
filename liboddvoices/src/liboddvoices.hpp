@@ -74,9 +74,9 @@ private:
     float m_phase = 1;
     float m_frequency = 200;
     std::shared_ptr<Database> m_database;
-    const int m_maxGrains = 10;
+    static constexpr int m_maxGrains = 10;
     int m_nextGrain = 0;
-    std::vector<std::unique_ptr<Grain>> m_grains;
+    std::unique_ptr<Grain> m_grains[m_maxGrains];
 
     float m_originalF0;
 

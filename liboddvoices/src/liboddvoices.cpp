@@ -161,9 +161,7 @@ Synth::Synth(float sampleRate, std::shared_ptr<Database> database)
     , m_database(database)
 {
     for (int i = 0; i < m_maxGrains; i++) {
-        m_grains.push_back(
-            std::make_unique<Grain>(m_database)
-        );
+        m_grains[i] = std::make_unique<Grain>(m_database);
     }
 
     m_originalF0 = m_database->getSampleRate() / (0.5 * m_database->getGrainLength());
@@ -283,7 +281,7 @@ int32_t Synth::process()
     m_phase += m_frequency / m_sampleRate;
 
     int32_t result = 0;
-    for (int i = 0; i < static_cast<int>(m_grains.size()); i++) {
+    for (int i = 0; i < m_maxGrains; i++) {
         result += m_grains[i]->process();
     }
     return result;
