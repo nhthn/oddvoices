@@ -13,6 +13,7 @@ setuptools.setup(
     entry_points={
         "console_scripts": [
             "sing = oddvoices.frontend:main",
+            "sing-midi = oddvoices.midi_frontend:main",
             "oddvoices-compile = oddvoices.corpus:main",
         ],
     },

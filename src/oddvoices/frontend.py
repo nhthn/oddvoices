@@ -85,6 +85,7 @@ def pronounce_and_split_syllables(text):
         syllables.extend(split_syllables(pronunciation))
     return syllables
 
+
 def sing(voice_file, spec, out_file):
     syllables = pronounce_and_split_syllables(spec["text"])
 
