@@ -15,6 +15,7 @@ setuptools.setup(
             "sing = oddvoices.frontend:main",
             "sing-midi = oddvoices.midi_frontend:main",
             "oddvoices-compile = oddvoices.corpus:main",
+            "oddvoices-generate-wordlist = oddvoices.phonology:generate_wordlist",
         ],
     },
     package_data={

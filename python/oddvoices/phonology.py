@@ -196,17 +196,12 @@ def parse_wordlist(f):
     return wordlist
 
 
-def escape_latex(string):
-    escaped_string = string
-    escaped_string = escaped_string.replace("{", r"\{")
-    escaped_string = escaped_string.replace("}", r"\}")
-    escaped_string = escaped_string.replace("_", r"\_")
-    return escaped_string
-
 
 def generate_latex(words):
     result = []
     result.append(r"\documentclass{article}")
+    result.append(r"\usepackage{fontspec}")
+    result.append(r"\setmainfont{Doulos SIL}")
     result.append(r"\usepackage{setspace}")
     result.append(r"\usepackage{multicol}")
     result.append(r"\usepackage{xcolor}")
@@ -231,13 +226,14 @@ def generate_latex(words):
     """)
 
     for word in words:
+        pronunciation = as_ipa_string(word["pronunciation"])
+
         diphone_info = []
         for diphone in word["diphones"]:
             diphone_info.append("".join(diphone))
         diphone_info = ",".join(diphone_info)
-        diphone_info = escape_latex(diphone_info)
-        diphone_info = f"{{\\color{{lightgray}} {diphone_info}}}"
-        result.append(r"\item " + word["text"] + " " + diphone_info)
+        diphone_info = r"{\color{lightgray} \verb/" + diphone_info + r"/}"
+        result.append(r"\item " + word["text"] + " " + pronunciation + " " + diphone_info)
         result.append("")
 
     result.append(r"\end{enumerate}")
@@ -246,9 +242,7 @@ def generate_latex(words):
     return result
 
 
-
-if __name__ == "__main__":
-
+def generate_wordlist():
     with open("words.txt") as f:
         wordlist = parse_wordlist(f)
 
@@ -259,4 +253,4 @@ if __name__ == "__main__":
         for line in latex:
             f.write(line + "\n")
 
-    subprocess.run(["pdflatex", "words.tex"])
+    subprocess.run(["xelatex", "words.tex"])
