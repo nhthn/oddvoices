@@ -4,10 +4,10 @@ setuptools.setup(
     name="oddvoices",
     version="0.0.1",
     license="MIT",
-    description="Python part of an indie speech synthesizer.",
+    description="Python part of OddVoices, a speech synthesizer.",
     author="Nathan Ho",
-    packages=setuptools.find_packages("src"),
-    package_dir={"": "src"},
+    packages=setuptools.find_packages("python"),
+    package_dir={"": "python"},
     python_requires=">=3.8",
     install_requires=["numpy", "scipy", "soundfile", "mido"],
     entry_points={
