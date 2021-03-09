@@ -4,15 +4,15 @@ import oddvoices.frontend
 
 
 def make_music_spec_from_midi_file(midi_file):
+    microseconds_per_beat = 500_000
     notes = []
     durations = []
-    track = midi_file.tracks[0]
-    messages = [message for message in track]
-    for message in messages:
+    for message in midi_file:
         if message.type == "note_on":
             notes.append(message.note)
-            time = mido.tick2second(message.time, midi_file.ticks_per_beat, 500000)
-            durations.append(1.0)
+        elif message.type == "note_off":
+            durations.append(message.time)
+
     return {"notes": notes, "durations": durations}
 
 

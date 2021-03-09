@@ -35,6 +35,10 @@ Sing the JSON file at `example/music.json`:
 
     sing nt.voice example/music.json out.wav
 
+Sing a MIDI file (experimental, very rudimentary right now):
+
+    sing-midi nt.voice example/example.mid -l "This is just a test of singing" out.wav
+
 ### Building and using the C++ synthesizer
 
 The C++ synthesizer in the `liboddvoices` directory is a port of the Python synthesizer.
