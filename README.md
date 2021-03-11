@@ -1,11 +1,11 @@
 # OddVoices
 
-**OddVoices** is a project to create open-source singing synths inspired by retro speech synthesis algorithms. The goal is to create interesting voices for use in experimental music. Expect quirky and unusual voices, and not necessarily intelligible ones.
+**OddVoices** is a project to create open-source singing synthesizers for General American English (GA). The goal is to create interesting voices for use in experimental music inspired by retro synthesizers. Expect quirky and unusual voices, and not necessarily intelligible ones.
 
-Currently, OddVoices consists of two PSOLA-based singing synthesizers for General American English:
+Currently, OddVoices consists of two singing synthesizers:
 
 - nt, a deep, dark basso profondo
-- nwh, a synthesizer-like baritone (barely intelligible)
+- nwh, a barely intelligible synthesizer-like baritone
 
 ## Using the synthesizer
 
@@ -44,26 +44,24 @@ The C++ synthesizer in the `liboddvoices` directory is a port of the Python synt
 
 ## Corpus
 
-The corpus was created manually in the file `words.txt`, which spans most common CV and CC diphones in General American English (GA).
+The corpus was created manually in the file `wordlist/words.txt`, which spans most common CV and CC diphones in GA.
 
-All pronunciations are provided using X-SAMPA notation. X-SAMPA is similar to IPA, but uses ASCII characters. One minor change is that /æ/ is represented with `{}` to prevent bracket matching issues in text editors. (The closing curly bracket represents /ʉ/, which is not found in GA.)
+Pronunciations are provided using X-SAMPA notation. X-SAMPA is similar to IPA, but uses ASCII characters. One minor change is that /æ/ is represented with `{}` to prevent bracket matching issues in text editors. (The closing curly bracket represents /ʉ/, which is not found in GA.)
 
 ## Recording a corpus
 
-In a quiet recording environment, record all words in `words.pdf` in order. I recommend using a pop filter if possible to prevent overly loud plosives. With 700 words and a few seconds each, you'll need to set aside about half an hour. To minimize fatigue, take breaks and record in multiple sessions.
+In a quiet recording environment, record all words in `wordlist/words.pdf` in order. I recommend using a pop filter if possible to prevent overly loud plosives. With 700 words and a few seconds each, you'll need to set aside about half an hour. To minimize fatigue, take breaks and record in multiple sessions.
 
 All words should be sung in monotone without vibrato. Pick a note in a comfortable register where you can safely avoid cracks, vocal fries, and other artifacts, and keep that note fixed through the entire corpus. Poor intonation is not a big deal, but keep within 50 cents of the target frequency. It is fine to do multiple takes for a word.
 
-Sing at a moderate pace and anunciate consonants well.
+Sing at a moderate pace and anunciate consonants well. Each syllable lasting about 2 seconds is good. For diphthongs, always sing with a long stable region and a short transition at the end. For example, the diphone `aU` should sound like a long "aah" followed by a short "ow."
 
-Any word tagged "(long)" is an isolated vowel. Make these a few seconds long. For diphthongs, always sing with a long stable region and a short transition at the end. For example, the diphone `aU` should sound like a long "aah" followed by a short "ow."
+Any word tagged "(long)" is an isolated vowel. Make these a few seconds long.
 
 ## Processing and tagging the corpus
 
-If there are multiple audio files, concatenate them together into one big audio file. If there are multiple channels, take only one to ensure a mono audio file.
+Tagging a 30-minute corpus takes about two hours of work. If there are multiple audio files, concatenate them together into one big audio file. If there are multiple channels, take only one to ensure a mono audio file.
 
-Open up the audio file in Audacity. (On Linux, be sure to use JACK and not ALSA or PulseAudio. Audacity lies about the endpoints during audio playback!) For each word, use Audacity's built-in labeling system tag the diphone(s) and vowels indicated by the light gray text.
+Open up the audio file in Audacity. (On Linux, be sure to use JACK and not ALSA or PulseAudio. Audacity lies about the endpoints during audio playback!) For each word, use Audacity's built-in labeling system to tag the diphones and vowels indicated by the light gray text.
 
-For diphones, err on the side of longer: it is better for intelligibility to tag a little too long than a little too short. For vowels, tag only the stable region of diphthongs.
-
-Tagging a 30-minute corpus takes about two hours of work.
+For diphones, err on the side of longer: it is better for intelligibility to tag too long than too short. For diphthongs in diphones, tag the entire transition region. For vowels, tag only the stable region of diphthongs.
