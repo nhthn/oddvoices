@@ -7,14 +7,6 @@ Currently, OddVoices consists of two PSOLA-based singing synthesizers for Genera
 - nt, a deep, dark basso profondo
 - nwh, a synthesizer-like baritone (barely intelligible)
 
-## Roadmap
-
-- Basic prototype in Python (done)
-- C++ port (in progress)
-- SuperCollider UGen
-- Standalone C++ app
-- VST plugin
-
 ## Using the synthesizer
 
 Install [Git LFS](https://git-lfs.github.com/) and make sure you are up to date:
