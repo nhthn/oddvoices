@@ -38,6 +38,7 @@ Sing the JSON file at `example/music.json`:
 Sing a MIDI file (experimental, very rudimentary right now):
 
     sing-midi nt.voice example/example.mid -l "This is just a test of singing" out.wav
+    sing-midi nt.voice example/example.mid -f lyrics.txt out.wav
 
 ### Building and using the C++ synthesizer
 
