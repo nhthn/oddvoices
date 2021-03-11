@@ -99,55 +99,19 @@ def split_words_and_strip_punctuation(text):
     return words
 
 
-GUESS_PRONUNCIATIONS = {
-    "a": "{}",
-    "ai": "aI",
-    "au": "aU",
-    "b": "b",
-    "c": "k",
-    "d": "d",
-    "e": "E",
-    "ei": "eI",
-    "ee": "i",
-    "ea": "i",
-    "er": "@`",
-    "f": "f",
-    "g": "g",
-    "h": "h",
-    "i": "I",
-    "ie": "aI",
-    "j": "dZ",
-    "k": "k",
-    "l": "l",
-    "m": "m",
-    "n": "n",
-    "o": "oU",
-    "oo": "u",
-    "ou": "aU",
-    "ow": "aU",
-    "p": "p",
-    "q": ["k", "w"],
-    "r": "r",
-    "s": "s",
-    "t": "t",
-    "u": "@",
-    "v": "v",
-    "w": "w",
-    "x": ["k", "s"],
-    "y": "j",
-    "z": "z",
-}
-
-
 def pronounce_unrecognized_word(word):
     phonemes = []
-    keys = sorted(list(GUESS_PRONUNCIATIONS.keys()), key=len, reverse=True)
+    keys = sorted(
+        list(oddvoices.phonology.GUESS_PRONUNCIATIONS.keys()),
+        key=len,
+        reverse=True,
+    )
 
     while len(word) != 0:
         for key in keys:
             if word.startswith(key):
                 word = word[len(key):]
-                new_phonemes = GUESS_PRONUNCIATIONS[key]
+                new_phonemes = oddvoices.phonology.GUESS_PRONUNCIATIONS[key]
                 if isinstance(new_phonemes, list):
                     phonemes.extend(new_phonemes)
                 else:

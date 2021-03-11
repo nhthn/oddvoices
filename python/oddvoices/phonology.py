@@ -129,6 +129,51 @@ ARPABET_TO_XSAMPA = {
     "ZH": "Z",
 }
 
+
+GUESS_PRONUNCIATIONS = {
+    "a": "{}",
+    "ai": "aI",
+    "au": "aU",
+    "b": "b",
+    "c": "k",
+    "ch": "tS",
+    "d": "d",
+    "e": "E",
+    "ei": "eI",
+    "ee": "i",
+    "ea": "i",
+    "er": "@`",
+    "f": "f",
+    "g": "g",
+    "h": "h",
+    "i": "I",
+    "ie": "aI",
+    "j": "dZ",
+    "k": "k",
+    "l": "l",
+    "m": "m",
+    "n": "n",
+    "ng": "N",
+    "o": "oU",
+    "oo": "u",
+    "ou": "aU",
+    "ow": "aU",
+    "p": "p",
+    "q": ["k", "w"],
+    "r": "r",
+    "s": "s",
+    "sh": "S",
+    "t": "t",
+    "th": "T",
+    "u": "@",
+    "v": "v",
+    "w": "w",
+    "x": ["k", "s"],
+    "y": "j",
+    "z": "z",
+}
+
+
 def as_ipa_string(tokens):
     result = []
     for phoneme in tokens:
