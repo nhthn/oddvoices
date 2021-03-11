@@ -73,15 +73,113 @@ def read_cmu_dict():
     return pronunciation_dict
 
 
+def split_words_and_strip_punctuation(text):
+    words_pass_1 = text.split()
+    words_pass_2 = []
+
+    punctuation = ".!,;:\"'()[]-"
+    for word in words_pass_1:
+        if word.startswith("/"):
+            new_word = word
+            while new_word[-1] in punctuation:
+                new_word = new_word[:-1]
+            if not new_word.endswith("/"):
+                raise RuntimeError(f"Syntax error: {new_word}")
+            words_pass_2.append(new_word)
+        else:
+            new_word = word
+            while len(new_word) != 0 and new_word[-1] in punctuation:
+                new_word = new_word[:-1]
+            while len(new_word) != 0 and new_word[0] in punctuation:
+                new_word = new_word[1:]
+            if len(new_word) != 0:
+                words_pass_2.append(new_word)
+
+    words = words_pass_2
+    return words
+
+
+GUESS_PRONUNCIATIONS = {
+    "a": "{}",
+    "ai": "aI",
+    "au": "aU",
+    "b": "b",
+    "c": "k",
+    "d": "d",
+    "e": "E",
+    "ei": "eI",
+    "ee": "i",
+    "ea": "i",
+    "er": "@`",
+    "f": "f",
+    "g": "g",
+    "h": "h",
+    "i": "I",
+    "ie": "aI",
+    "j": "dZ",
+    "k": "k",
+    "l": "l",
+    "m": "m",
+    "n": "n",
+    "o": "oU",
+    "oo": "u",
+    "ou": "aU",
+    "ow": "aU",
+    "p": "p",
+    "q": ["k", "w"],
+    "r": "r",
+    "s": "s",
+    "t": "t",
+    "u": "@",
+    "v": "v",
+    "w": "w",
+    "x": ["k", "s"],
+    "y": "j",
+    "z": "z",
+}
+
+
+def pronounce_unrecognized_word(word):
+    phonemes = []
+    keys = sorted(list(GUESS_PRONUNCIATIONS.keys()), key=len, reverse=True)
+
+    while len(word) != 0:
+        for key in keys:
+            if word.startswith(key):
+                word = word[len(key):]
+                new_phonemes = GUESS_PRONUNCIATIONS[key]
+                if isinstance(new_phonemes, list):
+                    phonemes.extend(new_phonemes)
+                else:
+                    phonemes.append(new_phonemes)
+                break
+        else:
+            word = word[1:]
+
+    phonemes_pass_2 = []
+    last_phoneme = None
+    for phoneme in phonemes:
+        if phoneme != last_phoneme:
+            phonemes_pass_2.append(phoneme)
+        last_phoneme = phoneme
+
+    phonemes = phonemes_pass_2
+    return phonemes
+
+
 def pronounce_text(text):
-    words = text.split()
+    words = split_words_and_strip_punctuation(text)
+
     pronunciation_dict = read_cmu_dict()
     syllables = []
     for word in words:
         if word.startswith("/"):
             pronunciation = oddvoices.phonology.parse_pronunciation(word[1:-1])
         else:
-            pronunciation = pronunciation_dict[word.lower()]
+            try:
+                pronunciation = pronunciation_dict[word.lower()]
+            except KeyError:
+                pronunciation = pronounce_unrecognized_word(word)
         pronunciation = oddvoices.phonology.normalize_pronunciation(pronunciation)
         syllables.extend(split_syllables(pronunciation))
 
