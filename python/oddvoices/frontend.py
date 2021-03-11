@@ -73,21 +73,23 @@ def read_cmu_dict():
     return pronunciation_dict
 
 
-def pronounce_and_split_syllables(text):
+def pronounce_text(text):
+    words = text.split()
     pronunciation_dict = read_cmu_dict()
     syllables = []
-    for word in text.split():
+    for word in words:
         if word.startswith("/"):
             pronunciation = oddvoices.phonology.parse_pronunciation(word[1:-1])
         else:
             pronunciation = pronunciation_dict[word.lower()]
         pronunciation = oddvoices.phonology.normalize_pronunciation(pronunciation)
         syllables.extend(split_syllables(pronunciation))
+
     return syllables
 
 
 def sing(voice_file, spec, out_file):
-    syllables = pronounce_and_split_syllables(spec["text"])
+    syllables = pronounce_text(spec["text"])
 
     with open(voice_file, "rb") as f:
         database = oddvoices.corpus.read_voice_file(f)
