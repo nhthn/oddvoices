@@ -173,6 +173,11 @@ GUESS_PRONUNCIATIONS = {
     "z": "z",
 }
 
+CMUDICT_EXCEPTIONS = {
+    "and": ["{}", "n", "d"],
+    "for": ["f", "oU", "r"],
+}
+
 
 def as_ipa_string(tokens):
     result = []

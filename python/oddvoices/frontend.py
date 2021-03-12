@@ -70,6 +70,7 @@ def read_cmu_dict():
                 continue
             line = line.split()
             pronunciation_dict[line[0].lower()] = [arpabet_to_xsampa(x) for x in line[1:]]
+    pronunciation_dict.update(oddvoices.phonology.CMUDICT_EXCEPTIONS)
     return pronunciation_dict
 
 
@@ -164,14 +165,14 @@ def sing(voice_file, spec, out_file):
     }
 
     for i, syllable in enumerate(syllables):
-        note = spec["notes"][i]
+        note = spec["notes"][i % len(spec["notes"])]
         if isinstance(note, str):
             note = note_string_to_midinote(note)
         note += spec.get("transposition", 0)
         frequency = oddvoices.utils.midi_note_to_hertz(note)
         music["notes"].append({
             "frequency": frequency,
-            "duration": spec["durations"][i] * 60 / spec.get("bpm", 60),
+            "duration": spec["durations"][i % len(spec["durations"])] * 60 / spec.get("bpm", 60),
         })
         music["phonemes"].append("-")
         music["phonemes"].extend(syllable)
