@@ -7,6 +7,8 @@ Currently, OddVoices consists of two singing synthesizers:
 - nt, a deep, dark basso profondo
 - nwh, a barely intelligible synthesizer-like baritone
 
+**This project is unstable and in an early stage of development.**
+
 ## Using the synthesizer
 
 Install [Git LFS](https://git-lfs.github.com/) and make sure you are up to date:
