@@ -16,6 +16,7 @@ def seconds_to_timestamp(seconds):
 
 
 AUTOCORRELATION_WINDOW_SIZE_NUMBER_OF_PERIODS = 8
+RANDOMIZED_PHASE_CUTOFF = 3000.0
 
 
 class CorpusAnalyzer:
@@ -34,7 +35,7 @@ class CorpusAnalyzer:
         self.rate: int
         self.audio, self.rate = soundfile.read(sound_file)
 
-        self.n_randomized_phases = 30
+        self.n_randomized_phases = int(RANDOMIZED_PHASE_CUTOFF / self.expected_f0)
         self.randomized_phases = np.exp(np.random.random((self.n_randomized_phases,)) * 2 * np.pi * 1j)
 
         self.parse_label_file(label_file)
@@ -105,7 +106,7 @@ class CorpusAnalyzer:
                 frame[:self.n_randomized_phases] = (
                     np.abs(frame[:self.n_randomized_phases]) * self.randomized_phases
                 )
-                frame[0] = 0
+                frame[:2] = 0
                 frame = np.fft.irfft(frame)
                 frame = frame * scipy.signal.get_window("hann", len(frame))
             if len(frame) < int(period * 2):
