@@ -1,6 +1,7 @@
 import json
 import numpy as np
 import soundfile
+from typing import List
 
 import oddvoices.corpus
 import oddvoices.utils
@@ -151,6 +152,62 @@ def pronounce_text(text):
     return syllables
 
 
+def phonemes_to_segments(synth: oddvoices.synth.Synth, phonemes: List[str]) -> List[str]:
+    segments: List[str] = []
+    for i in range(len(phonemes) - 1):
+        syllableBreak = False
+        phoneme_1 = phonemes[i]
+        if phoneme_1 in synth.database["segments_list"]:
+            segments.append(phoneme_1)
+        phoneme_2_index = i + 1
+        phoneme_2 = phonemes[phoneme_2_index]
+        while phoneme_2 == "-" and phoneme_2_index < len(phonemes):
+            syllableBreak = True
+            phoneme_2_index += 1
+            phoneme_2 = phonemes[phoneme_2_index]
+        diphone = phoneme_1 + phoneme_2
+        if diphone in synth.database["segments_list"]:
+            segments.append(diphone)
+            if syllableBreak:
+                segments.append("-")
+        else:
+            if phoneme_1 + "_" in synth.database["segments_list"]:
+                segments.append(phoneme_1 + "_")
+            if syllableBreak:
+                segments.append("-")
+            if "_" + phoneme_2 in synth.database["segments_list"]:
+                segments.append("_" + phoneme_2)
+    return segments
+
+
+def get_trim_amount(synth, syllable):
+    vowel_index = 0
+    for i, segment in enumerate(syllable):
+        if segment in oddvoices.phonology.VOWELS:
+            vowel_index = i
+    final_segments = syllable[vowel_index + 1:]
+    final_segment_lengths = [
+        synth.get_segment_length(segment) - synth.crossfade_length
+        for segment in final_segments
+    ]
+    trim_amount = sum(final_segment_lengths)
+    return trim_amount
+
+def calculate_auto_trim_amounts(synth, phonemes):
+    segments = phonemes_to_segments(synth, phonemes)
+    trim_amounts = []
+    syllable = []
+    for segment in segments:
+        if segment == "-":
+            if len(syllable) != 0:
+                trim_amounts.append(get_trim_amount(synth, syllable))
+            syllable = []
+        else:
+            syllable.append(segment)
+    trim_amounts.append(get_trim_amount(synth, syllable))
+    return trim_amounts
+
+
 def sing(voice_file, spec, out_file):
     syllables = pronounce_text(spec["text"])
 
@@ -180,6 +237,16 @@ def sing(voice_file, spec, out_file):
     trim_amounts = oddvoices.synth.calculate_auto_trim_amounts(synth, music["phonemes"])
     for i, note in enumerate(music["notes"]):
         note["trim"] = trim_amounts[i]
+
+    segments = phonemes_to_segments(synth, music["phonemes"])
+    segment_indices = []
+    for segment_name in segments:
+        try:
+            segment_index = synth.database["segments_list"].index(segment_name)
+        except:
+            segment_index = -1
+        segment_indices.append(segment_index)
+    music["segments"] = segment_indices
 
     result = oddvoices.synth.sing(synth, music)
     soundfile.write(out_file, result, samplerate=int(synth.rate))

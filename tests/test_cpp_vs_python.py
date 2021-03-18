@@ -17,7 +17,7 @@ CPP_EXECUTABLE = common.TEST_ROOT.parent / "liboddvoices/build/liboddvoices_fron
 EXAMPLE_VOICE = common.TEST_ROOT / "compiled-voices/nt.voice"
 
 EXAMPLE_MUSIC = {
-    "phonemes": ["-", "_", "h", "E", "-", "l", "oU", "_", "-", "_", "w", "@`", "l", "d", "_"],
+    "segments": [-1, 0, 1, 2, -1, 3, 4, 5, -1, 6, 7, 8],
     "notes": [
         {
             "frequency": 100,

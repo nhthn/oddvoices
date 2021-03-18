@@ -157,65 +157,13 @@ class Synth:
     def note_off(self):
         self.note_offs += 1
 
-
-def phonemes_to_segments(synth: Synth, phonemes: List[str]) -> List[str]:
-    segments: List[str] = []
-    for i in range(len(phonemes) - 1):
-        syllableBreak = False
-        phoneme_1 = phonemes[i]
-        if phoneme_1 in synth.database["segments_list"]:
-            segments.append(phoneme_1)
-        phoneme_2_index = i + 1
-        phoneme_2 = phonemes[phoneme_2_index]
-        while phoneme_2 == "-" and phoneme_2_index < len(phonemes):
-            syllableBreak = True
-            phoneme_2_index += 1
-            phoneme_2 = phonemes[phoneme_2_index]
-        diphone = phoneme_1 + phoneme_2
-        if diphone in synth.database["segments_list"]:
-            segments.append(diphone)
-            if syllableBreak:
-                segments.append("-")
-        else:
-            if phoneme_1 + "_" in synth.database["segments_list"]:
-                segments.append(phoneme_1 + "_")
-            if syllableBreak:
-                segments.append("-")
-            if "_" + phoneme_2 in synth.database["segments_list"]:
-                segments.append("_" + phoneme_2)
-    return segments
-
-
-def get_trim_amount(synth, syllable):
-    vowel_index = 0
-    for i, segment in enumerate(syllable):
-        if segment in oddvoices.phonology.VOWELS:
-            vowel_index = i
-    final_segments = syllable[vowel_index + 1:]
-    final_segment_lengths = [
-        synth.get_segment_length(segment) - synth.crossfade_length
-        for segment in final_segments
-    ]
-    trim_amount = sum(final_segment_lengths)
-    return trim_amount
-
-def calculate_auto_trim_amounts(synth, phonemes):
-    segments = phonemes_to_segments(synth, phonemes)
-    trim_amounts = []
-    syllable = []
-    for segment in segments:
-        if segment == "-":
-            if len(syllable) != 0:
-                trim_amounts.append(get_trim_amount(synth, syllable))
-            syllable = []
-        else:
-            syllable.append(segment)
-    trim_amounts.append(get_trim_amount(synth, syllable))
-    return trim_amounts
-
 def sing(synth, music):
-    segments = phonemes_to_segments(synth, music["phonemes"])
-    synth.segment_queue = segments
+    for segment_index in music["segments"]:
+        if segment_index < 0:
+            segment_name = "-"
+        else:
+            segment_name = synth.database["segments_list"][segment_index]
+        synth.segment_queue.append(segment_name)
 
     result = []
     for i, note in enumerate(music["notes"]):

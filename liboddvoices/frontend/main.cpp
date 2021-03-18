@@ -39,44 +39,8 @@ int main(int argc, char** argv)
     int numSamples = sampleRate * totalDuration;
     float* samples = new float[numSamples];
 
-    for (unsigned int i = 0; i < j["phonemes"].size() - 1; i++) {
-        auto syllableBreak = false;
-        std::string phoneme1 = j["phonemes"][i];
-        int phoneme1SegmentIndex = database->segmentToSegmentIndex(phoneme1);
-        if (phoneme1SegmentIndex != -1) {
-            synth.queueSegment(phoneme1SegmentIndex);
-        }
-        auto phoneme2Index = i + 1;
-        std::string phoneme2 = j["phonemes"][phoneme2Index];
-        while (phoneme2 == "-" && (phoneme2Index < j["phonemes"].size())) {
-            syllableBreak = true;
-            phoneme2Index += 1;
-            phoneme2 = j["phonemes"][phoneme2Index];
-        }
-        auto segmentName = phoneme1 + phoneme2;
-        auto segmentIndex = database->segmentToSegmentIndex(segmentName);
-
-        if (segmentIndex == -1) {
-            auto segmentName1 = phoneme1 + "_";
-            auto segmentIndex1 = database->segmentToSegmentIndex(segmentName1);
-            if (segmentIndex1 != -1) {
-                synth.queueSegment(segmentIndex1);
-            }
-            if (syllableBreak) {
-                synth.queueSegment(-1);
-            }
-            auto segmentName2 = "_" + phoneme2;
-            auto segmentIndex2 = database->segmentToSegmentIndex(segmentName2);
-            if (segmentIndex2 != -1) {
-                synth.queueSegment(segmentIndex2);
-            }
-        } else {
-            synth.queueSegment(segmentIndex);
-            if (syllableBreak) {
-                synth.queueSegment(-1);
-            }
-        }
-
+    for (int i : j["segments"]) {
+        synth.queueSegment(i);
     }
 
     int t = 0;
