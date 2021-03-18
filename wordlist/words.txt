@@ -80,6 +80,7 @@ DaU /DaU/ thou
 Di /Di/ thee
 DoU /DoU/ though
 D{} /D{}t/ that
+Dz /loUDz/ loathes
 ES /mES/ mesh
 ET /bET/ Beth
 Eb /Eb/ ebb
@@ -153,6 +154,7 @@ T_ /wIT/ with
 TaI,_T /TaI/ thigh
 Ti /Tij@d@`/ theater
 Tr /Tri/ three
+Ts /mATs/ moths
 US /pUS/ push
 Ud /wUd/ wood
 Uk /lUk/ look
