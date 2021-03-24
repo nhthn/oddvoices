@@ -60,5 +60,5 @@ def test_cpp_vs_python():
         spectrogram(result_cpp),
         spectrogram(result_py),
         rtol=0,
-        atol=0.02
+        atol=0.09
     )
