@@ -9,8 +9,6 @@ import oddvoices.utils
 import oddvoices.phonology
 import oddvoices.synth
 
-pronunciation_dict = {}
-
 NOTE_NAMES = ["c", "d", "e", "f", "g", "a", "b"]
 MAJOR_SCALE = [0, 2, 4, 5, 7, 9, 11]
 FLATS = "bf"
@@ -91,7 +89,8 @@ def calculate_auto_trim_amounts(synth, phonemes):
 
 
 def sing(voice_file, spec, out_file):
-    syllables = oddvoices.g2p.pronounce_text(spec["text"])
+    pronunciation_dict = oddvoices.g2p.read_cmudict()
+    syllables = oddvoices.g2p.pronounce_text(spec["text"], pronunciation_dict)
 
     with open(voice_file, "rb") as f:
         database = oddvoices.corpus.read_voice_file(f)

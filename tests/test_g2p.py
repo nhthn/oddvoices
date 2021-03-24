@@ -3,27 +3,32 @@ import pytest
 import oddvoices.g2p
 
 
-def test_pronounce_text_basic():
+@pytest.fixture(scope="module")
+def cmudict():
+    return oddvoices.g2p.read_cmudict()
+
+
+def test_pronounce_text_basic(cmudict):
     text = "hello world"
     expected = [
         ["_", "h", "@", "l"],
         ["oU", "_"],
         ["_", "w", "@`", "l", "d", "_"],
     ]
-    assert oddvoices.g2p.pronounce_text(text) == expected
+    assert oddvoices.g2p.pronounce_text(text, cmudict) == expected
 
 
-def test_pronounce_text_punctuation():
+def test_pronounce_text_punctuation(cmudict):
     text = "hello, world"
     expected = [
         ["_", "h", "@", "l"],
         ["oU", "_"],
         ["_", "w", "@`", "l", "d", "_"],
     ]
-    assert oddvoices.g2p.pronounce_text(text) == expected
+    assert oddvoices.g2p.pronounce_text(text, cmudict) == expected
 
 
-def test_pronounce_text_nonsense_word():
+def test_pronounce_text_nonsense_word(cmudict):
     text = "hallo worldo"
     expected = [
         ["_", "h", "{}", "l"],
@@ -31,17 +36,17 @@ def test_pronounce_text_nonsense_word():
         ["_", "w", "oU", "r"],
         ["l", "d", "oU", "_"],
     ]
-    assert oddvoices.g2p.pronounce_text(text) == expected
+    assert oddvoices.g2p.pronounce_text(text, cmudict) == expected
 
 
-def test_pronounce_text_xsampa():
+def test_pronounce_text_xsampa(cmudict):
     text = "hello /w@`ld/"
     expected = [
         ["_", "h", "@", "l"],
         ["oU", "_"],
         ["_", "w", "@`", "l", "d", "_"],
     ]
-    assert oddvoices.g2p.pronounce_text(text) == expected
+    assert oddvoices.g2p.pronounce_text(text, cmudict) == expected
 
 
 @pytest.mark.parametrize(

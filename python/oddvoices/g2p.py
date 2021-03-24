@@ -10,7 +10,7 @@ def arpabet_to_xsampa(string: str) -> str:
     return oddvoices.phonology.ARPABET_TO_XSAMPA[string]
 
 
-def read_cmu_dict() -> Dict[str, List[str]]:
+def read_cmudict() -> Dict[str, List[str]]:
     """Parse the packaged cmudict file and return a Python dictionary mapping
     lowercase words to X-SAMPA pronunciations. Examples:
 
@@ -25,38 +25,43 @@ def read_cmu_dict() -> Dict[str, List[str]]:
         for line in f:
             if line.startswith(";;;"):
                 continue
-            line = line.split()
-            pronunciation_dict[line[0].lower()] = [arpabet_to_xsampa(x) for x in line[1:]]
+            parts = line.split()
+            pronunciation_dict[parts[0].lower()] = [arpabet_to_xsampa(x) for x in parts[1:]]
     pronunciation_dict.update(oddvoices.phonology.CMUDICT_EXCEPTIONS)
     return pronunciation_dict
 
 
-def split_syllables(word: List[str]) -> List[List[str]]:
+def split_syllables(phonemes: List[str]) -> List[List[str]]:
     """Given an X-SAMPA pronunciation of a word, split it into syllables."""
-    result = []
-    current_syllable = None
-    current_syllable_has_vowel = False
-    def new_syllable():
-        nonlocal current_syllable
-        nonlocal current_syllable_has_vowel
-        current_syllable_has_vowel = False
-        current_syllable = []
-        result.append(current_syllable)
-    new_syllable()
-    for phoneme in word:
-        if phoneme in oddvoices.phonology.VOWELS:
-            if current_syllable_has_vowel:
-                new_syllable()
-            current_syllable_has_vowel = True
-        else:
-            if current_syllable_has_vowel and current_syllable[-1] in oddvoices.phonology.CONSONANTS:
-                new_syllable()
-        current_syllable.append(phoneme)
+    return _SyllableSplitter(phonemes)()
 
-    if not current_syllable_has_vowel and len(result) > 1:
-        result[-2].extend(result.pop())
 
-    return result
+class _SyllableSplitter:
+
+    def __init__(self, phonemes):
+        self.phonemes = phonemes
+        self.result = []
+        self.new_syllable()
+
+    def new_syllable(self):
+        self.current_syllable_has_vowel: bool = False
+        self.current_syllable: List[str] = []
+        self.result.append(self.current_syllable)
+
+    def __call__(self) -> List[List[str]]:
+        for phoneme in self.phonemes:
+            if phoneme in oddvoices.phonology.VOWELS:
+                if self.current_syllable_has_vowel:
+                    self.new_syllable()
+                self.current_syllable_has_vowel = True
+            else:
+                if self.current_syllable_has_vowel and self.current_syllable[-1] in oddvoices.phonology.CONSONANTS:
+                    self.new_syllable()
+            self.current_syllable.append(phoneme)
+
+        if not self.current_syllable_has_vowel and len(self.result) > 1:
+            self.result[-2].extend(self.result.pop())
+        return self.result
 
 
 def split_words_and_strip_punctuation(text: str) -> List[str]:
@@ -120,11 +125,10 @@ def pronounce_unrecognized_word(word: str) -> List[str]:
     return phonemes
 
 
-def pronounce_text(text: str) -> List[List[str]]:
+def pronounce_text(text: str, pronunciation_dict: Dict[str, List[str]]) -> List[List[str]]:
     """Convert an entire text into a list of syllables pronounced with X-SAMPA."""
     words = split_words_and_strip_punctuation(text)
 
-    pronunciation_dict = read_cmu_dict()
     syllables = []
     for word in words:
         if word.startswith("/"):
