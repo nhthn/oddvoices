@@ -1,6 +1,6 @@
 import pytest
 
-import oddvoices.frontend
+import oddvoices.g2p
 
 
 def test_pronounce_text_basic():
@@ -10,7 +10,7 @@ def test_pronounce_text_basic():
         ["oU", "_"],
         ["_", "w", "@`", "l", "d", "_"],
     ]
-    assert oddvoices.frontend.pronounce_text(text) == expected
+    assert oddvoices.g2p.pronounce_text(text) == expected
 
 
 def test_pronounce_text_punctuation():
@@ -20,7 +20,7 @@ def test_pronounce_text_punctuation():
         ["oU", "_"],
         ["_", "w", "@`", "l", "d", "_"],
     ]
-    assert oddvoices.frontend.pronounce_text(text) == expected
+    assert oddvoices.g2p.pronounce_text(text) == expected
 
 
 def test_pronounce_text_nonsense_word():
@@ -31,7 +31,7 @@ def test_pronounce_text_nonsense_word():
         ["_", "w", "oU", "r"],
         ["l", "d", "oU", "_"],
     ]
-    assert oddvoices.frontend.pronounce_text(text) == expected
+    assert oddvoices.g2p.pronounce_text(text) == expected
 
 
 def test_pronounce_text_xsampa():
@@ -41,7 +41,7 @@ def test_pronounce_text_xsampa():
         ["oU", "_"],
         ["_", "w", "@`", "l", "d", "_"],
     ]
-    assert oddvoices.frontend.pronounce_text(text) == expected
+    assert oddvoices.g2p.pronounce_text(text) == expected
 
 
 @pytest.mark.parametrize(
@@ -54,7 +54,7 @@ def test_pronounce_text_xsampa():
     ]
 )
 def test_split_words_and_strip_punctuation(text, expected):
-    assert oddvoices.frontend.split_words_and_strip_punctuation(text) == expected
+    assert oddvoices.g2p.split_words_and_strip_punctuation(text) == expected
 
 
 @pytest.mark.parametrize(
@@ -66,4 +66,4 @@ def test_split_words_and_strip_punctuation(text, expected):
     ]
 )
 def test_pronounce_unrecognized_word(word, expected):
-    assert oddvoices.frontend.pronounce_unrecognized_word(word) == expected
+    assert oddvoices.g2p.pronounce_unrecognized_word(word) == expected
