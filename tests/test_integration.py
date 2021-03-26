@@ -62,3 +62,22 @@ def test_cpp_vs_python():
         rtol=0,
         atol=0.09
     )
+
+
+def test_sample_rates():
+    with open(EXAMPLE_VOICE, "rb") as f:
+        database = oddvoices.corpus.read_voice_file(f)
+
+    synth_1 = oddvoices.synth.Synth(database, sample_rate=48000)
+    result_1 = oddvoices.synth.sing(synth_1, EXAMPLE_MUSIC)
+
+    synth_2 = oddvoices.synth.Synth(database, sample_rate=44100)
+    result_2 = oddvoices.synth.sing(synth_2, EXAMPLE_MUSIC)
+    result_2 = scipy.signal.resample(result_2, len(result_1))
+
+    np.testing.assert_allclose(
+        spectrogram(result_1),
+        spectrogram(result_2),
+        rtol=0,
+        atol=0.09
+    )

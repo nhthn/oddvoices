@@ -3,12 +3,11 @@ from typing import List
 import numpy as np
 import soundfile
 
-import oddvoices.phonology
-
 
 class Grain:
 
-    def __init__(self, frame, old_frame, frame_length, crossfade):
+    def __init__(self, frame, old_frame, frame_length, crossfade, rate):
+        self.rate = rate
         self.frame = frame
         self.old_frame = old_frame
         self.frame_length = frame_length
@@ -17,24 +16,29 @@ class Grain:
         self.read_pos = 0
 
     def process(self):
+        if self.read_pos >= self.frame_length:
+            self.playing = False
         if not self.playing:
             return 0
         result = 0
+        int_read_pos: int = int(self.read_pos)
         if self.frame is not None:
-            result += self.frame[self.read_pos] / 32767 * (1 - self.crossfade)
+            result += self.frame[int_read_pos] / 32767 * (1 - self.crossfade)
         if self.old_frame is not None:
-            result += self.old_frame[self.read_pos] / 32767 * self.crossfade
-        self.read_pos += 1
-        if self.read_pos == self.frame_length:
-            self.playing = False
+            result += self.old_frame[int_read_pos] / 32767 * self.crossfade
+        self.read_pos += self.rate
         return result
 
 
 class Synth:
 
-    def __init__(self, database):
+    def __init__(self, database, sample_rate=None):
         self.database = database
-        self.rate: float = float(self.database["rate"])
+        self.database_rate: float = float(self.database["rate"])
+        if sample_rate is None:
+            self.rate: float = self.database_rate
+        else:
+            self.rate: float = float(sample_rate)
         self.expected_f0: float = self.rate / (0.5 * self.database["grain_length"])
         self.max_frequency = 2000
         self.frame_length = self.database["grain_length"]
@@ -78,7 +82,8 @@ class Synth:
             frame,
             old_frame,
             self.frame_length,
-            crossfade=self.crossfade
+            crossfade=self.crossfade,
+            rate=self.database_rate / self.rate
         )
         self.grains.append(grain)
 

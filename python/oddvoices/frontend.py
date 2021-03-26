@@ -1,7 +1,7 @@
 import json
 import numpy as np
 import soundfile
-from typing import List
+from typing import List, Optional
 
 import oddvoices.corpus
 import oddvoices.g2p
@@ -88,7 +88,7 @@ def calculate_auto_trim_amounts(synth, phonemes):
     return trim_amounts
 
 
-def sing(voice_file: str, spec, out_file: str):
+def sing(voice_file: str, spec, out_file: str, sample_rate: Optional[float]):
     pronunciation_dict = oddvoices.g2p.read_cmudict()
     phonemes = oddvoices.g2p.pronounce_text(spec["text"], pronunciation_dict)
     syllable_count = sum([phoneme == "-" for phoneme in phonemes])
@@ -96,7 +96,7 @@ def sing(voice_file: str, spec, out_file: str):
     with open(voice_file, "rb") as f:
         database = oddvoices.corpus.read_voice_file(f)
 
-    synth = oddvoices.synth.Synth(database)
+    synth = oddvoices.synth.Synth(database, sample_rate=sample_rate)
 
     music = {
         "phonemes": phonemes,
@@ -139,6 +139,7 @@ def main():
     parser.add_argument("voice_npz")
     parser.add_argument("music_file")
     parser.add_argument("out_file")
+    parser.add_argument("-s", "--sample-rate", type=float)
 
     args = parser.parse_args()
 
@@ -146,4 +147,4 @@ def main():
     with open(music_file) as f:
         music = json.load(f)
 
-    sing(args.voice_npz, music, args.out_file)
+    sing(args.voice_npz, music, args.out_file, sample_rate=args.sample_rate)
