@@ -131,19 +131,33 @@ def pronounce_unrecognized_word(word: str) -> List[str]:
     return phonemes
 
 
+def perform_cot_caught_merger(pronunciation: List[str]) -> None:
+    for i, phoneme in enumerate(pronunciation):
+        if phoneme == "O":
+            if i + 1 < len(pronunciation) and pronunciation[i + 1] == "r":
+                pronunciation[i] = "oU"
+            else:
+                pronunciation[i] = "A"
+
+
+def pronounce_word(word: str, pronunciation_dict: Dict[str, List[str]]) -> List[str]:
+    if word.startswith("/"):
+        return oddvoices.phonology.parse_pronunciation(word[1:-1])
+    try:
+        pronunciation = pronunciation_dict[word.lower()]
+        perform_cot_caught_merger(pronunciation)
+    except KeyError:
+        pronunciation = pronounce_unrecognized_word(word)
+    return pronunciation
+
+
 def pronounce_text(text: str, pronunciation_dict: Dict[str, List[str]]) -> List[List[str]]:
     """Convert an entire text into a list of syllables pronounced with X-SAMPA."""
     words = tokenize(text)
 
     syllables = []
     for word in words:
-        if word.startswith("/"):
-            pronunciation = oddvoices.phonology.parse_pronunciation(word[1:-1])
-        else:
-            try:
-                pronunciation = pronunciation_dict[word.lower()]
-            except KeyError:
-                pronunciation = pronounce_unrecognized_word(word)
+        pronunciation = pronounce_word(word, pronunciation_dict)
         pronunciation = oddvoices.phonology.normalize_pronunciation(pronunciation)
         syllables.extend(split_syllables(pronunciation))
 

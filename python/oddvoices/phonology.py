@@ -70,6 +70,7 @@ XSAMPA_TO_IPA = {
     "I": "ɪ",
     "E": "ɛ",
     "@": "ə",
+    "O": "ɔ",
     "U": "ʊ",
     "@`": "ɚ",
     "i": "i",
@@ -91,7 +92,7 @@ ARPABET_TO_XSAMPA = {
     "AA": "A",
     "AE": "{}",
     "AH": "@",
-    "AO": "A",
+    "AO": "O",
     "AW": "aU",
     "AY": "aI",
     "B": "b",
@@ -175,13 +176,20 @@ GUESS_PRONUNCIATIONS = {
 
 CMUDICT_EXCEPTIONS = {
     "and": ["{}", "n", "d"],
-    "for": ["f", "oU", "r"],
 }
 
 
-def as_ipa_string(tokens):
+def _fix_oUr(phonemes):
+    for i, phoneme in enumerate(phonemes[:-1]):
+        if phoneme == "oU" and phonemes[i + 1] == "r":
+            phonemes[i] = "O"
+
+
+def as_ipa_string(phonemes):
+    modified_phonemes = phonemes[:]
+    _fix_oUr(modified_phonemes)
     result = []
-    for phoneme in tokens:
+    for phoneme in modified_phonemes:
         if phoneme in XSAMPA_TO_IPA:
             result.append(XSAMPA_TO_IPA[phoneme])
         else:

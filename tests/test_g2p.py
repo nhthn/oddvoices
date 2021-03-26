@@ -8,6 +8,19 @@ def cmudict():
     return oddvoices.g2p.read_cmudict()
 
 
+@pytest.mark.parametrize(
+    "pronunciation, expected",
+    [
+        (["O", "t"], ["A", "t"]),
+        (["f", "O", "r"], ["f", "oU", "r"]),
+        (["f", "O"], ["f", "A"]),
+    ]
+)
+def test_perform_cot_caught_merger(pronunciation, expected):
+    oddvoices.g2p.perform_cot_caught_merger(pronunciation)
+    assert pronunciation == expected
+
+
 def test_pronounce_text_basic(cmudict):
     text = "hello world"
     expected = [
