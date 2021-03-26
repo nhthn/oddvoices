@@ -36,6 +36,7 @@ class CorpusAnalyzer:
         self.audio, self.rate = soundfile.read(sound_file)
 
         self.n_randomized_phases = int(RANDOMIZED_PHASE_CUTOFF / self.expected_f0)
+        np.random.seed(0)
         self.randomized_phases = np.exp(np.random.random((self.n_randomized_phases,)) * 2 * np.pi * 1j)
 
         self.parse_label_file(label_file)
