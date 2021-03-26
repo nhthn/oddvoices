@@ -88,9 +88,10 @@ def calculate_auto_trim_amounts(synth, phonemes):
     return trim_amounts
 
 
-def sing(voice_file, spec, out_file):
+def sing(voice_file: str, spec, out_file: str):
     pronunciation_dict = oddvoices.g2p.read_cmudict()
-    syllables = oddvoices.g2p.pronounce_text(spec["text"], pronunciation_dict)
+    phonemes = oddvoices.g2p.pronounce_text(spec["text"], pronunciation_dict)
+    syllable_count = sum([phoneme == "-" for phoneme in phonemes])
 
     with open(voice_file, "rb") as f:
         database = oddvoices.corpus.read_voice_file(f)
@@ -98,11 +99,11 @@ def sing(voice_file, spec, out_file):
     synth = oddvoices.synth.Synth(database)
 
     music = {
-        "phonemes": [],
+        "phonemes": phonemes,
         "notes": [],
     }
 
-    for i, syllable in enumerate(syllables):
+    for i in range(syllable_count):
         note = spec["notes"][i % len(spec["notes"])]
         if isinstance(note, str):
             note = note_string_to_midinote(note)
@@ -112,10 +113,8 @@ def sing(voice_file, spec, out_file):
             "frequency": frequency,
             "duration": spec["durations"][i % len(spec["durations"])] * 60 / spec.get("bpm", 60),
         })
-        music["phonemes"].append("-")
-        music["phonemes"].extend(syllable)
 
-    trim_amounts = oddvoices.synth.calculate_auto_trim_amounts(synth, music["phonemes"])
+    trim_amounts = calculate_auto_trim_amounts(synth, music["phonemes"])
     for i, note in enumerate(music["notes"]):
         note["trim"] = trim_amounts[i]
 

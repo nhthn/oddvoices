@@ -34,8 +34,8 @@ def read_cmudict() -> Dict[str, List[str]]:
     return pronunciation_dict
 
 
-def split_syllables(phonemes: List[str]) -> List[List[str]]:
-    """Given an X-SAMPA pronunciation of a word, split it into syllables."""
+def split_syllables(phonemes: List[str]) -> List[str]:
+    """Given an X-SAMPA pronunciation of a word, prepend a "-" phoneme to each syllable."""
     return _SyllableSplitter(phonemes)()
 
 
@@ -43,15 +43,15 @@ class _SyllableSplitter:
 
     def __init__(self, phonemes):
         self.phonemes = phonemes
-        self.result = []
+        self.syllables = []
         self.new_syllable()
 
     def new_syllable(self):
         self.current_syllable_has_vowel: bool = False
         self.current_syllable: List[str] = []
-        self.result.append(self.current_syllable)
+        self.syllables.append(self.current_syllable)
 
-    def __call__(self) -> List[List[str]]:
+    def __call__(self) -> List[str]:
         for phoneme in self.phonemes:
             if phoneme in oddvoices.phonology.VOWELS:
                 if self.current_syllable_has_vowel:
@@ -62,9 +62,15 @@ class _SyllableSplitter:
                     self.new_syllable()
             self.current_syllable.append(phoneme)
 
-        if not self.current_syllable_has_vowel and len(self.result) > 1:
-            self.result[-2].extend(self.result.pop())
-        return self.result
+        if not self.current_syllable_has_vowel and len(self.syllables) > 1:
+            self.syllables[-2].extend(self.syllables.pop())
+
+        result = []
+        for syllable in self.syllables:
+            result.append("-")
+            result.extend(syllable)
+
+        return result
 
 
 def tokenize(text: str) -> List[str]:

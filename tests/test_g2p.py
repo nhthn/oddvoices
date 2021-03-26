@@ -24,9 +24,9 @@ def test_perform_cot_caught_merger(pronunciation, expected):
 def test_pronounce_text_basic(cmudict):
     text = "hello world"
     expected = [
-        ["_", "h", "@", "l"],
-        ["oU", "_"],
-        ["_", "w", "@`", "l", "d", "_"],
+        "-", "_", "h", "@", "l",
+        "-", "oU", "_",
+        "-", "_", "w", "@`", "l", "d", "_",
     ]
     assert oddvoices.g2p.pronounce_text(text, cmudict) == expected
 
@@ -34,9 +34,9 @@ def test_pronounce_text_basic(cmudict):
 def test_pronounce_text_punctuation(cmudict):
     text = "hello, world"
     expected = [
-        ["_", "h", "@", "l"],
-        ["oU", "_"],
-        ["_", "w", "@`", "l", "d", "_"],
+        "-", "_", "h", "@", "l",
+        "-", "oU", "_",
+        "-", "_", "w", "@`", "l", "d", "_",
     ]
     assert oddvoices.g2p.pronounce_text(text, cmudict) == expected
 
@@ -44,10 +44,10 @@ def test_pronounce_text_punctuation(cmudict):
 def test_pronounce_text_nonsense_word(cmudict):
     text = "hallo worldo"
     expected = [
-        ["_", "h", "{}", "l"],
-        ["oU", "_"],
-        ["_", "w", "oU", "r"],
-        ["l", "d", "oU", "_"],
+        "-", "_", "h", "{}", "l",
+        "-", "oU", "_",
+        "-", "_", "w", "oU", "r",
+        "-", "l", "d", "oU", "_",
     ]
     assert oddvoices.g2p.pronounce_text(text, cmudict) == expected
 
@@ -55,9 +55,9 @@ def test_pronounce_text_nonsense_word(cmudict):
 def test_pronounce_text_xsampa(cmudict):
     text = "hello /w@`ld/"
     expected = [
-        ["_", "h", "@", "l"],
-        ["oU", "_"],
-        ["_", "w", "@`", "l", "d", "_"],
+        "-", "_", "h", "@", "l",
+        "-", "oU", "_",
+        "-", "_", "w", "@`", "l", "d", "_",
     ]
     assert oddvoices.g2p.pronounce_text(text, cmudict) == expected
 
