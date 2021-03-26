@@ -1,6 +1,8 @@
+from typing import Dict, List
+import string
+
 import oddvoices.phonology
 import oddvoices.utils
-from typing import Dict, List
 
 
 def arpabet_to_xsampa(string: str) -> str:
@@ -64,30 +66,33 @@ class _SyllableSplitter:
         return self.result
 
 
-def split_words_and_strip_punctuation(text: str) -> List[str]:
-    """Split a text into words and remove all punctuation."""
-    words_pass_1 = text.split()
-    words_pass_2 = []
+def tokenize(text: str) -> List[str]:
+    """Split a text into words and remove punctuation."""
+    islands = text.split()
+    words = []
 
     punctuation = ".!,;:\"'()[]-"
-    for word in words_pass_1:
-        if word.startswith("/"):
-            new_word = word
+    for island in islands:
+        if island.startswith("/"):
+            new_word = island
             while new_word[-1] in punctuation:
                 new_word = new_word[:-1]
             if not new_word.endswith("/"):
                 raise RuntimeError(f"Syntax error: {new_word}")
-            words_pass_2.append(new_word)
+            words.append(new_word)
         else:
-            new_word = word
-            while len(new_word) != 0 and new_word[-1] in punctuation:
-                new_word = new_word[:-1]
-            while len(new_word) != 0 and new_word[0] in punctuation:
-                new_word = new_word[1:]
-            if len(new_word) != 0:
-                words_pass_2.append(new_word)
+            new_word_characters: List[str] = []
+            lower_island: str = island.lower()
+            for character in lower_island:
+                if character not in string.ascii_lowercase:
+                    if len(new_word_characters) != 0:
+                        words.append("".join(new_word_characters))
+                        new_word_characters = []
+                else:
+                    new_word_characters.append(character)
+            if len(new_word_characters) != 0:
+                words.append("".join(new_word_characters))
 
-    words = words_pass_2
     return words
 
 
@@ -127,7 +132,7 @@ def pronounce_unrecognized_word(word: str) -> List[str]:
 
 def pronounce_text(text: str, pronunciation_dict: Dict[str, List[str]]) -> List[List[str]]:
     """Convert an entire text into a list of syllables pronounced with X-SAMPA."""
-    words = split_words_and_strip_punctuation(text)
+    words = tokenize(text)
 
     syllables = []
     for word in words:

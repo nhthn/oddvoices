@@ -53,13 +53,16 @@ def test_pronounce_text_xsampa(cmudict):
     "text, expected",
     [
         ("hello world", ["hello", "world"]),
+        ("Hello World", ["hello", "world"]),
+        ("hello-world", ["hello", "world"]),
         ("hello, world!", ["hello", "world"]),
         (",hello !world", ["hello", "world"]),
-        ("hello ,/w!rld/!", ["hello", "/w!rld/"]),
+        ("hello /w!rld/", ["hello", "/w!rld/"]),
+        ("hello ,/w!rld/", ["hello", "w", "rld"]),
     ]
 )
-def test_split_words_and_strip_punctuation(text, expected):
-    assert oddvoices.g2p.split_words_and_strip_punctuation(text) == expected
+def test_tokenize(text, expected):
+    assert oddvoices.g2p.tokenize(text) == expected
 
 
 @pytest.mark.parametrize(
