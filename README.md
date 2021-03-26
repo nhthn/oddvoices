@@ -2,7 +2,7 @@
 
 **OddVoices** is a project to create open-source singing synthesizers for General American English (GA). The goal is to create interesting voices for use in experimental music inspired by retro synthesizers. Expect quirky and unusual voices, and not necessarily intelligible ones.
 
-Currently, OddVoices consists of two singing synthesizers:
+Currently, OddVoices consists of the following voices:
 
 - nt, a deep, dark basso profondo
 
