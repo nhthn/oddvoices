@@ -14,7 +14,7 @@ import common
 
 CPP_EXECUTABLE = common.TEST_ROOT.parent / "liboddvoices/build/liboddvoices_frontend"
 
-EXAMPLE_VOICE = common.TEST_ROOT / "compiled-voices/nt.voice"
+EXAMPLE_VOICE = common.TEST_ROOT / "compiled-voices/quake.voice"
 
 EXAMPLE_MUSIC = {
     "segments": [-1, 0, 1, 2, -1, 3, 4, 5, -1, 6, 7, 8],
