@@ -158,7 +158,7 @@ def pronounce_word(word: str, pronunciation_dict: Dict[str, List[str]]) -> List[
     return pronunciation
 
 
-def pronounce_text(text: str, pronunciation_dict: Dict[str, List[str]]) -> List[List[str]]:
+def pronounce_text(text: str, pronunciation_dict: Dict[str, List[str]]) -> List[str]:
     """Convert an entire text into a list of syllables pronounced with X-SAMPA."""
     words = tokenize(text)
 
