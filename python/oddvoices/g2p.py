@@ -85,7 +85,7 @@ def tokenize(text: str) -> List[str]:
             new_word_characters: List[str] = []
             lower_island: str = island.lower()
             for character in lower_island:
-                if character not in string.ascii_lowercase:
+                if character not in string.ascii_lowercase + "'":
                     if len(new_word_characters) != 0:
                         words.append("".join(new_word_characters))
                         new_word_characters = []

@@ -59,6 +59,7 @@ def test_pronounce_text_xsampa(cmudict):
         (",hello !world", ["hello", "world"]),
         ("hello /w!rld/", ["hello", "/w!rld/"]),
         ("hello ,/w!rld/", ["hello", "w", "rld"]),
+        ("world's", ["world's"]),
     ]
 )
 def test_tokenize(text, expected):
