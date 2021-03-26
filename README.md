@@ -5,7 +5,6 @@
 Currently, OddVoices consists of two singing synthesizers:
 
 - nt, a deep, dark basso profondo
-- nwh, a barely intelligible synthesizer-like baritone
 
 **This project is unstable and in an early stage of development.**
 
@@ -44,11 +43,17 @@ The C++ synthesizer in the `liboddvoices` directory is a port of the Python synt
 
     liboddvoices_frontend ../../nwh.voice ../example/music.json out.wav
 
-## Corpus
+## Corpus and phonology
+
+Pronunciations are provided using X-SAMPA notation. One minor change is that /æ/ is represented with `/{}/` to prevent bracket matching issues in text editors. (The closing curly bracket represents /ʉ/, which is not found in GA.)
+
+Our representation of General American English phonology is fairly standard, but with some changes:
+
+- `/V/` is merged into `/@/`. The distinctions between them are inessential for singing synthesis.
+- `/O/` is merged into `/A/`. This is the cot-caught merger and admittedly reflects a Western American bias.
+- `/Or/`, being distinct from `/Ar/`, is represented as `/oUr/`.
 
 The corpus was created manually in the file `wordlist/words.txt`, which spans most common CV and CC diphones in GA.
-
-Pronunciations are provided using X-SAMPA notation. X-SAMPA is similar to IPA, but uses ASCII characters. One minor change is that /æ/ is represented with `{}` to prevent bracket matching issues in text editors. (The closing curly bracket represents /ʉ/, which is not found in GA.)
 
 ## Recording a corpus
 
