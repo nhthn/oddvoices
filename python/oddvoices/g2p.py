@@ -113,10 +113,11 @@ def pronounce_unrecognized_word(word: str) -> List[str]:
         reverse=True,
     )
 
-    while len(word) != 0:
+    remaining_word = word + "$"
+    while len(remaining_word) != 0:
         for key in keys:
-            if word.startswith(key):
-                word = word[len(key):]
+            if remaining_word.startswith(key):
+                remaining_word = remaining_word[len(key):]
                 new_phonemes = oddvoices.phonology.GUESS_PRONUNCIATIONS[key]
                 if isinstance(new_phonemes, list):
                     phonemes.extend(new_phonemes)
@@ -124,7 +125,7 @@ def pronounce_unrecognized_word(word: str) -> List[str]:
                     phonemes.append(new_phonemes)
                 break
         else:
-            word = word[1:]
+            remaining_word = remaining_word[1:]
 
     phonemes_pass_2 = []
     last_phoneme = None
@@ -174,9 +175,5 @@ def main():
     text = " ".join(sys.argv[1:])
 
     cmudict = read_cmudict()
-    pronunciation = pronounce_text(text, cmudict)
-    phonemes = []
-    for syllable in pronunciation:
-        phonemes.append("-")
-        phonemes.extend(syllable)
+    phonemes = pronounce_text(text, cmudict)
     print(" ".join(phonemes))

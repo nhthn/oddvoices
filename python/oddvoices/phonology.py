@@ -135,6 +135,7 @@ GUESS_PRONUNCIATIONS = {
     "a": "{}",
     "ai": "aI",
     "au": "aU",
+    "augh": "A",
     "b": "b",
     "c": "k",
     "ch": "tS",
@@ -149,6 +150,7 @@ GUESS_PRONUNCIATIONS = {
     "h": "h",
     "i": "I",
     "ie": "aI",
+    "igh": "aI",
     "j": "dZ",
     "k": "k",
     "l": "l",
@@ -158,6 +160,7 @@ GUESS_PRONUNCIATIONS = {
     "o": "oU",
     "oo": "u",
     "ou": "aU",
+    "ough": "A",
     "ow": "aU",
     "p": "p",
     "q": ["k", "w"],
@@ -171,6 +174,7 @@ GUESS_PRONUNCIATIONS = {
     "w": "w",
     "x": ["k", "s"],
     "y": "j",
+    "y$": "i",
     "z": "z",
 }
 

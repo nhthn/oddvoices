@@ -85,6 +85,10 @@ def test_tokenize(text, expected):
         ("world", ["w", "oU", "r", "l", "d"]),
         ("greed", ["g", "r", "i", "d"]),
         ("summer", ["s", "@", "m", "@`"]),
+        ("night", ["n", "aI", "t"]),
+        ("bought", ["b", "A", "t"]),
+        ("naught", ["n", "A", "t"]),
+        ("many", ["m", "{}", "n", "i"]),
     ]
 )
 def test_pronounce_unrecognized_word(word, expected):
