@@ -1,5 +1,6 @@
 from typing import Dict, List
 import string
+import sys
 
 import oddvoices.phonology
 import oddvoices.utils
@@ -147,3 +148,15 @@ def pronounce_text(text: str, pronunciation_dict: Dict[str, List[str]]) -> List[
         syllables.extend(split_syllables(pronunciation))
 
     return syllables
+
+
+def main():
+    text = " ".join(sys.argv[1:])
+
+    cmudict = read_cmudict()
+    pronunciation = pronounce_text(text, cmudict)
+    phonemes = []
+    for syllable in pronunciation:
+        phonemes.append("-")
+        phonemes.extend(syllable)
+    print(" ".join(phonemes))
