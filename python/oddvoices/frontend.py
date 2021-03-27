@@ -14,6 +14,7 @@ MAJOR_SCALE = [0, 2, 4, 5, 7, 9, 11]
 FLATS = "bf"
 SHARPS = "#s"
 
+
 def note_string_to_midinote(string):
     if not 2 <= len(string) <= 3:
         raise ValueError(f"Note string {string} is not 2-3 characters")
@@ -31,7 +32,9 @@ def note_string_to_midinote(string):
     return 60 + (octave - 4) * 12 + MAJOR_SCALE[degree] + accidental
 
 
-def phonemes_to_segments(synth: oddvoices.synth.Synth, phonemes: List[str]) -> List[str]:
+def phonemes_to_segments(
+    synth: oddvoices.synth.Synth, phonemes: List[str]
+) -> List[str]:
     segments: List[str] = []
     for i in range(len(phonemes) - 1):
         syllableBreak = False
@@ -64,7 +67,7 @@ def get_trim_amount(synth, syllable):
     for i, segment in enumerate(syllable):
         if segment in oddvoices.phonology.VOWELS:
             vowel_index = i
-    final_segments = syllable[vowel_index + 1:]
+    final_segments = syllable[vowel_index + 1 :]
     final_segment_lengths = [
         synth.get_segment_length(segment) - synth.crossfade_length
         for segment in final_segments
@@ -95,30 +98,28 @@ def sing(voice_file: str, spec, out_file: str, sample_rate: Optional[float]):
 
     with open(voice_file, "rb") as f:
         database = oddvoices.corpus.read_voice_file(f)
-
     synth = oddvoices.synth.Synth(database, sample_rate=sample_rate)
 
-    music = {
-        "phonemes": phonemes,
-        "notes": [],
-    }
-
+    notes = []
     for i in range(syllable_count):
         note = spec["notes"][i % len(spec["notes"])]
         if isinstance(note, str):
             note = note_string_to_midinote(note)
         note += spec.get("transposition", 0)
         frequency = oddvoices.utils.midi_note_to_hertz(note)
-        music["notes"].append({
-            "frequency": frequency,
-            "duration": spec["durations"][i % len(spec["durations"])] * 60 / spec.get("bpm", 60),
-        })
-
-    trim_amounts = calculate_auto_trim_amounts(synth, music["phonemes"])
-    for i, note in enumerate(music["notes"]):
+        notes.append(
+            {
+                "frequency": frequency,
+                "duration": spec["durations"][i % len(spec["durations"])]
+                * 60
+                / spec.get("bpm", 60),
+            }
+        )
+    trim_amounts = calculate_auto_trim_amounts(synth, phonemes)
+    for i, note in enumerate(notes):
         note["trim"] = trim_amounts[i]
 
-    segments = phonemes_to_segments(synth, music["phonemes"])
+    segments = phonemes_to_segments(synth, phonemes)
     segment_indices = []
     for segment_name in segments:
         try:
@@ -126,7 +127,11 @@ def sing(voice_file: str, spec, out_file: str, sample_rate: Optional[float]):
         except:
             segment_index = -1
         segment_indices.append(segment_index)
-    music["segments"] = segment_indices
+
+    music: dict = {
+        "segments": segment_indices,
+        "notes": notes,
+    }
 
     result = oddvoices.synth.sing(synth, music)
     soundfile.write(out_file, result, samplerate=int(synth.rate))

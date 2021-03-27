@@ -2,9 +2,9 @@
 
 **OddVoices** is a project to create open-source singing synthesizers for General American English (GA). The goal is to create interesting voices for use in experimental music inspired by retro synthesizers. Expect quirky and unusual voices, and not necessarily intelligible ones.
 
-Currently, OddVoices consists of two singing synthesizers:
+Currently, OddVoices consists of the following voices:
 
-- nt, a deep, dark basso profondo
+- Quake Chesnokov, a deep, dark basso profondo
 
 **This project is unstable and in an early stage of development.**
 
@@ -20,18 +20,18 @@ Set up Python virtualenv:
     source .venv/bin/activate
     pip install -e .
 
-Analyze segments in `voices/nt` directory and generate the database file at `nt.voice`. You only need to do this once:
+Analyze segments in `voices/quake` directory and generate the voice file at `quake.voice`:
 
-    oddvoices-compile voices/nt nt.voice
+    oddvoices-compile voices/quake quake.voice
 
 Sing the JSON file at `example/music.json`:
 
-    sing nt.voice example/music.json out.wav
+    sing quake.voice example/music.json out.wav
 
 Sing a MIDI file (experimental, very rudimentary right now):
 
-    sing-midi nt.voice example/example.mid -l "This is just a test of singing" out.wav
-    sing-midi nt.voice example/example.mid -f lyrics.txt out.wav
+    sing-midi quake.voice example/example.mid -l "This is just a test of singing" out.wav
+    sing-midi quake.voice example/example.mid -f lyrics.txt out.wav
 
 ### Building and using the C++ synthesizer
 
