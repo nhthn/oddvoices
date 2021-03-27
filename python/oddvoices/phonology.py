@@ -158,6 +158,7 @@ GUESS_PRONUNCIATIONS = {
     "n": "n",
     "ng": "N",
     "o": "oU",
+    "oi": "OI",
     "oo": "u",
     "ou": "aU",
     "ough": "A",
