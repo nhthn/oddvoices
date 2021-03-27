@@ -10,6 +10,9 @@ setuptools.setup(
     package_dir={"": "python"},
     python_requires=">=3.8",
     install_requires=["numpy", "scipy", "soundfile", "mido"],
+    extras_require={
+        "dev": ["pytest", "mypy", "black", "pre-commit"],
+    },
     entry_points={
         "console_scripts": [
             "sing = oddvoices.frontend:main",
@@ -21,5 +24,5 @@ setuptools.setup(
     },
     package_data={
         "oddvoices": ["cmudict-0.7b"],
-    }
+    },
 )

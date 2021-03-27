@@ -1,0 +1,10 @@
+repos:
+-   repo: https://github.com/psf/black
+    rev: 20.8b1
+    hooks:
+    -   id: black
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: b84ce09
+    hooks:
+    -   id: mypy
+    args: ["python/oddvoices", "tests"]
