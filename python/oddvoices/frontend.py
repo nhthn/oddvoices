@@ -1,7 +1,7 @@
 import json
 import numpy as np
 import soundfile
-from typing import List
+from typing import List, Optional
 
 import oddvoices.corpus
 import oddvoices.g2p
@@ -13,6 +13,7 @@ NOTE_NAMES = ["c", "d", "e", "f", "g", "a", "b"]
 MAJOR_SCALE = [0, 2, 4, 5, 7, 9, 11]
 FLATS = "bf"
 SHARPS = "#s"
+
 
 def note_string_to_midinote(string):
     if not 2 <= len(string) <= 3:
@@ -31,7 +32,9 @@ def note_string_to_midinote(string):
     return 60 + (octave - 4) * 12 + MAJOR_SCALE[degree] + accidental
 
 
-def phonemes_to_segments(synth: oddvoices.synth.Synth, phonemes: List[str]) -> List[str]:
+def phonemes_to_segments(
+    synth: oddvoices.synth.Synth, phonemes: List[str]
+) -> List[str]:
     segments: List[str] = []
     for i in range(len(phonemes) - 1):
         syllableBreak = False
@@ -64,7 +67,7 @@ def get_trim_amount(synth, syllable):
     for i, segment in enumerate(syllable):
         if segment in oddvoices.phonology.VOWELS:
             vowel_index = i
-    final_segments = syllable[vowel_index + 1:]
+    final_segments = syllable[vowel_index + 1 :]
     final_segment_lengths = [
         synth.get_segment_length(segment) - synth.crossfade_length
         for segment in final_segments
@@ -88,14 +91,14 @@ def calculate_auto_trim_amounts(synth, phonemes):
     return trim_amounts
 
 
-def sing(voice_file: str, spec, out_file: str):
+def sing(voice_file: str, spec, out_file: str, sample_rate: Optional[float]):
     pronunciation_dict = oddvoices.g2p.read_cmudict()
     phonemes = oddvoices.g2p.pronounce_text(spec["text"], pronunciation_dict)
     syllable_count = sum([phoneme == "-" for phoneme in phonemes])
 
     with open(voice_file, "rb") as f:
         database = oddvoices.corpus.read_voice_file(f)
-    synth = oddvoices.synth.Synth(database)
+    synth = oddvoices.synth.Synth(database, sample_rate=sample_rate)
 
     notes = []
     for i in range(syllable_count):
@@ -104,10 +107,14 @@ def sing(voice_file: str, spec, out_file: str):
             note = note_string_to_midinote(note)
         note += spec.get("transposition", 0)
         frequency = oddvoices.utils.midi_note_to_hertz(note)
-        notes.append({
-            "frequency": frequency,
-            "duration": spec["durations"][i % len(spec["durations"])] * 60 / spec.get("bpm", 60),
-        })
+        notes.append(
+            {
+                "frequency": frequency,
+                "duration": spec["durations"][i % len(spec["durations"])]
+                * 60
+                / spec.get("bpm", 60),
+            }
+        )
     trim_amounts = calculate_auto_trim_amounts(synth, phonemes)
     for i, note in enumerate(notes):
         note["trim"] = trim_amounts[i]
@@ -137,6 +144,7 @@ def main():
     parser.add_argument("voice_npz")
     parser.add_argument("music_file")
     parser.add_argument("out_file")
+    parser.add_argument("-s", "--sample-rate", type=float)
 
     args = parser.parse_args()
 
@@ -144,4 +152,4 @@ def main():
     with open(music_file) as f:
         music = json.load(f)
 
-    sing(args.voice_npz, music, args.out_file)
+    sing(args.voice_npz, music, args.out_file, sample_rate=args.sample_rate)
