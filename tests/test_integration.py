@@ -6,9 +6,9 @@ import tempfile
 import numpy as np
 import scipy.signal
 import soundfile
+import pytest
 
 import oddvoices.synth
-
 import common
 
 
@@ -53,15 +53,23 @@ def test_cpp_vs_python():
     )
 
 
+@pytest.mark.xfail
 def test_sample_rates():
     with open(EXAMPLE_VOICE, "rb") as f:
         database = oddvoices.corpus.read_voice_file(f)
 
-    synth_1 = oddvoices.synth.Synth(database, sample_rate=48000)
+    sample_rate_1 = 48000
+    synth_1 = oddvoices.synth.Synth(database, sample_rate=sample_rate_1)
     result_1 = oddvoices.synth.sing(synth_1, EXAMPLE_MUSIC)
 
-    synth_2 = oddvoices.synth.Synth(database, sample_rate=44100)
+    sample_rate_2 = 8000
+    synth_2 = oddvoices.synth.Synth(database, sample_rate=sample_rate_2)
     result_2 = oddvoices.synth.sing(synth_2, EXAMPLE_MUSIC)
+
+    np.testing.assert_allclose(
+        len(result_1) / sample_rate_1, len(result_2) / sample_rate_2
+    )
+
     result_2 = scipy.signal.resample(result_2, len(result_1))
 
     np.testing.assert_allclose(
