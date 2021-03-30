@@ -159,7 +159,7 @@ US /pUS/ push
 Ud /wUd/ wood
 Uk /lUk/ look
 Ut /rUt/ root ("oo" as in "book")
-Z@` /mEZ@`/ measure
+EZ,Z@` /mEZ@`/ measure
 Z_ /m@sAZ/ massage
 _Z /Z@/ je (French, soft "j")
 _b,bA /bAg/ bog
@@ -284,6 +284,7 @@ faI /faIt/ fight
 faU /faUnd/ found
 feI /feI/ Faye
 fi /fit/ feet
+fj,utS,tS@` /fjutS@`/ future
 fl /flu/ flu
 foU /foU/ foe
 fr /freIm/ frame
