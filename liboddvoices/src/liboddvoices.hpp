@@ -43,7 +43,7 @@ public:
     Grain(std::shared_ptr<Database> database);
 
     bool isActive() { return m_active; };
-    void play(int offset1, int offset2, float crossfade);
+    void play(int offset1, int offset2, float crossfade, float rate);
 
     int16_t process();
 
@@ -54,6 +54,7 @@ private:
     int m_offset2;
     int m_readPos = 0;
     float m_crossfade;
+    float m_rate;
 };
 
 

@@ -129,8 +129,9 @@ Grain::Grain(std::shared_ptr<Database> database)
 {
 }
 
-void Grain::play(int offset1, int offset2, float crossfade)
+void Grain::play(int offset1, int offset2, float crossfade, float rate)
 {
+    m_rate = rate;
     m_readPos = 0;
     m_offset1 = offset1;
     m_offset2 = offset2;
@@ -140,18 +141,19 @@ void Grain::play(int offset1, int offset2, float crossfade)
 
 int16_t Grain::process()
 {
+    if (m_readPos >= m_database->getGrainLength()) {
+        m_active = false;
+    }
     if (!m_active) {
         return 0;
     }
     auto& memory = m_database->getWavetableMemory();
-    auto result = m_crossfade == 0 ? memory[m_offset1 + m_readPos] : (
-        memory[m_offset1 + m_readPos] * (1 - m_crossfade)
-        + memory[m_offset2 + m_readPos] * m_crossfade
+    auto readPos = static_cast<int>(m_readPos);
+    auto result = m_crossfade == 0 ? memory[m_offset1 + readPos] : (
+        memory[m_offset1 + readPos] * (1 - m_crossfade)
+        + memory[m_offset2 + readPos] * m_crossfade
     );
-    m_readPos += 1;
-    if (m_readPos == m_database->getGrainLength()) {
-        m_active = false;
-    }
+    m_readPos += m_rate;
     return result;
 }
 
@@ -271,8 +273,9 @@ int32_t Synth::process()
 
         auto offset = getOffset(m_segment, m_segmentTime);
         auto oldOffset = getOffset(m_oldSegment, m_oldSegmentTime);
+        auto rate = m_database->getSampleRate() / m_sampleRate;
 
-        m_grains[m_nextGrain]->play(offset, oldOffset, m_crossfade);
+        m_grains[m_nextGrain]->play(offset, oldOffset, m_crossfade, rate);
         m_nextGrain = (m_nextGrain + 1) % m_maxGrains;
     }
     m_segmentTime += 1.0 / m_sampleRate;
