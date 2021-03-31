@@ -10,7 +10,7 @@
 
 For related open-source projects, check out [eCantorix](https://github.com/divVerent/ecantorix) (based on eSpeak), [Flinger](https://web.archive.org/web/20110524220620/http://cslu.cse.ogi.edu/tts/flinger/) (Festival), and [Sinsy](http://sinsy.sourceforge.net/) (HTS).
 
-OddVoices aspires to be a fun and quirky option for experimental musicians, and doesn't intend to advance the state of the art intelligibility or naturalness. It is based on sample concatenation synthesis with the [MBR-PSOLA](https://www.sciencedirect.com/science/article/abs/pii/016763939390042J) algorithm, which is similar to algorithms used in the 90's and 2000's.
+OddVoices aspires to be a fun and quirky option for experimental musicians, and doesn't intend to advance the state of the art of intelligibility or naturalness. It is based on sample concatenation synthesis with [MBR-PSOLA](https://www.sciencedirect.com/science/article/abs/pii/016763939390042J), which is similar to algorithms used in the 90's and 2000's.
 
 ## Using the synthesizer
 
