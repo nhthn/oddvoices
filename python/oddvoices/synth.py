@@ -46,7 +46,9 @@ class Synth:
             self.rate: float = self.database_rate
         else:
             self.rate: float = float(sample_rate)
-        self.expected_f0: float = self.rate / (0.5 * self.database["grain_length"])
+        self.expected_f0: float = self.database_rate / (
+            0.5 * self.database["grain_length"]
+        )
         self.max_frequency = 2000
         self.frame_length = self.database["grain_length"]
         self.crossfade_length = 0.03
