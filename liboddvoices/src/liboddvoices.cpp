@@ -141,7 +141,7 @@ void Grain::play(int offset1, int offset2, float crossfade, float rate)
 
 int16_t Grain::process()
 {
-    if (m_readPos >= m_database->getGrainLength()) {
+    if (m_readPos >= m_database->getGrainLength() - 1) {
         m_active = false;
     }
     if (!m_active) {
@@ -149,10 +149,20 @@ int16_t Grain::process()
     }
     auto& memory = m_database->getWavetableMemory();
     auto readPos = static_cast<int>(m_readPos);
-    auto result = m_crossfade == 0 ? memory[m_offset1 + readPos] : (
-        memory[m_offset1 + readPos] * (1 - m_crossfade)
-        + memory[m_offset2 + readPos] * m_crossfade
-    );
+    auto fracReadPos = m_readPos - readPos;
+
+    auto result = (
+        memory[m_offset1 + readPos] * (1 - fracReadPos)
+        + memory[m_offset1 + readPos + 1] * fracReadPos
+    ) * (1 - m_crossfade);
+
+    if (m_crossfade != 0) {
+        result += (
+            memory[m_offset2 + readPos] * (1 - fracReadPos)
+            + memory[m_offset2 + readPos + 1] * fracReadPos
+        ) * m_crossfade;
+    }
+
     m_readPos += m_rate;
     return result;
 }

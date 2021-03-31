@@ -5,7 +5,6 @@ import soundfile
 
 
 class Grain:
-
     def __init__(self, frame, old_frame, frame_length, crossfade, rate):
         self.rate = rate
         self.frame = frame
@@ -16,22 +15,30 @@ class Grain:
         self.read_pos = 0
 
     def process(self):
-        if self.read_pos >= self.frame_length:
+        if self.read_pos >= self.frame_length - 1:
             self.playing = False
         if not self.playing:
             return 0
+        scale: float = 1 / 32767
         result = 0
         int_read_pos: int = int(self.read_pos)
+        frac_read_pos: float = self.read_pos - int_read_pos
         if self.frame is not None:
-            result += self.frame[int_read_pos] / 32767 * (1 - self.crossfade)
+            result += (
+                self.frame[int_read_pos] * (1 - frac_read_pos)
+                + self.frame[int_read_pos + 1] * frac_read_pos
+            ) * (1 - self.crossfade)
         if self.old_frame is not None:
-            result += self.old_frame[int_read_pos] / 32767 * self.crossfade
+            result += (
+                self.old_frame[int_read_pos] * (1 - frac_read_pos)
+                + self.old_frame[int_read_pos + 1] * frac_read_pos
+            ) * self.crossfade
+        result *= scale
         self.read_pos += self.rate
         return result
 
 
 class Synth:
-
     def __init__(self, database, sample_rate=None):
         self.database = database
         self.database_rate: float = float(self.database["rate"])
@@ -68,13 +75,20 @@ class Synth:
             return
 
         frame_index = int(self.segment_time * self.expected_f0)
-        frame_index = frame_index % self.database["segments"][self.segment_id]["num_frames"]
+        frame_index = (
+            frame_index % self.database["segments"][self.segment_id]["num_frames"]
+        )
         frame = self.database["segments"][self.segment_id]["frames"][frame_index, :]
 
         if self.old_segment_id != "-":
             old_frame_index = int(self.old_segment_time * self.expected_f0)
-            old_frame_index = old_frame_index % self.database["segments"][self.old_segment_id]["num_frames"]
-            old_frame = self.database["segments"][self.old_segment_id]["frames"][old_frame_index, :]
+            old_frame_index = (
+                old_frame_index
+                % self.database["segments"][self.old_segment_id]["num_frames"]
+            )
+            old_frame = self.database["segments"][self.old_segment_id]["frames"][
+                old_frame_index, :
+            ]
         else:
             old_frame = None
 
@@ -83,7 +97,7 @@ class Synth:
             old_frame,
             self.frame_length,
             crossfade=self.crossfade,
-            rate=self.database_rate / self.rate
+            rate=self.database_rate / self.rate,
         )
         self.grains.append(grain)
 
@@ -161,6 +175,7 @@ class Synth:
 
     def note_off(self):
         self.note_offs += 1
+
 
 def sing(synth, music):
     for segment_index in music["segments"]:
