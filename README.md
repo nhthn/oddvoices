@@ -1,12 +1,16 @@
 # OddVoices
 
-**OddVoices** is a project to create open-source singing synthesizers for General American English (GA). The goal is to create interesting voices for use in experimental music inspired by retro synthesizers. Expect quirky and unusual voices, and not necessarily intelligible ones.
-
-Currently, OddVoices consists of the following voices:
+**OddVoices** is a project to create open-source singing synthesizers for General American English. Currently, OddVoices consists of the following voices:
 
 - Quake Chesnokov, a deep, dark basso profondo
 
 **This project is unstable and in an early stage of development.**
+
+## Background
+
+For related open-source projects, check out [eCantorix](https://github.com/divVerent/ecantorix) (based on eSpeak), [Flinger](https://web.archive.org/web/20110524220620/http://cslu.cse.ogi.edu/tts/flinger/) (Festival), and [Sinsy](http://sinsy.sourceforge.net/) (HTS).
+
+OddVoices aspires to be a fun and quirky option for experimental musicians, and doesn't intend to advance the state of the art intelligibility or naturalness. It is based on sample concatenation synthesis with the [MBR-PSOLA](https://www.sciencedirect.com/science/article/abs/pii/016763939390042J) algorithm, which is similar to algorithms used in the 90's and 2000's.
 
 ## Using the synthesizer
 
@@ -50,8 +54,8 @@ Pronunciations are provided using X-SAMPA notation. One minor change is that /æ
 Our representation of General American English phonology is fairly standard, but with some changes:
 
 - `/V/` is merged into `/@/`. The distinctions between them are inessential for singing synthesis.
-- `/O/` is merged into `/A/`. This is the cot-caught merger and admittedly reflects a Western American bias.
-- `/Or/`, being distinct from `/Ar/`, is represented as `/oUr/`.
+- `/O/` is merged into `/A/`. This is the cot-caught merger, admittedly reflecting a California bias.
+- `/Or/`, being distinct from `/Ar/`, is represented as `/oUr/`. A literal interpretation of `/oUr/`, as in "lower," is better written as ``/oUw@`/``.
 
 The corpus was created manually in the file `wordlist/words.txt`, which spans most common CV and CC diphones in GA.
 
