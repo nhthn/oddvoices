@@ -47,6 +47,18 @@ int main(int argc, char** argv)
     for (auto& note : j["notes"]) {
         synth.setFrequency(note["frequency"]);
 
+        if (!note["formant_shift"].is_null()) {
+            synth.setFormantShift(note["formant_shift"]);
+        } else {
+            synth.setFormantShift(1.0);
+        }
+
+        if (!note["phoneme_speed"].is_null()) {
+            synth.setPhonemeSpeed(note["phoneme_speed"]);
+        } else {
+            synth.setPhonemeSpeed(1.0);
+        }
+
         float duration = note["duration"];
         float trim = note["trim"];
         synth.noteOn();

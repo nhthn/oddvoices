@@ -67,6 +67,9 @@ public:
     void queueSegment(int segment);
     bool isActive();
 
+    void setFormantShift(float formantShift) { m_formantShift = formantShift; };
+    void setPhonemeSpeed(float phonemeSpeed) { m_phonemeSpeed = phonemeSpeed; };
+
     void noteOn();
     void noteOff();
 
@@ -74,6 +77,9 @@ private:
     const float m_sampleRate;
     float m_phase = 1;
     float m_frequency = 200;
+    float m_phonemeSpeed = 1.0;
+    float m_formantShift = 1.0;
+
     std::shared_ptr<Database> m_database;
     static constexpr int m_maxGrains = 10;
     int m_nextGrain = 0;
