@@ -54,7 +54,7 @@ def spectrogram(signal):
     [
         (EXAMPLE_MUSIC_BASIC, 0.09),
         (EXAMPLE_MUSIC_PHONEME_SPEED, 0.09),
-        (EXAMPLE_MUSIC_FORMANT_SHIFT, 0.13),
+        (EXAMPLE_MUSIC_FORMANT_SHIFT, 0.09),
     ],
 )
 def test_cpp_vs_python(music, tolerance):

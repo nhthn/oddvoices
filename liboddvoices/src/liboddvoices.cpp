@@ -283,7 +283,7 @@ int32_t Synth::process()
 
         auto offset = getOffset(m_segment, m_segmentTime);
         auto oldOffset = getOffset(m_oldSegment, m_oldSegmentTime);
-        auto rate = (m_database->getSampleRate() / m_sampleRate) * m_formantShift;
+        auto rate = (static_cast<float>(m_database->getSampleRate()) / m_sampleRate) * m_formantShift;
 
         m_grains[m_nextGrain]->play(offset, oldOffset, m_crossfade, rate);
         m_nextGrain = (m_nextGrain + 1) % m_maxGrains;

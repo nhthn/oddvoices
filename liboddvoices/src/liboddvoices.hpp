@@ -52,7 +52,7 @@ private:
     bool m_active = false;
     int m_offset1;
     int m_offset2;
-    int m_readPos = 0;
+    float m_readPos = 0;
     float m_crossfade;
     float m_rate;
 };
