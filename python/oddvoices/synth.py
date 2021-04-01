@@ -58,6 +58,8 @@ class Synth:
 
         self.frequency = 0
         self.phase = 0.0
+        self.phoneme_speed = 1.0
+        self.formant_shift = 1.0
 
         self.grains = []
 
@@ -99,7 +101,7 @@ class Synth:
             old_frame,
             self.frame_length,
             crossfade=self.crossfade,
-            rate=self.database_rate / self.sample_rate,
+            rate=(self.database_rate / self.sample_rate) * self.formant_shift,
         )
         self.grains.append(grain)
 
@@ -161,9 +163,12 @@ class Synth:
                 self._start_grain()
             self.phase -= 1
 
-        self.old_segment_time += 1 / self.sample_rate
-        self.segment_time += 1 / self.sample_rate
-        self.crossfade = max(self.crossfade + self.crossfade_ramp, 0.0)
+        segment_time_per_sample = self.phoneme_speed / self.sample_rate
+        self.old_segment_time += segment_time_per_sample
+        self.segment_time += segment_time_per_sample
+        self.crossfade = max(
+            self.crossfade + self.crossfade_ramp * self.phoneme_speed, 0.0
+        )
         self.phase += self.frequency / self.sample_rate
 
         self.grains = [grain for grain in self.grains if grain.playing]
@@ -192,6 +197,10 @@ def sing(synth, music):
         frequency = note["frequency"]
         duration = note["duration"]
         trim = note["trim"]
+
+        synth.phoneme_speed = note.get("phoneme_speed", 1.0)
+        synth.formant_shift = note.get("formant_shift", 1.0)
+
         synth.note_on(frequency)
         for i in range(int((duration - trim) * synth.sample_rate)):
             result.append(synth.process())

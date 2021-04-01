@@ -113,6 +113,8 @@ def sing(voice_file: str, spec, out_file: str, sample_rate: Optional[float]):
                 "duration": spec["durations"][i % len(spec["durations"])]
                 * 60
                 / spec.get("bpm", 60),
+                "formant_shift": spec.get("formant_shift", 1.0),
+                "phoneme_speed": spec.get("phoneme_speed", 1.0),
             }
         )
     trim_amounts = calculate_auto_trim_amounts(synth, phonemes)
