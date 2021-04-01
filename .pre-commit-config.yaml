@@ -7,4 +7,3 @@ repos:
     rev: b84ce09
     hooks:
     -   id: mypy
-        args: ["python/oddvoices", "tests"]

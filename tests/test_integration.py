@@ -48,7 +48,7 @@ def test_cpp_vs_python():
     synth = oddvoices.synth.Synth(database)
     result_py = oddvoices.synth.sing(synth, EXAMPLE_MUSIC)
 
-    assert rate == int(synth.rate)
+    assert rate == int(synth.sample_rate)
     np.testing.assert_allclose(
         spectrogram(result_cpp), spectrogram(result_py), rtol=0, atol=0.09
     )

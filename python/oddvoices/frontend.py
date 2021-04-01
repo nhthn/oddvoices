@@ -134,7 +134,7 @@ def sing(voice_file: str, spec, out_file: str, sample_rate: Optional[float]):
     }
 
     result = oddvoices.synth.sing(synth, music)
-    soundfile.write(out_file, result, samplerate=int(synth.rate))
+    soundfile.write(out_file, result, samplerate=int(synth.sample_rate))
 
 
 def main():

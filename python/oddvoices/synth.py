@@ -43,9 +43,9 @@ class Synth:
         self.database = database
         self.database_rate: float = float(self.database["rate"])
         if sample_rate is None:
-            self.rate: float = self.database_rate
+            self.sample_rate: float = self.database_rate
         else:
-            self.rate: float = float(sample_rate)
+            self.sample_rate: float = float(sample_rate)
         self.expected_f0: float = self.database_rate / (
             0.5 * self.database["grain_length"]
         )
@@ -99,7 +99,7 @@ class Synth:
             old_frame,
             self.frame_length,
             crossfade=self.crossfade,
-            rate=self.database_rate / self.rate,
+            rate=self.database_rate / self.sample_rate,
         )
         self.grains.append(grain)
 
@@ -126,7 +126,7 @@ class Synth:
             self.crossfade_ramp = 0
         else:
             self.crossfade = 1
-            self.crossfade_ramp = -1 / (self.crossfade_length * self.rate)
+            self.crossfade_ramp = -1 / (self.crossfade_length * self.sample_rate)
 
     def get_segment_length(self, segment_id):
         return self.database["segments"][segment_id]["num_frames"] / self.expected_f0
@@ -161,10 +161,10 @@ class Synth:
                 self._start_grain()
             self.phase -= 1
 
-        self.old_segment_time += 1 / self.rate
-        self.segment_time += 1 / self.rate
+        self.old_segment_time += 1 / self.sample_rate
+        self.segment_time += 1 / self.sample_rate
         self.crossfade = max(self.crossfade + self.crossfade_ramp, 0.0)
-        self.phase += self.frequency / self.rate
+        self.phase += self.frequency / self.sample_rate
 
         self.grains = [grain for grain in self.grains if grain.playing]
         result = sum([grain.process() for grain in self.grains])
@@ -193,10 +193,10 @@ def sing(synth, music):
         duration = note["duration"]
         trim = note["trim"]
         synth.note_on(frequency)
-        for i in range(int((duration - trim) * synth.rate)):
+        for i in range(int((duration - trim) * synth.sample_rate)):
             result.append(synth.process())
         synth.note_off()
-        for i in range(int(trim * synth.rate)):
+        for i in range(int(trim * synth.sample_rate)):
             result.append(synth.process())
 
     return np.array(result, dtype="float32")
