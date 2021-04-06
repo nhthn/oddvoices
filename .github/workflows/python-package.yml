@@ -25,6 +25,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
+        sudo apt install libsndfile cmake g++
         python -m pip install --upgrade pip
         python -m pip install flake8
         python -m pip install -e .[dev]
@@ -40,6 +41,13 @@ jobs:
     - name: Check types with mypy
       run: |
         mypy python/oddvoices tests
+    - name: Build C++ tool
+      run: |
+        cd liboddvoices
+        mkdir build
+        cd build
+        cmake ..
+        make
     - name: Test with pytest
       run: |
         pytest
