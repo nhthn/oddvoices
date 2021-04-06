@@ -8,7 +8,7 @@ setuptools.setup(
     author="Nathan Ho",
     packages=setuptools.find_packages("python"),
     package_dir={"": "python"},
-    python_requires=">=3.8",
+    python_requires=">=3.7",
     install_requires=["numpy", "scipy", "soundfile", "mido"],
     extras_require={
         "dev": ["pytest", "mypy", "black", "pre-commit"],
