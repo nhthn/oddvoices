@@ -8,6 +8,7 @@ def is_sublist(list_1, list_2):
             return True
     return False
 
+
 APPROXIMANTS = [
     "l",
     "r",
@@ -201,6 +202,7 @@ def as_ipa_string(phonemes):
             result.append(phoneme)
     return "/" + "".join(result) + "/"
 
+
 def parse_pronunciation(pronunciation):
     pronunciation = pronunciation.strip()
     phonemes = []
@@ -208,7 +210,7 @@ def parse_pronunciation(pronunciation):
         for phoneme in sorted(ALL_PHONEMES, key=lambda x: len(x), reverse=True):
             if pronunciation.startswith(phoneme):
                 phonemes.append(phoneme)
-                pronunciation = pronunciation[len(phoneme):]
+                pronunciation = pronunciation[len(phoneme) :]
                 break
         else:
             if pronunciation[0] == "?":
@@ -251,13 +253,14 @@ def parse_wordlist(f):
         for diphone in diphones:
             if not is_sublist(diphone, normalized_pronunciation):
                 raise RuntimeError(f"{diphone} is not in {pronunciation}")
-        wordlist.append({
-            "diphones": diphones,
-            "pronunciation": pronunciation,
-            "text": text,
-        })
+        wordlist.append(
+            {
+                "diphones": diphones,
+                "pronunciation": pronunciation,
+                "text": text,
+            }
+        )
     return wordlist
-
 
 
 def generate_latex(words):
@@ -269,24 +272,28 @@ def generate_latex(words):
     result.append(r"\usepackage{multicol}")
     result.append(r"\usepackage{xcolor}")
     result.append(r"\setlength{\columnsep}{1cm}")
-    result.append(r"""
+    result.append(
+        r"""
     \usepackage[
       margin=1.5cm,
       includefoot,
       footskip=30pt,
     ]{geometry}
     \usepackage{layout}
-    """)
+    """
+    )
 
     result.append(r"\begin{document}")
     result.append(r"\singlespacing")
     result.append(r"\begin{multicols}{3}")
     result.append(r"\begin{enumerate}")
-    result.append(r"""
+    result.append(
+        r"""
         \setlength{\itemsep}{0pt}
         \setlength{\parskip}{0pt}
         \setlength{\parsep}{0pt}
-    """)
+    """
+    )
 
     for word in words:
         pronunciation = as_ipa_string(word["pronunciation"])
@@ -296,7 +303,9 @@ def generate_latex(words):
             diphone_info.append("".join(diphone))
         diphone_info = ",".join(diphone_info)
         diphone_info = r"{\color{lightgray} \verb/" + diphone_info + r"/}"
-        result.append(r"\item " + word["text"] + " " + pronunciation + " " + diphone_info)
+        result.append(
+            r"\item " + word["text"] + " " + pronunciation + " " + diphone_info
+        )
         result.append("")
 
     result.append(r"\end{enumerate}")

@@ -2,6 +2,7 @@ import io
 import numpy as np
 import oddvoices.corpus
 
+
 def test_write_and_read_voice_file():
     database = {
         "rate": 44100,
@@ -13,15 +14,15 @@ def test_write_and_read_voice_file():
                 "frames": np.array([[1, 2, 3], [-4, 5, 6]], dtype="int16"),
                 "num_frames": 2,
                 "offset": 0,
-                "long": False
+                "long": False,
             },
             "1": {
                 "frames": np.array([[-4, 5, 6]], dtype="int16"),
                 "num_frames": 1,
                 "offset": 0,
-                "long": True
+                "long": True,
             },
-        }
+        },
     }
 
     f = io.BytesIO()

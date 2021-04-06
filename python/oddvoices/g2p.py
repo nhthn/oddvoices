@@ -29,7 +29,9 @@ def read_cmudict() -> Dict[str, List[str]]:
             if line.startswith(";;;"):
                 continue
             parts = line.split()
-            pronunciation_dict[parts[0].lower()] = [arpabet_to_xsampa(x) for x in parts[1:]]
+            pronunciation_dict[parts[0].lower()] = [
+                arpabet_to_xsampa(x) for x in parts[1:]
+            ]
     pronunciation_dict.update(oddvoices.phonology.CMUDICT_EXCEPTIONS)
     return pronunciation_dict
 
@@ -40,7 +42,6 @@ def split_syllables(phonemes: List[str]) -> List[str]:
 
 
 class _SyllableSplitter:
-
     def __init__(self, phonemes):
         self.phonemes = phonemes
         self.syllables = []
@@ -58,7 +59,10 @@ class _SyllableSplitter:
                     self.new_syllable()
                 self.current_syllable_has_vowel = True
             else:
-                if self.current_syllable_has_vowel and self.current_syllable[-1] in oddvoices.phonology.CONSONANTS:
+                if (
+                    self.current_syllable_has_vowel
+                    and self.current_syllable[-1] in oddvoices.phonology.CONSONANTS
+                ):
                     self.new_syllable()
             self.current_syllable.append(phoneme)
 
@@ -117,7 +121,7 @@ def pronounce_unrecognized_word(word: str) -> List[str]:
     while len(remaining_word) != 0:
         for key in keys:
             if remaining_word.startswith(key):
-                remaining_word = remaining_word[len(key):]
+                remaining_word = remaining_word[len(key) :]
                 new_phonemes = oddvoices.phonology.GUESS_PRONUNCIATIONS[key]
                 if isinstance(new_phonemes, list):
                     phonemes.extend(new_phonemes)
