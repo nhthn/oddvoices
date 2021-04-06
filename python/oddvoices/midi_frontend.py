@@ -41,4 +41,3 @@ def main():
     spec["text"] = lyrics
 
     oddvoices.frontend.sing(args.voice_file, spec, args.out_file)
-

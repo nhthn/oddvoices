@@ -6,8 +6,10 @@ import scipy.signal
 import numpy as np
 import oddvoices.phonology
 
+
 def midi_note_to_hertz(midi_note):
     return 440 * 2 ** ((midi_note - 69) / 12)
+
 
 def seconds_to_timestamp(seconds):
     minutes = int(seconds / 60)
@@ -20,7 +22,6 @@ RANDOMIZED_PHASE_CUTOFF = 3000.0
 
 
 class CorpusAnalyzer:
-
     def __init__(self, directory):
         root = pathlib.Path(directory)
         sound_file = root / "audio.wav"
@@ -37,7 +38,9 @@ class CorpusAnalyzer:
 
         self.n_randomized_phases = int(RANDOMIZED_PHASE_CUTOFF / self.expected_f0)
         np.random.seed(0)
-        self.randomized_phases = np.exp(np.random.random((self.n_randomized_phases,)) * 2 * np.pi * 1j)
+        self.randomized_phases = np.exp(
+            np.random.random((self.n_randomized_phases,)) * 2 * np.pi * 1j
+        )
 
         self.parse_label_file(label_file)
 
@@ -69,12 +72,18 @@ class CorpusAnalyzer:
             max_ = max(max_, np.max(np.abs(self.database["segments"][name]["frames"])))
         for segment_id in sorted(list(self.markers.keys())):
             name = "".join(segment_id)
-            self.database["segments"][name]["frames"] = self.database["segments"][name]["frames"] * 32767 / max_
-            self.database["segments"][name]["frames"] = self.database["segments"][name]["frames"].astype(np.int16)
+            self.database["segments"][name]["frames"] = (
+                self.database["segments"][name]["frames"] * 32767 / max_
+            )
+            self.database["segments"][name]["frames"] = self.database["segments"][name][
+                "frames"
+            ].astype(np.int16)
 
     def get_instantaneous_f0(self, signal, offset, window_size=2048):
-        unwindowed_frame: np.array = signal[offset:offset + window_size]
-        frame: np.array = unwindowed_frame * scipy.signal.get_window("hann", window_size)
+        unwindowed_frame: np.array = signal[offset : offset + window_size]
+        frame: np.array = unwindowed_frame * scipy.signal.get_window(
+            "hann", window_size
+        )
 
         autocorrelation: np.array = scipy.signal.correlate(frame, frame)
         autocorrelation = autocorrelation[window_size:]
@@ -82,13 +91,17 @@ class CorpusAnalyzer:
         if len(ascending_bins[0]) == 0:
             return -1
         first_ascending_bin = np.min(ascending_bins)
-        measured_period: int = np.argmax(autocorrelation[first_ascending_bin:]) + first_ascending_bin
+        measured_period: int = (
+            np.argmax(autocorrelation[first_ascending_bin:]) + first_ascending_bin
+        )
         measured_f0 = self.rate / measured_period
         return measured_f0
 
     def analyze_psola(self, segment):
         period: float = self.rate / self.expected_f0
-        autocorrelation_window_size: int = int(period * AUTOCORRELATION_WINDOW_SIZE_NUMBER_OF_PERIODS)
+        autocorrelation_window_size: int = int(
+            period * AUTOCORRELATION_WINDOW_SIZE_NUMBER_OF_PERIODS
+        )
         frames = []
         offset = 0
         while offset + autocorrelation_window_size < len(segment):
@@ -99,13 +112,13 @@ class CorpusAnalyzer:
             measured_period = self.rate / f0 if voiced else period
             window_size = int(measured_period * 2)
 
-            frame: np.array = segment[offset:offset + window_size]
+            frame: np.array = segment[offset : offset + window_size]
             frame = frame * scipy.signal.get_window("hann", len(frame))
             frame = scipy.signal.resample(frame, int(period * 2))
             if voiced:
                 frame = np.fft.rfft(frame)
-                frame[:self.n_randomized_phases] = (
-                    np.abs(frame[:self.n_randomized_phases]) * self.randomized_phases
+                frame[: self.n_randomized_phases] = (
+                    np.abs(frame[: self.n_randomized_phases]) * self.randomized_phases
                 )
                 frame[:2] = 0
                 frame = np.fft.irfft(frame)
@@ -124,9 +137,8 @@ class CorpusAnalyzer:
             n_old -= 1
         n_new = n_old // 2
         t = np.linspace(0, 1, n_new, endpoint=False)
-        return (
-            frames[:n_new, :] * t[:, np.newaxis]
-            + frames[n_new:n_old, :] * (1 - t[:, np.newaxis])
+        return frames[:n_new, :] * t[:, np.newaxis] + frames[n_new:n_old, :] * (
+            1 - t[:, np.newaxis]
         )
 
     def render_database(self):
@@ -142,7 +154,9 @@ class CorpusAnalyzer:
             markers = self.markers[segment_id]
             segment = self.get_audio_between_markers(markers)
             frames = self.analyze_psola(segment)
-            is_long = len(segment_id) == 1 and segment_id[0] in oddvoices.phonology.VOWELS
+            is_long = (
+                len(segment_id) == 1 and segment_id[0] in oddvoices.phonology.VOWELS
+            )
             if is_long:
                 frames = self.make_loopable(frames)
             self.database["segments"]["".join(segment_id)] = {
@@ -153,7 +167,9 @@ class CorpusAnalyzer:
         self.normalize_database()
         return self.database
 
+
 MAGIC_WORD = b"ODDVOICES\0\0\0"
+
 
 def write_voice_file_header(f, database):
     f.write(MAGIC_WORD)
@@ -214,8 +230,12 @@ def read_voice_file_header(f, database):
             break
         database["segments_list"].append(segment_id)
         database["segments"][segment_id] = {}
-        database["segments"][segment_id]["num_frames"] = struct.unpack("<l", f.read(4))[0]
-        database["segments"][segment_id]["long"] = struct.unpack("<l", f.read(4))[0] != 0
+        database["segments"][segment_id]["num_frames"] = struct.unpack("<l", f.read(4))[
+            0
+        ]
+        database["segments"][segment_id]["long"] = (
+            struct.unpack("<l", f.read(4))[0] != 0
+        )
 
 
 def read_voice_file(f):
