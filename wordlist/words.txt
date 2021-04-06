@@ -219,6 +219,7 @@ baI /baI/ bye
 baU /baU/ bow (rhyming with "cow")
 beI /beI/ bay
 bi /bi/ bee
+bj /bjuteIn/ butane
 bl /blA/ blah
 boU /boUn/ bone
 br /brAd/ broad
@@ -237,6 +238,7 @@ daI /daI/ dye
 daU /daU/ Dow
 deI /deI/ day
 di /dim/ deem
+dj /@dju/ adieu
 doU /doU/ dough
 dr /draI/ dry
 du /dun/ dune
@@ -367,6 +369,7 @@ kaI /kaI/ Kai
 kaU /kaU/ cow
 keI /oUkeI/ okay
 ki /ki/ key
+kj /kjut/ cute
 kl /klA/ claw
 koU /koUt/ coat
 kr /krA/ craw
