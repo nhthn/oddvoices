@@ -19,28 +19,37 @@ EXAMPLE_VOICE = common.TEST_ROOT / "compiled-voices/quake.voice"
 
 EXAMPLE_MUSIC_BASIC = {
     "segments": [-1, 0, 1, 2, -1, 3, 4, 5, -1, 6, 7, 8],
-    "notes": [
-        {"frequency": 100, "duration": 2, "trim": 0.2},
-        {"frequency": 150, "duration": 2, "trim": 0.25},
-        {"frequency": 200, "duration": 2, "trim": 0.5},
+    "events": [
+        {"frequency": 100, "duration": 1, "note_on": True},
+        {"duration": 0.3, "note_off": True},
+        {"frequency": 150, "duration": 2, "note_on": True},
+        {"duration": 0.3, "note_off": True},
+        {"frequency": 200, "duration": 2, "note_on": True},
+        {"duration": 0.3, "note_off": True},
     ],
 }
 
 EXAMPLE_MUSIC_PHONEME_SPEED = {
     "segments": [-1, 0, 1, 2, -1, 3, 4, 5, -1, 6, 7, 8],
-    "notes": [
-        {"frequency": 100, "duration": 2, "trim": 0.2, "phoneme_speed": 2},
-        {"frequency": 150, "duration": 2, "trim": 0.25, "phoneme_speed": 1},
-        {"frequency": 200, "duration": 2, "trim": 0.5, "phoneme_speed": 0.5},
+    "events": [
+        {"frequency": 100, "duration": 1, "note_on": True, "phoneme_speed": 2.0},
+        {"duration": 0.3, "note_off": True},
+        {"frequency": 150, "duration": 2, "note_on": True, "phoneme_speed": 1.0},
+        {"duration": 0.3, "note_off": True},
+        {"frequency": 200, "duration": 2, "note_on": True, "phoneme_speed": 0.5},
+        {"duration": 0.3, "note_off": True},
     ],
 }
 
 EXAMPLE_MUSIC_FORMANT_SHIFT = {
     "segments": [-1, 0, 1, 2, -1, 3, 4, 5, -1, 6, 7, 8],
-    "notes": [
-        {"frequency": 100, "duration": 2, "trim": 0.2, "formant_shift": 2},
-        {"frequency": 150, "duration": 2, "trim": 0.25, "formant_shift": 1},
-        {"frequency": 200, "duration": 2, "trim": 0.5, "formant_shift": 0.5},
+    "events": [
+        {"frequency": 100, "duration": 1, "note_on": True, "formant_shift": 2.0},
+        {"duration": 0.3, "note_off": True},
+        {"frequency": 150, "duration": 2, "note_on": True, "formant_shift": 1.0},
+        {"duration": 0.3, "note_off": True},
+        {"frequency": 200, "duration": 2, "note_on": True, "formant_shift": 0.5},
+        {"duration": 0.3, "note_off": True},
     ],
 }
 

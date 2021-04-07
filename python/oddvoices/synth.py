@@ -175,9 +175,8 @@ class Synth:
         result = sum([grain.process() for grain in self.grains])
         return result
 
-    def note_on(self, frequency):
+    def note_on(self):
         self.note_ons += 1
-        self.frequency = frequency
         self.gate = True
 
     def note_off(self):
@@ -193,19 +192,22 @@ def sing(synth, music):
         synth.segment_queue.append(segment_name)
 
     result = []
-    for i, note in enumerate(music["notes"]):
-        frequency = note["frequency"]
-        duration = note["duration"]
-        trim = note["trim"]
+    for i, event in enumerate(music["events"]):
+        duration = event["duration"]
 
-        synth.phoneme_speed = note.get("phoneme_speed", 1.0)
-        synth.formant_shift = note.get("formant_shift", 1.0)
+        if "frequency" in event:
+            synth.frequency = event["frequency"]
+        if "phoneme_speed" in event:
+            synth.phoneme_speed = event["phoneme_speed"]
+        if "formant_shift" in event:
+            synth.formant_shift = event["formant_shift"]
 
-        synth.note_on(frequency)
-        for i in range(int((duration - trim) * synth.sample_rate)):
-            result.append(synth.process())
-        synth.note_off()
-        for i in range(int(trim * synth.sample_rate)):
+        if event.get("note_on", False):
+            synth.note_on()
+        if event.get("note_off", False):
+            synth.note_off()
+
+        for i in range(int(duration * synth.sample_rate)):
             result.append(synth.process())
 
     return np.array(result, dtype="float32")
