@@ -10,7 +10,7 @@
 
 For related open-source projects, check out [eCantorix](https://github.com/divVerent/ecantorix) (based on eSpeak), [Flinger](https://web.archive.org/web/20110524220620/http://cslu.cse.ogi.edu/tts/flinger/) (Festival), and [Sinsy](http://sinsy.sourceforge.net/) (HTS).
 
-OddVoices aspires to be a fun and quirky option for experimental musicians, and doesn't intend to advance the state of the art of intelligibility or naturalness. It is based on sample concatenation synthesis with [MBR-PSOLA](https://www.sciencedirect.com/science/article/abs/pii/016763939390042J), which is similar to algorithms used in the 90's and 2000's.
+OddVoices aspires to be a fun and quirky option for experimental musicians, and doesn't intend to advance the state of the art of intelligibility or naturalness. It is based on sample concatenation synthesis with [MBR-PSOLA](https://www.sciencedirect.com/science/article/abs/pii/016763939390042J), the algorithm used in [MBROLA](https://github.com/numediart/MBROLA). Note, however, that OddVoices does not interface with MBROLA.
 
 ## Using the synthesizer
 
@@ -76,3 +76,7 @@ Tagging a 30-minute corpus takes about two hours of work. If there are multiple 
 Open up the audio file in Audacity. (On Linux, be sure to use JACK and not ALSA or PulseAudio. Audacity lies about the endpoints during audio playback!) For each word, use Audacity's built-in labeling system to tag the diphones and vowels indicated by the light gray text.
 
 For diphones, err on the side of longer: it is better for intelligibility to tag too long than too short. For diphthongs in diphones, tag the entire transition region. For vowels, tag only the stable region of diphthongs.
+
+## License
+
+OddVoices is licensed under Apache license. All files in the `voices/` directory are in the Public Domain.
