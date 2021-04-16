@@ -100,26 +100,34 @@ def sing(voice_file: str, spec, out_file: str, sample_rate: Optional[float]):
         database = oddvoices.corpus.read_voice_file(f)
     synth = oddvoices.synth.Synth(database, sample_rate=sample_rate)
 
-    notes = []
+    trim_amounts = calculate_auto_trim_amounts(synth, phonemes)
+
+    events = []
     for i in range(syllable_count):
         note = spec["notes"][i % len(spec["notes"])]
         if isinstance(note, str):
             note = note_string_to_midinote(note)
         note += spec.get("transposition", 0)
         frequency = oddvoices.utils.midi_note_to_hertz(note)
-        notes.append(
+        duration = (
+            spec["durations"][i % len(spec["durations"])] * 60 / spec.get("bpm", 60)
+        )
+        trim = trim_amounts[i]
+        events.append(
             {
+                "note_on": True,
                 "frequency": frequency,
-                "duration": spec["durations"][i % len(spec["durations"])]
-                * 60
-                / spec.get("bpm", 60),
+                "duration": duration - trim,
                 "formant_shift": spec.get("formant_shift", 1.0),
                 "phoneme_speed": spec.get("phoneme_speed", 1.0),
             }
         )
-    trim_amounts = calculate_auto_trim_amounts(synth, phonemes)
-    for i, note in enumerate(notes):
-        note["trim"] = trim_amounts[i]
+        events.append(
+            {
+                "note_off": True,
+                "duration": trim,
+            }
+        )
 
     segments = phonemes_to_segments(synth, phonemes)
     segment_indices = []
@@ -132,7 +140,7 @@ def sing(voice_file: str, spec, out_file: str, sample_rate: Optional[float]):
 
     music: dict = {
         "segments": segment_indices,
-        "notes": notes,
+        "events": events,
     }
 
     result = oddvoices.synth.sing(synth, music)

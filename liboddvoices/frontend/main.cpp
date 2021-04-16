@@ -23,8 +23,8 @@ int main(int argc, char** argv)
     }
 
     float totalDuration = 0;
-    for (auto& note : j["notes"]) {
-        float duration = note["duration"];
+    for (auto& event : j["events"]) {
+        float duration = event["duration"];
         totalDuration += duration;
     }
 
@@ -44,30 +44,25 @@ int main(int argc, char** argv)
     }
 
     int t = 0;
-    for (auto& note : j["notes"]) {
-        synth.setFrequency(note["frequency"]);
+    for (auto& event : j["events"]) {
+        float duration = event["duration"];
 
-        if (!note["formant_shift"].is_null()) {
-            synth.setFormantShift(note["formant_shift"]);
-        } else {
-            synth.setFormantShift(1.0);
+        if (!event["frequency"].is_null()) {
+            synth.setFrequency(event["frequency"]);
         }
-
-        if (!note["phoneme_speed"].is_null()) {
-            synth.setPhonemeSpeed(note["phoneme_speed"]);
-        } else {
-            synth.setPhonemeSpeed(1.0);
+        if (!event["formant_shift"].is_null()) {
+            synth.setFormantShift(event["formant_shift"]);
         }
-
-        float duration = note["duration"];
-        float trim = note["trim"];
-        synth.noteOn();
-        for (int j = 0; j < sampleRate * (duration - trim); j++) {
-            samples[t] = synth.process() / 32768.0;
-            t++;
+        if (!event["phoneme_speed"].is_null()) {
+            synth.setPhonemeSpeed(event["phoneme_speed"]);
         }
-        synth.noteOff();
-        for (int j = 0; j < sampleRate * trim; j++) {
+        if (!event["note_on"].is_null() && event["note_on"]) {
+            synth.noteOn();
+        }
+        if (!event["note_off"].is_null() && event["note_off"]) {
+            synth.noteOff();
+        }
+        for (int j = 0; j < sampleRate * duration; j++) {
             samples[t] = synth.process() / 32768.0;
             t++;
         }
