@@ -14,7 +14,7 @@ def midi_note_to_hertz(midi_note):
 def seconds_to_timestamp(seconds):
     minutes = int(seconds / 60)
     remaining_seconds = seconds - minutes * 60
-    return str(minutes) + ":" + str(remaining_seconds)
+    return f"{minutes}:{remaining_seconds:.02f}"
 
 
 AUTOCORRELATION_WINDOW_SIZE_NUMBER_OF_PERIODS = 8
@@ -60,11 +60,6 @@ class CorpusAnalyzer:
                         "end": int(float(end) * self.rate),
                     }
 
-    def get_audio_between_markers(self, markers):
-        start_frame = markers["start"]
-        end_frame = markers["end"]
-        return self.audio[start_frame:end_frame]
-
     def normalize_database(self):
         max_ = 0
         for segment_id in sorted(list(self.markers.keys())):
@@ -79,8 +74,11 @@ class CorpusAnalyzer:
                 "frames"
             ].astype(np.int16)
 
-    def get_instantaneous_f0(self, signal, offset, window_size=2048):
-        unwindowed_frame: np.array = signal[offset : offset + window_size]
+    def get_instantaneous_f0(self, offset, window_size=2048):
+        start: int = offset - window_size // 2
+        end: int = start + window_size
+
+        unwindowed_frame: np.array = self.audio[start:end]
         frame: np.array = unwindowed_frame * scipy.signal.get_window(
             "hann", window_size
         )
@@ -97,22 +95,23 @@ class CorpusAnalyzer:
         measured_f0 = self.rate / measured_period
         return measured_f0
 
-    def analyze_psola(self, segment):
+    def analyze_psola(self, start, end):
         period: float = self.rate / self.expected_f0
         autocorrelation_window_size: int = int(
             period * AUTOCORRELATION_WINDOW_SIZE_NUMBER_OF_PERIODS
         )
         frames = []
-        offset = 0
-        while offset + autocorrelation_window_size < len(segment):
+        offset: int = start
+        while offset <= end:
             f0 = self.get_instantaneous_f0(
-                segment, offset, window_size=autocorrelation_window_size
+                offset, window_size=autocorrelation_window_size
             )
             voiced = self.expected_f0 / 1.5 <= f0 <= self.expected_f0 * 1.5
             measured_period = self.rate / f0 if voiced else period
-            window_size = int(measured_period * 2)
-
-            frame: np.array = segment[offset : offset + window_size]
+            window_size: int = int(measured_period * 2)
+            frame_start: int = offset - window_size // 2
+            frame_end: int = frame_start + window_size
+            frame: np.array = self.audio[frame_start:frame_end]
             frame = frame * scipy.signal.get_window("hann", len(frame))
             frame = scipy.signal.resample(frame, int(period * 2))
             if voiced:
@@ -127,8 +126,6 @@ class CorpusAnalyzer:
                 frame = np.concatenate([frame, np.zeros(int(period * 2) - len(frame))])
             frames.append(frame)
             offset += int(measured_period)
-        if len(frames) == 0:
-            raise RuntimeError("Zero frames")
         return np.array(frames)
 
     def make_loopable(self, frames):
@@ -152,8 +149,8 @@ class CorpusAnalyzer:
 
         for segment_id in sorted(list(self.markers.keys())):
             markers = self.markers[segment_id]
-            segment = self.get_audio_between_markers(markers)
-            frames = self.analyze_psola(segment)
+            frames = self.analyze_psola(markers["start"], markers["end"])
+
             is_long = (
                 len(segment_id) == 1 and segment_id[0] in oddvoices.phonology.VOWELS
             )

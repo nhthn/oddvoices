@@ -3,6 +3,7 @@
 **OddVoices** is a project to create open-source singing synthesizers for General American English. Currently, OddVoices consists of the following voices:
 
 - Quake Chesnokov, a deep, dark basso profondo
+- Cicada Lumen, a bright and buzzy baritone
 
 **This project is unstable and in an early stage of development.**
 
