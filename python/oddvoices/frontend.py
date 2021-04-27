@@ -62,7 +62,7 @@ def phonemes_to_segments(
     return segments
 
 
-def get_trim_amount(synth, syllable):
+def get_trim_amount(synth, syllable, phoneme_speed):
     vowel_index = 0
     for i, segment in enumerate(syllable):
         if segment in oddvoices.phonology.VOWELS:
@@ -73,21 +73,21 @@ def get_trim_amount(synth, syllable):
         for segment in final_segments
     ]
     trim_amount = sum(final_segment_lengths)
-    return trim_amount
+    return trim_amount / phoneme_speed
 
 
-def calculate_auto_trim_amounts(synth, phonemes):
+def calculate_auto_trim_amounts(synth, phonemes, phoneme_speed):
     segments = phonemes_to_segments(synth, phonemes)
     trim_amounts = []
     syllable = []
     for segment in segments:
         if segment == "-":
             if len(syllable) != 0:
-                trim_amounts.append(get_trim_amount(synth, syllable))
+                trim_amounts.append(get_trim_amount(synth, syllable, phoneme_speed))
             syllable = []
         else:
             syllable.append(segment)
-    trim_amounts.append(get_trim_amount(synth, syllable))
+    trim_amounts.append(get_trim_amount(synth, syllable, phoneme_speed))
     return trim_amounts
 
 
@@ -100,7 +100,9 @@ def sing(voice_file: str, spec, out_file: str, sample_rate: Optional[float]):
         database = oddvoices.corpus.read_voice_file(f)
     synth = oddvoices.synth.Synth(database, sample_rate=sample_rate)
 
-    trim_amounts = calculate_auto_trim_amounts(synth, phonemes)
+    trim_amounts = calculate_auto_trim_amounts(
+        synth, phonemes, spec.get("phoneme_speed", 1.0)
+    )
 
     events = []
     for i in range(syllable_count):
