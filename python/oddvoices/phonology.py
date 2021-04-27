@@ -180,8 +180,11 @@ GUESS_PRONUNCIATIONS = {
     "z": "z",
 }
 
+# Exceptions for common words that are different for sung vs. spoken English, or
+# where I disagree with cmudict.
 CMUDICT_EXCEPTIONS = {
     "and": ["{}", "n", "d"],
+    "every": ["E", "v", "r", "i"],
 }
 
 
